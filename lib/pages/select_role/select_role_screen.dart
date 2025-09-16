@@ -46,7 +46,7 @@ class SelectRoleScreen extends StatelessWidget {
           ),
           SizedBox(height: 23),
           Text('Select Role', style: manRopeSemiBold),
-          SizedBox(height: 24),
+          SizedBox(height: 52),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
             child: Text(
@@ -56,8 +56,19 @@ class SelectRoleScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 24),
-          CustomButton(onPressed: (){}, text: 'Sender')
-
+          Spacer(),
+          CustomButton(onPressed: () {}, text: 'Sender'),
+          SizedBox(height: 16),
+          CustomButton(
+            onPressed: () {},
+            text: 'Recipient',
+            backgroundColor: whiteColor,
+            borderColor: blackColor,
+            isBorder: true,
+            borderWidth: 1,
+            textColor: blackColor,
+          ),
+          SizedBox(height: 24),
         ],
       ),
     );
