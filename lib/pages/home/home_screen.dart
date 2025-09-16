@@ -39,14 +39,12 @@ class HomeScreen extends StatelessWidget {
               children: [
                 SizedBox(height: 20),
                 Container(
-
-
                   width: Get.width,
-                  padding: EdgeInsets.only(left: 16,top: 10,bottom: 10),
+                  padding: EdgeInsets.only(left: 16, top: 10, bottom: 10),
                   decoration: BoxDecoration(
                     color: Color(0xFFF3F2F7),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: darkGrey)
+                    border: Border.all(color: darkGrey.withValues(alpha: 0.05)),
                   ),
                   child: Row(
                     children: [
@@ -59,7 +57,7 @@ class HomeScreen extends StatelessWidget {
                               height: 14,
                               width: 14,
                             ),
-                        SizedBox(height: 3,),
+                            SizedBox(height: 3),
                             Text(
                               "Because everyone needs a soundtrack to rise, to heal, to fight, to feel alive again",
                               style: manRope.copyWith(
@@ -67,7 +65,6 @@ class HomeScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w200,
                               ),
                             ),
-                        
                             Align(
                               alignment: Alignment.bottomRight,
                               child: Image.asset(
@@ -79,13 +76,17 @@ class HomeScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(width: 20,),
-                      Expanded(child: Image.asset('assets/images/music_waves.png',height: 64,width: Get.width,))
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: Image.asset(
+                          'assets/images/music_waves.png',
+                          height: 64,
+                          width: Get.width,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-
-
               ],
             ),
           ),
