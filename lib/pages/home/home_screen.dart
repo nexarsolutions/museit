@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                   width: Get.width,
                   padding: EdgeInsets.only(left: 16, top: 10, bottom: 10),
                   decoration: BoxDecoration(
-                    color: Color(0xFFF3F2F7),
+                    color:lightWhite,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: darkGrey.withValues(alpha: 0.05)),
                   ),
@@ -87,6 +87,14 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                SizedBox(height: 20,),
+            Container(
+              height: 44,
+              width: 44,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: blackColor,
+              ),),
               ],
             ),
           ),
