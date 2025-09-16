@@ -85,6 +85,9 @@ flutter:
     - family: ManropeSemiBold
       fonts:
         - asset: assets/fonts/Manrope-SemiBold.ttf
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

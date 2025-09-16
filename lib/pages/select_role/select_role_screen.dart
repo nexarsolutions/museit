@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constants/colors.dart';
+import '../../constants/text_styles.dart';
 
 class SelectRoleScreen extends StatelessWidget {
   const SelectRoleScreen({super.key});
@@ -26,12 +27,26 @@ class SelectRoleScreen extends StatelessWidget {
                   width: Get.width,
                   height: Get.height * 0.15,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [whiteColor, blackColor]),
+                    // Corrected the gradient direction and colors
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withOpacity(
+                          0.0,
+                        ), // Starts fully transparent
+                        Colors.white, // Fades to solid white
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
+          SizedBox(height: 23,),
+          Text('Select Role',style: manRopeSemiBold,),
+          SizedBox(height: 24,),
+          Text('Motivation moves in two ways, will you send it or receive it?')
         ],
       ),
     );
