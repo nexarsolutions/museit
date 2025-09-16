@@ -40,7 +40,7 @@ class CustomButton extends StatelessWidget {
     this.horizontalPadding = 8,
     this.verticalPadding = 8,
     this.borderRadius = 16,
-    this.fontWeight = FontWeight.w700,
+    this.fontWeight = FontWeight.w500,
     this.backgroundColor = blackColor,
     this.textColor = whiteColor,
     this.elevation = 0,
@@ -53,7 +53,7 @@ class CustomButton extends StatelessWidget {
     this.prefixIcon,
     this.prefixIconColor,
     this.suffixIconColor,
-    this.fontFamily = 'Lexend',
+    this.fontFamily = 'ManropeSemiBold',
     this.borderColor = Colors.transparent,
     this.borderWidth,
     this.suffixIconSize = 24,
@@ -63,7 +63,7 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      width: width ?? Get.width,
+      width: width ?? 220,
       child: MaterialButton(
         onPressed: onPressed,
         elevation: elevation,

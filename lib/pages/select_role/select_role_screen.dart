@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musit/widgets/custom_button.dart';
 
 import '../../constants/colors.dart';
 import '../../constants/text_styles.dart';
@@ -43,10 +44,20 @@ class SelectRoleScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 23,),
-          Text('Select Role',style: manRopeSemiBold,),
-          SizedBox(height: 24,),
-          Text('Motivation moves in two ways, will you send it or receive it?')
+          SizedBox(height: 23),
+          Text('Select Role', style: manRopeSemiBold),
+          SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+            child: Text(
+              'Motivation moves in two ways, will you send it or receive it?',
+              style: manRopeSemiBold.copyWith(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: 24),
+          CustomButton(onPressed: (){}, text: 'Sender')
+
         ],
       ),
     );
