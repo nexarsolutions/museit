@@ -7,3 +7,11 @@ TextStyle manRopeSemiBold = const TextStyle(
   fontFamily: 'ManropeSemiBold',
   color: blackColor,
 );
+
+
+TextStyle manRope = const TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Manrope',
+  color: blackColor,
+);
