@@ -61,66 +61,87 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: width ?? 220,
-      child: MaterialButton(
-        onPressed: onPressed,
-        elevation: elevation,
-        height: height,
-        shape: RoundedRectangleBorder(
-          side: isBorder == true
-              ? BorderSide(
-                  color: borderColor,
-                  width: borderWidth ?? 2,
-                )
-              : BorderSide.none,
-          borderRadius: BorderRadius.circular(borderRadius),
-        ),
-        color: backgroundColor,
-        minWidth: width,
-        padding: EdgeInsets.symmetric(
-          horizontal: horizontalPadding,
-          vertical: verticalPadding,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isPrefixIcon == true && prefixIcon != null)
-              Image.asset(
-                prefixIcon!,
-                height: 24,
-                width: 24,
-                color: prefixIconColor,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          left: 1,
+          right: 1,
+          bottom: -3,
+          child: Container(
+            height: 30,
+            width: 218,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadiusGeometry.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
               ),
-            // if (isPrefixIcon == true && prefixIcon != null)
-              const SizedBox(width: 12),
-            showWidget == true
-                ? Container(
-                    child: widget,
-                  )
-                : Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: fontWeight,
-                      fontFamily: fontFamily,
-                      color: textColor,
-                    ),
+              color: purpleColor,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: height,
+          width: width ?? 220,
+          child: MaterialButton(
+            onPressed: onPressed,
+            elevation: elevation,
+            height: height,
+            shape: RoundedRectangleBorder(
+              side: isBorder == true
+                  ? BorderSide(
+                      color: borderColor,
+                      width: borderWidth ?? 2,
+                    )
+                  : BorderSide.none,
+              borderRadius: BorderRadius.circular(borderRadius),
+            ),
+            color: backgroundColor,
+            minWidth: width,
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (isPrefixIcon == true && prefixIcon != null)
+                  Image.asset(
+                    prefixIcon!,
+                    height: 24,
+                    width: 24,
+                    color: prefixIconColor,
                   ),
-            // if (isSuffixIcon == true && suffixIcon != null)
-              const SizedBox(width: 12),
-            if (isSuffixIcon == true && suffixIcon != null)
-              Image.asset(
-                suffixIcon!,
-                height: 24,
-                width: 24,
-                color: suffixIconColor,
-              ),
-          ],
+                // if (isPrefixIcon == true && prefixIcon != null)
+                  const SizedBox(width: 12),
+                showWidget == true
+                    ? Container(
+                        child: widget,
+                      )
+                    : Text(
+                        text,
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: fontWeight,
+                          fontFamily: fontFamily,
+                          color: textColor,
+                        ),
+                      ),
+                // if (isSuffixIcon == true && suffixIcon != null)
+                  const SizedBox(width: 12),
+                if (isSuffixIcon == true && suffixIcon != null)
+                  Image.asset(
+                    suffixIcon!,
+                    height: 24,
+                    width: 24,
+                    color: suffixIconColor,
+                  ),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

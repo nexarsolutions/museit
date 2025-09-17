@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musit/pages/auth/login/login_screen.dart';
+import 'package:musit/pages/auth/verify/verify_screen.dart';
+import 'package:musit/pages/health/health_support/health_support_screen.dart';
 import 'package:musit/pages/home/home_screen.dart';
 import 'package:musit/pages/on_boarding/on_boarding_screen.dart';
 import 'package:musit/pages/select_role/select_role_screen.dart';
+import 'package:musit/pages/subscriptions/subscriptions/subscription_screen.dart';
 
 void main() {
   runApp(const MyApp());

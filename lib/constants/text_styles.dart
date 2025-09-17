@@ -8,7 +8,6 @@ TextStyle manRopeSemiBold = const TextStyle(
   color: blackColor,
 );
 
-
 TextStyle manRope = const TextStyle(
   fontSize: 14,
   fontWeight: FontWeight.w500,
