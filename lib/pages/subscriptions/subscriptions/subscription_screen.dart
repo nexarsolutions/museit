@@ -8,23 +8,25 @@ import 'package:musit/widgets/custom_app_bar.dart';
 import '../payment_details/payment_details_screen.dart';
 
 class SubscriptionScreen extends StatelessWidget {
-  const SubscriptionScreen({super.key});
-
+  const SubscriptionScreen({super.key, this.paymentConfirmOnTap, this.isBack = false});
+final void Function()? paymentConfirmOnTap;
+final bool isBack;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          CustomAppBar(text: 'Subscriptions'),
+          CustomAppBar(text: 'Subscriptions',isBack: isBack,),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
                   SubscriptionWidget(
+
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: (){
+                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: paymentConfirmOnTap??(){
                         Get.to(()=>HomeScreen());
 
                       },));
@@ -40,7 +42,7 @@ class SubscriptionScreen extends StatelessWidget {
                   SizedBox(height: 12,),
                   SubscriptionWidget(
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: (){
+                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: paymentConfirmOnTap??(){
                         Get.to(()=>HomeScreen());
 
                       },));
@@ -57,7 +59,7 @@ class SubscriptionScreen extends StatelessWidget {
                   SizedBox(height: 12,),
                   SubscriptionWidget(
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: (){
+                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: paymentConfirmOnTap??(){
                         Get.to(()=>HomeScreen());
                       },));
 
