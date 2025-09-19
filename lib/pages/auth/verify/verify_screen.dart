@@ -6,7 +6,7 @@ import 'package:musit/pages/auth/widget/auth_header.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../widgets/custom_button.dart';
-import '../../subscriptions/subscriptions/subscription_screen.dart';
+import '../../sender_side/subscriptions/subscriptions/subscription_screen.dart';
 import 'controller/verify_controller.dart';
 
 class VerifyScreen extends StatelessWidget {

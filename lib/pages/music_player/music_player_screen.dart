@@ -1,7 +1,12 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:path_provider/path_provider.dart';
+
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
@@ -14,91 +19,135 @@ class MusicPlayerScreen extends StatefulWidget {
 }
 
 class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
-  final AudioPlayer audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  late PlayerController _waveformController;
+
   final RxBool isPlaying = false.obs;
   final Rx<Duration> totalDuration = Duration.zero.obs;
   final Rx<Duration> playedDuration = Duration.zero.obs;
-
-  final List<String> playlist = [
-    // Public domain music URLs from SoundHelix
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-    // Public domain music URLs from Bensound
-    'https://www.bensound.com/bensound-music/bensound-epic.mp3',
-    'https://www.bensound.com/bensound-music/bensound-jazzyfrenchy.mp3',
-  ];
   final RxInt currentSongIndex = 0.obs;
+
+  final List<Map<String, String>> playlist = [
+    {"title": "Relaxing Vibes", "path": "songs/song_1.mp3"},
+    {"title": "Morning Energy", "path": "songs/song_2.mp3"},
+    {"title": "Chill Night", "path": "songs/song_3.mp3"},
+  ];
 
   @override
   void initState() {
     super.initState();
-    _initAudioPlayer();
+    _waveformController = PlayerController();
+    _initAudioListeners();
   }
 
-  Future<void> _initAudioPlayer() async {
-    // Listen for duration changes
-    audioPlayer.onDurationChanged.listen((Duration d) {
+  void _initAudioListeners() {
+    _audioPlayer.onDurationChanged.listen((d) {
       totalDuration.value = d;
     });
 
-    // Listen for position changes
-    audioPlayer.onPositionChanged.listen((Duration p) {
+    _audioPlayer.onPositionChanged.listen((p) {
       playedDuration.value = p;
     });
 
-    // Handle end of song to play the next one
-    audioPlayer.onPlayerComplete.listen((event) {
+    _audioPlayer.onPlayerComplete.listen((_) {
       _playNextSong();
     });
+  }
 
-    // Start playing the first song
-    _playSong(currentSongIndex.value);
+  Future<File> _copyAssetToFile(String assetPath) async {
+    final byteData = await rootBundle.load("assets/$assetPath");
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = File('${tempDir.path}/${assetPath.split('/').last}');
+    await tempFile.writeAsBytes(
+      byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+      flush: true,
+    );
+    return tempFile;
+  }
+
+  Future<void> _prepareWaveform(String assetPath) async {
+    final file = await _copyAssetToFile(assetPath);
+    await _waveformController.preparePlayer(
+      path: file.path,
+      shouldExtractWaveform: true,
+      noOfSamples: 200,
+    );
   }
 
   Future<void> _playSong(int index) async {
-    final songUrl = playlist[index];
-    await audioPlayer.play(UrlSource(songUrl));
+    final songPath = playlist[index]["path"]!;
+
+    await _audioPlayer.stop();
+
+     _waveformController.dispose();
+    _waveformController = PlayerController();
+
+    await _prepareWaveform(songPath);
+
+    await _audioPlayer.play(AssetSource(songPath));
+
     isPlaying.value = true;
   }
 
-  void _togglePlayPause() async {
-    if (isPlaying.value) {
-      await audioPlayer.pause();
+  Future<void> _togglePlayPause() async {
+    if (!isPlaying.value) {
+      if (totalDuration.value == Duration.zero) {
+        await _playSong(currentSongIndex.value);
+        return;
+      }
+      await _audioPlayer.resume();
+      isPlaying.value = true;
     } else {
-      await audioPlayer.resume();
+      await _audioPlayer.pause();
+      isPlaying.value = false;
     }
-    isPlaying.value = !isPlaying.value;
   }
 
-  void _playNextSong() {
+  Future<void> _playNextSong() async {
+    await _audioPlayer.stop();
+    isPlaying.value = false;
     if (currentSongIndex.value < playlist.length - 1) {
       currentSongIndex.value++;
     } else {
-      currentSongIndex.value = 0; // Loop back to the beginning
+      currentSongIndex.value = 0;
     }
-    _playSong(currentSongIndex.value);
+    totalDuration.value = Duration.zero;
+    playedDuration.value = Duration.zero;
+    await _playSong(currentSongIndex.value);
   }
 
-  void _playPreviousSong() {
+  Future<void> _playPreviousSong() async {
+    await _audioPlayer.stop();
+    isPlaying.value = false;
     if (currentSongIndex.value > 0) {
       currentSongIndex.value--;
     } else {
-      currentSongIndex.value = playlist.length - 1; // Loop to the end
+      currentSongIndex.value = playlist.length - 1;
     }
-    _playSong(currentSongIndex.value);
+    totalDuration.value = Duration.zero;
+    playedDuration.value = Duration.zero;
+    await _playSong(currentSongIndex.value);
   }
 
-  String _formatDuration(Duration duration) {
+  Future<void> _seekToFraction(double fraction) async {
+    final totalMs = totalDuration.value.inMilliseconds;
+    if (totalMs <= 0) return;
+    final posMs = (totalMs * fraction).clamp(0, totalMs).toInt();
+    await _audioPlayer.seek(Duration(milliseconds: posMs));
+    playedDuration.value = Duration(milliseconds: posMs);
+  }
+
+  String _formatDuration(Duration d) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$minutes:$seconds';
+    final m = twoDigits(d.inMinutes.remainder(60));
+    final s = twoDigits(d.inSeconds.remainder(60));
+    return '$m:$s';
   }
 
   @override
   void dispose() {
-    audioPlayer.dispose();
+    _audioPlayer.dispose();
+    _waveformController.dispose();
     super.dispose();
   }
 
@@ -117,24 +166,9 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
               ),
             ),
           ),
-          Container(
-            width: Get.width,
-            height: Get.height,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      blackColor.withOpacity(0.9),
-                      blackColor.withOpacity(0.9),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+            child: Container(color: blackColor.withOpacity(0.9)),
           ),
           Column(
             children: [
@@ -156,16 +190,108 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                         ),
                       ),
                       const SizedBox(height: 28),
-                      Text(
-                        'Online Music',
-                        style: manRopeSemiBold.copyWith(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Obx(() {
+                        final title = playlist[currentSongIndex.value]["title"]!;
+                        return Text(
+                          title,
+                          style: manRopeSemiBold.copyWith(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      }),
                       const SizedBox(height: 24),
-                      // Duration display
+                      LayoutBuilder(builder: (context, constraints) {
+                        final width = constraints.maxWidth;
+                        final height = 120.0;
+                        return GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTapDown: (details) {
+                            final dx = details.localPosition.dx.clamp(0.0, width);
+                            final frac = dx / width;
+                            _seekToFraction(frac);
+                          },
+                          onHorizontalDragUpdate: (details) {
+                            final dx = details.localPosition.dx.clamp(0.0, width);
+                            final frac = dx / width;
+                            _seekToFraction(frac);
+                          },
+                          child: SizedBox(
+                            width: width,
+                            height: height,
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: AudioFileWaveforms(
+                                    size: Size(width, height),
+                                    playerController: _waveformController,
+                                    enableSeekGesture: false,
+                                    waveformType: WaveformType.fitWidth,
+                                    continuousWaveform: true,
+                                    playerWaveStyle: const PlayerWaveStyle(
+                                      fixedWaveColor: Colors.white24,
+                                      liveWaveColor: Colors.white24,
+                                      spacing: 4,
+                                      waveThickness: 2,
+                                      showTop: true,
+                                      showBottom: true,
+                                    ),
+                                  ),
+                                ),
+                                Obx(() {
+                                  final totalMs = totalDuration.value.inMilliseconds;
+                                  final playedMs = playedDuration.value.inMilliseconds;
+                                  final frac = (totalMs > 0) ? (playedMs / totalMs).clamp(0.0, 1.0) : 0.0;
+                                  final clipWidth = width * frac;
+                                  return ClipRect(
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: SizedBox(
+                                        width: width,
+                                        height: height,
+                                        child: Stack(
+                                          children: [
+                                            Positioned.fill(
+                                              child: AudioFileWaveforms(
+                                                size: Size(width, height),
+                                                playerController: _waveformController,
+                                                enableSeekGesture: false,
+                                                waveformType: WaveformType.fitWidth,
+                                                continuousWaveform: true,
+                                                playerWaveStyle: const PlayerWaveStyle(
+                                                  fixedWaveColor: Colors.white,
+                                                  liveWaveColor: Colors.white,
+                                                  spacing: 4,
+                                                  waveThickness: 2,
+                                                  showTop: true,
+                                                  showBottom: true,
+                                                ),
+                                              ),
+                                            ),
+                                            Positioned(
+                                              left: clipWidth,
+                                              top: 0,
+                                              bottom: 0,
+                                              right: 0,
+                                              child: Container(
+                                                color: Colors.transparent,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    clipper: _LeftClipper(width: clipWidth),
+                                  );
+                                }),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 24),
                       Obx(() {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -188,46 +314,36 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/images/shuffle_icon.png',
-                            width: 20,
-                            height: 20,
-                          ),
+                          Image.asset('assets/images/shuffle_icon.png', width: 20, height: 20),
                           const SizedBox(width: 30),
                           GestureDetector(
                             onTap: _playPreviousSong,
-                            child: Image.asset(
-                              'assets/images/play_previous.png',
-                              width: 24,
-                              height: 24,
-                            ),
+                            child: Image.asset('assets/images/play_previous.png', width: 24, height: 24),
                           ),
                           const SizedBox(width: 22),
                           GestureDetector(
-                            onTap: _togglePlayPause,
+                            onTap: () async {
+                              if (totalDuration.value == Duration.zero && !isPlaying.value) {
+                                await _playSong(currentSongIndex.value);
+                                return;
+                              }
+                              await _togglePlayPause();
+                            },
                             child: Obx(
                                   () => Image.asset(
                                 isPlaying.value ? 'assets/images/pause.png' : 'assets/images/play.png',
-                                width: 24,
-                                height: 24,
+                                width: 32,
+                                height: 32,
                               ),
                             ),
                           ),
                           const SizedBox(width: 22),
                           GestureDetector(
                             onTap: _playNextSong,
-                            child: Image.asset(
-                              'assets/images/play_next.png',
-                              width: 24,
-                              height: 24,
-                            ),
+                            child: Image.asset('assets/images/play_next.png', width: 24, height: 24),
                           ),
                           const SizedBox(width: 30),
-                          Image.asset(
-                            'assets/images/repeat.png',
-                            width: 20,
-                            height: 20,
-                          ),
+                          Image.asset('assets/images/repeat.png', width: 20, height: 20),
                         ],
                       ),
                       const SizedBox(height: 24),
@@ -241,4 +357,13 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
       ),
     );
   }
+}
+
+class _LeftClipper extends CustomClipper<Rect> {
+  final double width;
+  _LeftClipper({required this.width});
+  @override
+  Rect getClip(Size size) => Rect.fromLTWH(0, 0, width.clamp(0.0, size.width), size.height);
+  @override
+  bool shouldReclip(covariant _LeftClipper oldClipper) => oldClipper.width != width;
 }

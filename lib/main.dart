@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:musit/pages/auth/login/login_screen.dart';
-import 'package:musit/pages/auth/verify/verify_screen.dart';
-import 'package:musit/pages/health/health_support/health_support_screen.dart';
-import 'package:musit/pages/home/home_screen.dart';
-import 'package:musit/pages/music_player/music_player_screen.dart';
-import 'package:musit/pages/on_boarding/on_boarding_screen.dart';
-import 'package:musit/pages/select_role/select_role_screen.dart';
-import 'package:musit/pages/subscriptions/subscriptions/subscription_screen.dart';
+import 'package:musit/pages/charity_side/charity_home/charity_home/charity_home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -25,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: MusicPlayerScreen(),
+      home: CharityHomeScreen(),
     );
   }
 }
