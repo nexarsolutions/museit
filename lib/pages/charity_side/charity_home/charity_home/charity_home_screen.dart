@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musit/common_widgets/my_compaigns_widget.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/pages/notifications/notifications_screen.dart';
 
 import '../../../../constants/text_styles.dart';
+import '../../charity_create_compaign/charity_create_compaign_screen.dart';
+import '../../charity_create_playlist/charity_create_playlist_bottomsheet.dart';
 import '../../charity_profile/charity_profile/charity_profile_screen.dart';
 import '../../my_playlist/charity_my_playlist/charity_my_playlist_screen.dart';
+import '../my_compaigns/my_compaigns_screen.dart';
+import '../view_my_compaigns/view_my_compaigns_screen.dart';
+import 'controller/charity_home_controller.dart';
 
 class CharityHomeScreen extends StatelessWidget {
-  const CharityHomeScreen({super.key});
-
+   CharityHomeScreen({super.key});
+final controller = Get.put(CharityHomeController());
   @override
   Widget build(BuildContext context) {
     // Local function to build a reusable metric card widget
@@ -81,17 +87,27 @@ class CharityHomeScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: buildSmallCard(
-                            title: 'Create Charity\nCampaign ',
-                            image: 'assets/images/create_charity_compaign.png',
+                          child: GestureDetector(
+                            onTap: (){
+                              Get.to(()=>CharityCreateCompaignScreen());
+                            },
+                            child: buildSmallCard(
+                              title: 'Create Charity\nCampaign ',
+                              image: 'assets/images/create_charity_compaign.png',
+                            ),
                           ),
                         ),
                         const SizedBox(width: 20),
 
                         Expanded(
-                          child: buildSmallCard(
-                            title: 'Create\nPlaylist',
-                            image: 'assets/images/create_playlist.png',
+                          child: GestureDetector(
+                            onTap: (){
+                              charityCreatePlaylistBottomSheet();
+                            },
+                            child: buildSmallCard(
+                              title: 'Create\nPlaylist',
+                              image: 'assets/images/create_playlist.png',
+                            ),
                           ),
                         ),
 
@@ -112,25 +128,59 @@ class CharityHomeScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 15),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'My Compaigns',
-                          style: manRopeSemiBold.copyWith(fontSize: 14),
+                  GestureDetector(
+                    onTap: (){
+                      Get.to(()=>MyCompaignsScreen());
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'My Compaigns',
+                            style: manRopeSemiBold.copyWith(fontSize: 14),
+                          ),
                         ),
-                      ),
-                      Text(
-                        'View all',
-                        style: manRopeSemiBold.copyWith(
-                          fontSize: 14,
-                          decoration: TextDecoration.underline,
-                          decorationColor: blackColor,
+                        Text(
+                          'View all',
+                          style: manRopeSemiBold.copyWith(
+                            fontSize: 14,
+                            decoration: TextDecoration.underline,
+                            decorationColor: blackColor,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 53),
+                  const SizedBox(height: 12),
+                  GridView.builder(
+
+                    physics: NeverScrollableScrollPhysics(),
+                    primary: false,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.only(bottom: 30),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      mainAxisExtent: 190,
+                    ),
+                    itemCount: controller.myCompaignsList.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(
+                                () => ViewMyCompaignsScreen(
+                              model: controller.myCompaignsList[index],
+                            ),
+                          );
+                        },
+                        child: MyCompaignsWidget(
+                          model: controller.myCompaignsList[index],
+                        ),
+                      );
+                    },
+                  ),
+                  // const SizedBox(height: /),
                 ],
               ),
             ),
