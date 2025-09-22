@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
-import 'package:musit/pages/charity_side/charity_home/add_songs/model/add_songs_model.dart';
 
-class AddSongsController extends GetxController {
+import '../model/add_songs_model.dart';
+
+class CharityAddSongsController extends GetxController {
 
 final RxInt selectedIndex = 0.obs;
 List <AddSongsModel> spotifyList = [

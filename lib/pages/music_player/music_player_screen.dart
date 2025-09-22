@@ -12,8 +12,8 @@ import 'package:musit/constants/text_styles.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 class MusicPlayerScreen extends StatefulWidget {
-  const MusicPlayerScreen({super.key});
-
+  const MusicPlayerScreen({super.key, required this.imagePath});
+  final String imagePath;
   @override
   _MusicPlayerScreenState createState() => _MusicPlayerScreenState();
 }
@@ -79,7 +79,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
 
     await _audioPlayer.stop();
 
-     _waveformController.dispose();
+    _waveformController.dispose();
     _waveformController = PlayerController();
 
     await _prepareWaveform(songPath);
@@ -159,9 +159,9 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
           Container(
             width: Get.width,
             height: Get.height,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/thumbnail_2.png'),
+                image: AssetImage(widget.imagePath),
                 fit: BoxFit.cover,
               ),
             ),
@@ -183,8 +183,8 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                         height: Get.height * 0.3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/thumbnail_2.png'),
+                          image: DecorationImage(
+                            image: AssetImage(widget.imagePath),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -203,95 +203,44 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                         );
                       }),
                       const SizedBox(height: 24),
-                      LayoutBuilder(builder: (context, constraints) {
-                        final width = constraints.maxWidth;
-                        final height = 120.0;
-                        return GestureDetector(
-                          behavior: HitTestBehavior.translucent,
+                      SizedBox(
+                        width: Get.width,
+                        height: 120.0,
+                        child: GestureDetector(
                           onTapDown: (details) {
-                            final dx = details.localPosition.dx.clamp(0.0, width);
-                            final frac = dx / width;
+                            final frac = details.localPosition.dx / Get.width;
                             _seekToFraction(frac);
                           },
-                          onHorizontalDragUpdate: (details) {
-                            final dx = details.localPosition.dx.clamp(0.0, width);
-                            final frac = dx / width;
-                            _seekToFraction(frac);
-                          },
-                          child: SizedBox(
-                            width: width,
-                            height: height,
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: AudioFileWaveforms(
-                                    size: Size(width, height),
-                                    playerController: _waveformController,
-                                    enableSeekGesture: false,
-                                    waveformType: WaveformType.fitWidth,
-                                    continuousWaveform: true,
-                                    playerWaveStyle: const PlayerWaveStyle(
-                                      fixedWaveColor: Colors.white24,
-                                      liveWaveColor: Colors.white24,
-                                      spacing: 4,
-                                      waveThickness: 2,
-                                      showTop: true,
-                                      showBottom: true,
-                                    ),
-                                  ),
-                                ),
-                                Obx(() {
-                                  final totalMs = totalDuration.value.inMilliseconds;
-                                  final playedMs = playedDuration.value.inMilliseconds;
-                                  final frac = (totalMs > 0) ? (playedMs / totalMs).clamp(0.0, 1.0) : 0.0;
-                                  final clipWidth = width * frac;
-                                  return ClipRect(
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: SizedBox(
-                                        width: width,
-                                        height: height,
-                                        child: Stack(
-                                          children: [
-                                            Positioned.fill(
-                                              child: AudioFileWaveforms(
-                                                size: Size(width, height),
-                                                playerController: _waveformController,
-                                                enableSeekGesture: false,
-                                                waveformType: WaveformType.fitWidth,
-                                                continuousWaveform: true,
-                                                playerWaveStyle: const PlayerWaveStyle(
-                                                  fixedWaveColor: Colors.white,
-                                                  liveWaveColor: Colors.white,
-                                                  spacing: 4,
-                                                  waveThickness: 2,
-                                                  showTop: true,
-                                                  showBottom: true,
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: clipWidth,
-                                              top: 0,
-                                              bottom: 0,
-                                              right: 0,
-                                              child: Container(
-                                                color: Colors.transparent,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    clipper: _LeftClipper(width: clipWidth),
-                                  );
-                                }),
-                              ],
-                            ),
-                          ),
-                        );
-                      }),
-                      const SizedBox(height: 24),
+                          child: Obx(() {
+                            // Check if a song is loaded before showing the waveform
+                            if (totalDuration.value == Duration.zero) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+
+                            return AudioFileWaveforms(
+                              waveformType: WaveformType.fitWidth,
+                              size: Size(Get.width, 120),
+                              playerController: _waveformController,
+                              enableSeekGesture: true, // Enable seeking via gesture
+                              playerWaveStyle: const PlayerWaveStyle(
+                                showSeekLine: false, // Keep the seek line hidden
+                                spacing: 4,
+                                waveThickness: 1.5,
+                                // Use a gradient to create the "outlay" effect
+                                // gradient: LinearGradient(
+                                //   colors: [
+                                //     Colors.white, // The 'played' part will be solid white
+                                //     Colors.white24, // The 'unplayed' part will be transparent white
+                                //   ],
+                                //   stops: [0.0, 1.0],
+                                //   begin: Alignment.centerLeft,
+                                //   end: Alignment.centerRight,
+                                // ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),                      const SizedBox(height: 24),
                       Obx(() {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),

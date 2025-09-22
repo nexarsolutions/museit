@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/common_widgets/song_card.dart';
+import 'package:musit/pages/music_player/music_player_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_models/saved_playlist_model.dart';
@@ -196,6 +197,7 @@ class ViewSavedPlaylistScreen extends StatelessWidget {
                         ),
                         child: GestureDetector(
                           onTap: (){
+                            Get.to(()=>MusicPlayerScreen(imagePath: controller.songsList[index].imagePath));
                           },
                           child: SongCard(
                             model: controller.songsList[index],

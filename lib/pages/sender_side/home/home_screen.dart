@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/pages/sender_side/home/controller/home_controller.dart';
 
+import '../../../common_widgets/saved_playlist_card.dart';
 import '../health/health_support/health_support_screen.dart';
 import '../profile/profile/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
+  HomeScreen({super.key});
+  final controller = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,8 +25,8 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               children: [
                 GestureDetector(
-                  onTap: (){
-                    Get.to(()=>ProfileScreen());
+                  onTap: () {
+                    Get.to(() => ProfileScreen());
                   },
                   child: const CircleAvatar(
                     radius: 22,
@@ -51,123 +53,145 @@ class HomeScreen extends StatelessWidget {
           ),
 
           // ===== Scroll Body =====
-          SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-
-                // ==== Quote Box ====
-                Container(
-                  width: Get.width,
-                  padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
-                  decoration: BoxDecoration(
-                    color: lightWhite,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: darkGrey.withOpacity(0.05)),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              'assets/images/left_comma.png',
-                              height: 14,
-                              width: 14,
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              "Because everyone needs a soundtrack to rise, to heal, to fight, to feel alive again",
-                              style: manRope.copyWith(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w200,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Image.asset(
-                                'assets/images/right_comma.png',
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+            
+                  // ==== Quote Box ====
+                  Container(
+                    width: Get.width,
+                    padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: lightWhite,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: darkGrey.withOpacity(0.05)),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                'assets/images/left_comma.png',
                                 height: 14,
                                 width: 14,
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 3),
+                              Text(
+                                "Because everyone needs a soundtrack to rise, to heal, to fight, to feel alive again",
+                                style: manRope.copyWith(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w200,
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Image.asset(
+                                  'assets/images/right_comma.png',
+                                  height: 14,
+                                  width: 14,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: Image.asset(
-                          'assets/images/music_waves.png',
-                          height: 64,
-                          width: Get.width,
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Image.asset(
+                            'assets/images/music_waves.png',
+                            height: 64,
+                            width: Get.width,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-
-                const SizedBox(height: 53),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: buildSmallCard(
-                          title: 'Create\nPlaylist',
-                          image: 'assets/images/create_playlist.png',
+            
+                  const SizedBox(height: 53),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: buildSmallCard(
+                            title: 'Create\nPlaylist',
+                            image: 'assets/images/create_playlist.png',
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 29),
-                      Expanded(
-                        child: buildSmallCard(
-                          title: 'Sent\nPlaylist',
-                          image: 'assets/images/sent_playlist.png',
+                        const SizedBox(width: 29),
+                        Expanded(
+                          child: buildSmallCard(
+                            title: 'Sent\nPlaylist',
+                            image: 'assets/images/sent_playlist.png',
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 29),
-                      Expanded(
-                        child: buildSmallCard(
-                          title: 'Send\nPlaylist',
-                          image: 'assets/images/send_paid_songs.png',
+                        const SizedBox(width: 29),
+                        Expanded(
+                          child: buildSmallCard(
+                            title: 'Send\nPlaylist',
+                            image: 'assets/images/send_paid_songs.png',
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-
-                const SizedBox(height: 53),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: buildFullWidthCard(
-                          title: "Community",
-                          image: "assets/images/community.png",
-                          onTap: () {},
+            
+                  const SizedBox(height: 53),
+            
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: buildFullWidthCard(
+                            title: "Community",
+                            image: "assets/images/community.png",
+                            onTap: () {},
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: buildFullWidthCard(
-                          title: "Health Support",
-                          image: "assets/images/health_support.png",
-                          onTap: () {
-                            Get.to(() => const HealthSupportScreen());
-                          },
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: buildFullWidthCard(
+                            title: "Health Support",
+                            image: "assets/images/health_support.png",
+                            onTap: () {
+                              Get.to(() => const HealthSupportScreen());
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-
-                const SizedBox(height: 23),
-                Text('Recently Created Playlists',style: manRopeSemiBold.copyWith(fontSize: 14),)
-              ],
+            
+                  const SizedBox(height: 23),
+                  Text(
+                    'Recently Created Playlists',
+                    style: manRopeSemiBold.copyWith(fontSize: 14),
+                  ),
+                  const SizedBox(height: 23),
+                  ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: NeverScrollableScrollPhysics(),
+                    primary: false,
+                    shrinkWrap: true,
+                    itemCount: controller.recentCardList.length,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(bottom: 30.0),
+                      child: SavedPlaylistCard(
+                        showDateTime: true,
+                        model: controller.recentCardList[index],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 23),
+            
+                ],
+              ),
             ),
           ),
         ],

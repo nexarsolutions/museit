@@ -6,8 +6,9 @@ import '../constants/text_styles.dart';
 import '../common_models/song_model.dart';
 
 class SongCard extends StatelessWidget {
-  const SongCard({super.key, required this.model});
+  const SongCard({super.key, required this.model,  this.showPlaylistIcon = false});
 final SongModel model;
+final bool showPlaylistIcon;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -89,6 +90,9 @@ final SongModel model;
                     ],
                   ),
                 ),
+                const SizedBox(width: 12),
+                showPlaylistIcon == true?Image.asset('assets/images/playlist_icon.png',scale: 3.5,):SizedBox()
+
 
               ],
             ),

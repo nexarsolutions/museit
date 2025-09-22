@@ -5,6 +5,7 @@ import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/auth/login/controller/login_controller.dart';
 import 'package:musit/pages/auth/signup/signup_screen.dart';
 import 'package:musit/pages/auth/widget/auth_header.dart';
+import 'package:musit/pages/charity_side/charity_home/charity_home/charity_home_screen.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 
@@ -109,7 +110,7 @@ class CharityLoginScreen extends StatelessWidget {
                       child: CustomButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-
+                            Get.offAll(()=>CharityHomeScreen());
                           }
                         },
                         text: 'Log In',

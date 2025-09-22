@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/auth/widget/auth_header.dart';
+import 'package:musit/pages/charity_side/charity_profile_creation/charity_profile_creation_screen.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../widgets/custom_button.dart';
@@ -103,7 +104,7 @@ class CharityVerifyEmailScreen extends StatelessWidget {
                         controller.onClick.value = true;
                       } else if (controller.pinController.length == 6 ||
                           controller.isNumeric(pin)) {
-                        // Get.offAll(() => SubscriptionScreen());
+                        Get.offAll(() => CharityProfileCreationScreen());
                       }
                     },
                   ),

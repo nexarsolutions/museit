@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:musit/pages/charity_side/charity_home/add_songs/model/add_songs_model.dart';
 
 import '../../../../../constants/colors.dart';
 import '../../../../../constants/text_styles.dart';
+import '../model/add_songs_model.dart';
 
 class AddSongsWidget extends StatelessWidget {
   AddSongsWidget({super.key, required this.model});

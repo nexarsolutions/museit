@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_home/charity_home_screen.dart';
+import 'package:musit/pages/charity_side/charity_on_boarding/charity_on_boarding_screen.dart';
+import 'package:musit/pages/sender_side/home/home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: CharityHomeScreen(),
+      home: HomeScreen(),
     );
   }
 }
