@@ -5,36 +5,44 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/charity_side/my_playlist/view_my_playlist/controller/view_my_playlist_controller.dart';
 import 'package:musit/common_widgets/song_card.dart';
+import 'package:musit/pages/music_player/music_player_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_models/saved_playlist_model.dart';
 import '../charity_see_recipient/charity_see_recipient_screen.dart';
 
 class ViewMyPlaylistScreen extends StatelessWidget {
-  ViewMyPlaylistScreen({super.key, required this.model});
+  ViewMyPlaylistScreen({
+    super.key,
+    required this.model,
+    this.showRecipients = true,
+  });
   final SavedPlaylistModel model;
   final controller = Get.put(ViewMyPlaylistController());
+  final bool showRecipients;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:                   SizedBox(
-        height: 50,
-        child: Center(
-          child: GestureDetector(
-            onTap: (){
-              Get.to(()=>CharitySeeRecipientScreen());
-            },
-            child: Text(
-              'See Recipients',
-              style: manRope.copyWith(
-                fontSize: 12,
-                decoration: TextDecoration.underline,
-                decorationColor: lightBlack,
+      bottomNavigationBar: showRecipients == true
+          ? SizedBox(
+              height: 50,
+              child: Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Get.to(() => CharitySeeRecipientScreen());
+                  },
+                  child: Text(
+                    'See Recipients',
+                    style: manRope.copyWith(
+                      fontSize: 12,
+                      decoration: TextDecoration.underline,
+                      decorationColor: lightBlack,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      ),
+            )
+          : SizedBox.shrink(),
 
       backgroundColor: whiteColor,
       body: SingleChildScrollView(
@@ -192,7 +200,14 @@ class ViewMyPlaylistScreen extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(
+                              () => MusicPlayerScreen(
+                                imagePath:
+                                    controller.songsList[index].imagePath,
+                              ),
+                            );
+                          },
                           child: SongCard(model: controller.songsList[index]),
                         ),
                       );

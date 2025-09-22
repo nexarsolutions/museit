@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
-import 'package:musit/pages/privacy_policy/privacy_policy_screen.dart';
-import 'package:musit/pages/terms_conditions/terms_conditions_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/profile_widget.dart';
-import '../../../about_app/about_app_screen.dart';
+import '../../../common_sections/about_app/about_app_screen.dart';
+import '../../../common_sections/privacy_policy/privacy_policy_screen.dart';
+import '../../../common_sections/terms_conditions/terms_conditions_screen.dart';
 import '../charity_change_password/charity_change_password_bottomsheet.dart';
 import '../charity_edit_profile/charity_edit_profile_screen.dart';
 import '../edit_charity_profile/edit_charity_profile_screen.dart';

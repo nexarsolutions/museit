@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/common_widgets/my_compaigns_widget.dart';
 import 'package:musit/constants/colors.dart';
-import 'package:musit/pages/notifications/notifications_screen.dart';
-
 import '../../../../constants/text_styles.dart';
+import '../../../common_sections/notifications/notifications_screen.dart';
 import '../../charity_create_compaign/charity_create_compaign_screen.dart';
 import '../../charity_create_playlist/charity_create_playlist_bottomsheet.dart';
 import '../../charity_profile/charity_profile/charity_profile_screen.dart';

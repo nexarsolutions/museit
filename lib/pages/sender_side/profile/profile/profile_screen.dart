@@ -5,7 +5,7 @@ import 'package:musit/constants/text_styles.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/profile_widget.dart';
-import '../../home/home_screen.dart';
+import '../../sender_home/sender_home/sender_home_screen.dart';
 import '../../subscriptions/subscriptions/subscription_screen.dart';
 import '../change_password/change_password_bottomsheet.dart';
 import '../edit_profile/edit_profile_screen.dart';
@@ -96,7 +96,7 @@ class ProfileScreen extends StatelessWidget {
                       Get.to(()=>SubscriptionScreen(
                         isBack: true,
                         paymentConfirmOnTap: (){
-                        Get.offAll(()=>HomeScreen());
+                        Get.offAll(()=>SenderHomeScreen());
                       },));
                     },
                   ),

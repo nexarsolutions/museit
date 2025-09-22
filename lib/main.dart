@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:musit/pages/charity_side/charity_home/charity_home/charity_home_screen.dart';
-import 'package:musit/pages/charity_side/charity_on_boarding/charity_on_boarding_screen.dart';
-import 'package:musit/pages/sender_side/home/home_screen.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +10,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -21,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: HomeScreen(),
+      home: SenderHomeScreen(),
     );
   }
 }

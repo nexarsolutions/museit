@@ -7,6 +7,7 @@ import 'package:musit/pages/sender_side/profile/purchase_history/widget/support_
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../widgets/custom_tab_button.dart';
+import '../../../music_player/music_player_screen.dart';
 import '../view_support_plan/view_support_plan_screen.dart';
 import 'controller/purchase_history_controller.dart';
 
@@ -107,7 +108,10 @@ class PurchaseHistoryScreen extends StatelessWidget {
                                 itemCount: controller.paidSongsList.length,
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Get.to(()=>MusicPlayerScreen(imagePath: controller.paidSongsList[index].imagePath));
+
+                                    },
                                     child: PaidSongsWidget(
                                       model: controller.paidSongsList[index],
                                     ),

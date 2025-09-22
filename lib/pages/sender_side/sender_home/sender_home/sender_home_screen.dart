@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
-import 'package:musit/pages/sender_side/home/controller/home_controller.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_create_playlist/sender_create_playlist_bottom_sheet.dart';
 
-import '../../../common_widgets/saved_playlist_card.dart';
-import '../health/health_support/health_support_screen.dart';
-import '../profile/profile/profile_screen.dart';
+import '../../../../common_widgets/saved_playlist_card.dart';
+import '../../../charity_side/my_playlist/view_my_playlist/view_my_playlist_screen.dart';
+import '../../community/sender_community/sender_community_screen.dart';
+import '../../health/health_support/health_support_screen.dart';
+import '../../profile/profile/profile_screen.dart';
+import '../../profile/view_saved_playlist/view_saved_playlist_screen.dart';
+import '../../sender_sent_playlist/sender_sent_playlist_screen.dart';
+import 'controller/sender_home_controller.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-  final controller = Get.put(HomeController());
+class SenderHomeScreen extends StatelessWidget {
+  SenderHomeScreen({super.key});
+  final controller = Get.put(SenderHomeController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,11 +65,15 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-            
+
                   // ==== Quote Box ====
                   Container(
                     width: Get.width,
-                    padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      top: 10,
+                      bottom: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: lightWhite,
                       borderRadius: BorderRadius.circular(20),
@@ -111,23 +120,33 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-            
+
                   const SizedBox(height: 53),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
                       children: [
                         Expanded(
-                          child: buildSmallCard(
-                            title: 'Create\nPlaylist',
-                            image: 'assets/images/create_playlist.png',
+                          child: GestureDetector(
+                            onTap: () {
+                              senderCreatePlaylistBottomSheet();
+                            },
+                            child: buildSmallCard(
+                              title: 'Create\nPlaylist',
+                              image: 'assets/images/create_playlist.png',
+                            ),
                           ),
                         ),
                         const SizedBox(width: 29),
                         Expanded(
-                          child: buildSmallCard(
-                            title: 'Sent\nPlaylist',
-                            image: 'assets/images/sent_playlist.png',
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => SenderSentPlaylistScreen());
+                            },
+                            child: buildSmallCard(
+                              title: 'Sent\nPlaylist',
+                              image: 'assets/images/sent_playlist.png',
+                            ),
                           ),
                         ),
                         const SizedBox(width: 29),
@@ -140,9 +159,9 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-            
+
                   const SizedBox(height: 53),
-            
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
@@ -151,7 +170,9 @@ class HomeScreen extends StatelessWidget {
                           child: buildFullWidthCard(
                             title: "Community",
                             image: "assets/images/community.png",
-                            onTap: () {},
+                            onTap: () {
+                              Get.to(() => SenderCommunityScreen());
+                            },
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -167,7 +188,7 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-            
+
                   const SizedBox(height: 23),
                   Text(
                     'Recently Created Playlists',
@@ -182,14 +203,23 @@ class HomeScreen extends StatelessWidget {
                     itemCount: controller.recentCardList.length,
                     itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(bottom: 30.0),
-                      child: SavedPlaylistCard(
-                        showDateTime: true,
-                        model: controller.recentCardList[index],
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(
+                            () => ViewMyPlaylistScreen(
+                              model: controller.recentCardList[index],
+                            ),
+                          );
+                        },
+
+                        child: SavedPlaylistCard(
+                          showDateTime: true,
+                          model: controller.recentCardList[index],
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 23),
-            
                 ],
               ),
             ),

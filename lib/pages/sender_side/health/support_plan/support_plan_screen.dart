@@ -6,7 +6,7 @@ import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_bottom_sheet.dart';
 import '../../../../constants/text_styles.dart';
 import '../../../../widgets/custom_button.dart';
-import '../../home/home_screen.dart';
+import '../../sender_home/sender_home/sender_home_screen.dart';
 import '../../subscriptions/payment_details/payment_details_screen.dart';
 
 class SupportPlanScreen extends StatelessWidget {
@@ -48,7 +48,7 @@ class SupportPlanScreen extends StatelessWidget {
                                   SizedBox(height: 50),
                                   CustomButton(
                                     onPressed: () {
-                                      Get.offAll(() => HomeScreen());
+                                      Get.offAll(() => SenderHomeScreen());
                                     },
                                     text: 'Okay',
                                   ),
@@ -89,7 +89,7 @@ class SupportPlanScreen extends StatelessWidget {
                                   SizedBox(height: 50),
                                   CustomButton(
                                     onPressed: () {
-                                      Get.offAll(() => HomeScreen());
+                                      Get.offAll(() => SenderHomeScreen());
                                     },
                                     text: 'Okay',
                                   ),
@@ -130,7 +130,7 @@ class SupportPlanScreen extends StatelessWidget {
                                   SizedBox(height: 50),
                                   CustomButton(
                                     onPressed: () {
-                                      Get.offAll(() => HomeScreen());
+                                      Get.offAll(() => SenderHomeScreen());
                                     },
                                     text: 'Okay',
                                   ),

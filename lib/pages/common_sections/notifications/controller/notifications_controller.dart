@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:musit/pages/notifications/model/notifications_model.dart';
+
+import '../model/notifications_model.dart';
 
 class NotificationsController extends GetxController{
 List <NotificationsModel> notificationsList = [
