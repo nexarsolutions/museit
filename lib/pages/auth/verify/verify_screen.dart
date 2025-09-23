@@ -10,10 +10,10 @@ import '../../sender_side/subscriptions/subscriptions/subscription_screen.dart';
 import 'controller/verify_controller.dart';
 
 class VerifyScreen extends StatelessWidget {
-  VerifyScreen({super.key});
+  VerifyScreen({super.key, required this.isSender});
 
   final controller = Get.put(VerifyController());
-
+final bool isSender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,7 +103,7 @@ class VerifyScreen extends StatelessWidget {
                         controller.onClick.value = true;
                       } else if (controller.pinController.length == 6 ||
                           controller.isNumeric(pin)) {
-                        Get.offAll(() => SubscriptionScreen());
+                        Get.offAll(() => SubscriptionScreen(iSender: isSender,));
                       }
                     },
                   ),

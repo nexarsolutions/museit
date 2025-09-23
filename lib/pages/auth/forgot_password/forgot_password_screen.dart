@@ -11,11 +11,11 @@ import '../../../widgets/custom_text_field.dart';
 import 'controller/forgot_password_controller.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  ForgotPasswordScreen({super.key});
+  ForgotPasswordScreen({super.key, required this.isSender});
 
   final controller = Get.put(ForgotPasswordController());
   final formKey = GlobalKey<FormState>();
-
+final bool isSender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

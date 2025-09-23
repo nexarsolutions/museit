@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/pages/auth/signup/signup_screen.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'controller/on_boarding_controller.dart';
 
 class OnBoardingScreen extends StatelessWidget {
-  const OnBoardingScreen({super.key});
-
+  const OnBoardingScreen({super.key, required this.isSender});
+final bool isSender;
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(OnBoardingController());
@@ -105,7 +106,7 @@ class OnBoardingScreen extends StatelessWidget {
                 onPressed: () {
                   if (controller.currentPage.value ==
                       controller.images.length - 1) {
-                    // Navigate to next screen
+                    Get.to(()=>SignupScreen(isSender: isSender,));
                   } else {
                     controller.pageController.nextPage(
                       duration: const Duration(milliseconds: 300),

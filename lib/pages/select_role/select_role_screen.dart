@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musit/pages/sender_side/on_boarding/on_boarding_screen.dart';
 import 'package:musit/widgets/custom_button.dart';
 
 import '../../constants/colors.dart';
@@ -57,10 +58,17 @@ class SelectRoleScreen extends StatelessWidget {
           ),
           SizedBox(height: 24),
           Spacer(),
-          CustomButton(onPressed: () {}, text: 'Sender'),
+          CustomButton(
+            onPressed: () {
+              Get.to(() => OnBoardingScreen(isSender: true));
+            },
+            text: 'Sender',
+          ),
           SizedBox(height: 16),
           CustomButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.to(() => OnBoardingScreen(isSender: false));
+            },
             text: 'Recipient',
             backgroundColor: whiteColor,
             borderColor: blackColor,

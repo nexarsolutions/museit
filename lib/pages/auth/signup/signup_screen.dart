@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/pages/auth/login/login_screen.dart';
 import 'package:musit/pages/auth/widget/auth_header.dart';
 
 import '../../../constants/text_styles.dart';
@@ -11,10 +12,10 @@ import '../verify/verify_screen.dart';
 import 'controller/signup_controller.dart';
 
 class SignupScreen extends StatelessWidget {
-  SignupScreen({super.key,});
+  SignupScreen({super.key, required this.isSender});
 
   final controller = Get.put(SignupController());
-
+  final bool isSender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +33,10 @@ class SignupScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 18),
-                    Text('Username', style: manRopeSemiBold.copyWith(fontSize: 12)),
+                    Text(
+                      'Username',
+                      style: manRopeSemiBold.copyWith(fontSize: 12),
+                    ),
                     const SizedBox(height: 8),
                     CustomTextField(
                       controller: controller.nameController,
@@ -45,7 +49,10 @@ class SignupScreen extends StatelessWidget {
                       validator: validateName,
                     ),
                     const SizedBox(height: 10),
-                    Text('Email', style: manRopeSemiBold.copyWith(fontSize: 12)),
+                    Text(
+                      'Email',
+                      style: manRopeSemiBold.copyWith(fontSize: 12),
+                    ),
                     const SizedBox(height: 8),
                     CustomTextField(
                       controller: controller.emailController,
@@ -61,7 +68,10 @@ class SignupScreen extends StatelessWidget {
                       validator: validateEmail,
                     ),
                     const SizedBox(height: 10),
-                    Text('Phone Number', style: manRopeSemiBold.copyWith(fontSize: 12)),
+                    Text(
+                      'Phone Number',
+                      style: manRopeSemiBold.copyWith(fontSize: 12),
+                    ),
                     const SizedBox(height: 8),
                     CustomTextField(
                       controller: controller.phoneNumberController,
@@ -77,7 +87,10 @@ class SignupScreen extends StatelessWidget {
                       validator: validatePhoneNumber,
                     ),
                     const SizedBox(height: 10),
-                    Text('Password', style: manRopeSemiBold.copyWith(fontSize: 12)),
+                    Text(
+                      'Password',
+                      style: manRopeSemiBold.copyWith(fontSize: 12),
+                    ),
                     const SizedBox(height: 8),
                     Obx(
                       () => CustomTextField(
@@ -111,7 +124,10 @@ class SignupScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text('Confirm password', style: manRopeSemiBold.copyWith(fontSize: 12)),
+                    Text(
+                      'Confirm password',
+                      style: manRopeSemiBold.copyWith(fontSize: 12),
+                    ),
                     const SizedBox(height: 8),
                     Obx(
                       () => CustomTextField(
@@ -141,12 +157,11 @@ class SignupScreen extends StatelessWidget {
                           },
                         ),
                         validator: (value) {
-                        return isConfirmPasswordValid(
-                          value,
-                          controller.passwordController.text,
-                        );
-                      },
-
+                          return isConfirmPasswordValid(
+                            value,
+                            controller.passwordController.text,
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(height: 42),
@@ -154,7 +169,7 @@ class SignupScreen extends StatelessWidget {
                       child: CustomButton(
                         onPressed: () {
                           if (controller.formKey.currentState!.validate()) {
-                            Get.to(() => VerifyScreen());
+                            Get.to(() => VerifyScreen(isSender: isSender));
                           }
                         },
                         text: 'Sign up',
@@ -170,7 +185,7 @@ class SignupScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.back();
+                            Get.to(() => LoginScreen(isSender: isSender));
                           },
                           child: Text(
                             'Log in',

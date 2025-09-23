@@ -7,9 +7,10 @@ import '../../sender_home/sender_home/sender_home_screen.dart';
 import '../payment_details/payment_details_screen.dart';
 
 class SubscriptionScreen extends StatelessWidget {
-  const SubscriptionScreen({super.key, this.paymentConfirmOnTap, this.isBack = false});
+  const SubscriptionScreen({super.key, this.paymentConfirmOnTap, this.isBack = false, required this.iSender});
 final void Function()? paymentConfirmOnTap;
 final bool isBack;
+final bool iSender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,8 +26,12 @@ final bool isBack;
                   SubscriptionWidget(
 
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: paymentConfirmOnTap??(){
-                        Get.to(()=>SenderHomeScreen());
+                      Get.to(()=>PaymentDetailsScreen(
+                        isSender: iSender,
+
+                        confirmOnTap: paymentConfirmOnTap??(){
+                          iSender == true?
+                        Get.to(()=>SenderHomeScreen()):null;
 
                       },));
                     },
@@ -41,7 +46,10 @@ final bool isBack;
                   SizedBox(height: 12,),
                   SubscriptionWidget(
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: paymentConfirmOnTap??(){
+                      Get.to(()=>PaymentDetailsScreen(
+                        isSender: iSender,
+
+                        confirmOnTap: paymentConfirmOnTap??(){
                         Get.to(()=>SenderHomeScreen());
 
                       },));
@@ -58,7 +66,9 @@ final bool isBack;
                   SizedBox(height: 12,),
                   SubscriptionWidget(
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(confirmOnTap: paymentConfirmOnTap??(){
+                      Get.to(()=>PaymentDetailsScreen(
+                        isSender: iSender,
+                        confirmOnTap: paymentConfirmOnTap??(){
                         Get.to(()=>SenderHomeScreen());
                       },));
 

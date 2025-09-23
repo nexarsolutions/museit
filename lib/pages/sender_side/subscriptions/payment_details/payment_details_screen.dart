@@ -10,10 +10,11 @@ import '../../../../widgets/custom_text_field.dart';
 import 'controller/payment_details_controller.dart';
 
 class PaymentDetailsScreen extends StatelessWidget {
-  PaymentDetailsScreen({super.key, this.confirmOnTap});
+  PaymentDetailsScreen({super.key, this.confirmOnTap, required this.isSender});
   final controller = Get.put(PaymentDetailsController());
   final formKey = GlobalKey<FormState>();
   final void Function()? confirmOnTap;
+  final bool isSender;
 
   @override
   Widget build(BuildContext context) {

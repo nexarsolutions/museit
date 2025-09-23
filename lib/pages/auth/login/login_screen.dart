@@ -5,6 +5,7 @@ import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/auth/login/controller/login_controller.dart';
 import 'package:musit/pages/auth/signup/signup_screen.dart';
 import 'package:musit/pages/auth/widget/auth_header.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 
@@ -12,10 +13,10 @@ import '../../../utils/validators.dart';
 import '../forgot_password/forgot_password_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+  LoginScreen({super.key, required this.isSender});
   final controller = Get.put(LoginController());
   final formKey = GlobalKey<FormState>();
-
+final bool isSender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +94,7 @@ class LoginScreen extends StatelessWidget {
                       alignment: Alignment.topRight,
                       child: GestureDetector(
                         onTap: () {
-                          Get.to(() => ForgotPasswordScreen());
+                          Get.to(() => ForgotPasswordScreen(isSender: isSender,));
                         },
                         child: Text(
                           'Forget Password?',
@@ -106,6 +107,7 @@ class LoginScreen extends StatelessWidget {
                       child: CustomButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
+                            isSender== true? Get.to(()=>SenderHomeScreen()):null;
 
                           }
                         },
@@ -122,7 +124,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.to(()=>SignupScreen());
+                            Get.to(()=>SignupScreen(isSender: isSender,));
                           },
                           child: Text(
                             'Sign Up',
