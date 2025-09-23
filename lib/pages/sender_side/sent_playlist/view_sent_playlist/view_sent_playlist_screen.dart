@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
-import 'package:musit/pages/charity_side/my_playlist/view_my_playlist/controller/view_my_playlist_controller.dart';
 import 'package:musit/common_widgets/song_card.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_models/saved_playlist_model.dart';
-import '../charity_see_recipient/charity_see_recipient_screen.dart';
+import '../playlist_recipient/playlist_recipient_screen.dart';
+import 'controller/view_sent_playlist_controller.dart';
 
-class ViewMyPlaylistScreen extends StatelessWidget {
-  ViewMyPlaylistScreen({
+class ViewSentPlaylistScreen extends StatelessWidget {
+  ViewSentPlaylistScreen({
     super.key,
     required this.model,
     this.showRecipients = true,
   });
   final SavedPlaylistModel model;
-  final RxBool isSaved = true.obs;
 
-  final controller = Get.put(ViewMyPlaylistController());
+  final controller = Get.put(ViewSentPlaylistController());
   final bool showRecipients;
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class ViewMyPlaylistScreen extends StatelessWidget {
               child: Center(
                 child: GestureDetector(
                   onTap: () {
-                    Get.to(() => CharitySeeRecipientScreen());
+                    Get.to(() => PlaylistRecipientScreen());
                   },
                   child: Text(
                     'See Recipients',
@@ -82,27 +82,7 @@ class ViewMyPlaylistScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                CustomAppBar(text: '', isBack: true,showLastIcon: true,lastWidget: Obx(
-                      () => GestureDetector(
-                    onTap: () {
-                      isSaved.value = !isSaved.value;
-                    },
-                    child: Container(
-                      height: 44,
-                      width: 44,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: blackColor,
-                      ),
-                      child: Image.asset(
-                        isSaved.value
-                            ? 'assets/images/saved_filled.png'
-                            : 'assets/images/saved_icon.png',
-                        scale: 4,
-                      ),
-                    ),
-                  ),
-                ),),
+                CustomAppBar(text: '', isBack: true,),
               ],
             ),
             SizedBox(height: 18),

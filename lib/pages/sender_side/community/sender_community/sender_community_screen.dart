@@ -5,6 +5,7 @@ import 'package:musit/pages/charity_side/my_playlist/view_my_playlist/view_my_pl
 import 'package:musit/pages/sender_side/community/sender_community/widget/sender_community_card.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_tab_button.dart';
+import '../sender_view_community/sender_view_community_screen.dart';
 import 'controller/sender_community_controller.dart';
 
 class SenderCommunityScreen extends StatelessWidget {
@@ -37,37 +38,56 @@ class SenderCommunityScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16),
-                  GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    primary: false,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(bottom: 30),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
-                          mainAxisExtent: 200,
-                        ),
-                    itemCount: controller.playlistList.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {},
-                        child: GestureDetector(
-                          onTap: () {
-                            Get.to(
-                                  () => ViewMyPlaylistScreen(
-                                    showRecipients: false,
-                                model:  controller.playlistList[index],
-                              ),
-                            );
-                          },
-                          child: SenderCommunityCard(
-                            model: controller.playlistList[index],
+                  Obx(
+                    () => GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      primary: false,
+                      shrinkWrap: true,
+                      padding: EdgeInsets.only(bottom: 30),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
+                            mainAxisExtent: 200,
                           ),
-                        ),
-                      );
-                    },
+                      itemCount: controller.selectedTab.value == 0
+                          ? controller.motivationalList.length
+                          : controller.selectedTab.value == 1
+                          ? controller.griefList.length
+                          : controller.selectedTab.value == 2
+                          ? controller.encourageList.length
+                          : controller.loveList.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {},
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(
+                                () => SenderViewCommunityScreen(
+                                  model: controller.selectedTab.value == 0
+                                      ? controller.motivationalList[index]
+                                      : controller.selectedTab.value == 1
+                                      ? controller.griefList[index]
+                                      : controller.selectedTab.value == 2
+                                      ? controller.encourageList[index]
+                                      : controller.loveList[index],
+                                ),
+                              );
+                            },
+                            child: SenderCommunityCard(
+                              model: controller.selectedTab.value == 0
+                                  ? controller.motivationalList[index]
+                                  : controller.selectedTab.value == 1
+                                  ? controller.griefList[index]
+                                  : controller.selectedTab.value == 2
+                                  ? controller.encourageList[index]
+                                  : controller.loveList[index],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

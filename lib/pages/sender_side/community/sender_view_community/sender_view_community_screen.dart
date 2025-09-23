@@ -3,49 +3,50 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
-import 'package:musit/pages/charity_side/my_playlist/view_my_playlist/controller/view_my_playlist_controller.dart';
 import 'package:musit/common_widgets/song_card.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
+import 'package:musit/pages/sender_side/sent_playlist/playlist_recipient/playlist_recipient_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_models/saved_playlist_model.dart';
-import '../charity_see_recipient/charity_see_recipient_screen.dart';
+import 'controller/sender_view_community_controller.dart';
 
-class ViewMyPlaylistScreen extends StatelessWidget {
-  ViewMyPlaylistScreen({
+class SenderViewCommunityScreen extends StatelessWidget {
+  SenderViewCommunityScreen({
+    this.showRecipients = true,
+
     super.key,
     required this.model,
-    this.showRecipients = true,
   });
   final SavedPlaylistModel model;
-  final RxBool isSaved = true.obs;
-
-  final controller = Get.put(ViewMyPlaylistController());
+  final RxBool isSaved = false.obs;
   final bool showRecipients;
+
+
+  final controller = Get.put(SenderViewCommunityController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: showRecipients == true
           ? SizedBox(
-              height: 50,
-              child: Center(
-                child: GestureDetector(
-                  onTap: () {
-                    Get.to(() => CharitySeeRecipientScreen());
-                  },
-                  child: Text(
-                    'See Recipients',
-                    style: manRope.copyWith(
-                      fontSize: 12,
-                      decoration: TextDecoration.underline,
-                      decorationColor: lightBlack,
-                    ),
-                  ),
-                ),
+        height: 50,
+        child: Center(
+          child: GestureDetector(
+            onTap: () {
+              Get.to(() => PlaylistRecipientScreen());
+            },
+            child: Text(
+              'See Recipients',
+              style: manRope.copyWith(
+                fontSize: 12,
+                decoration: TextDecoration.underline,
+                decorationColor: lightBlack,
               ),
-            )
+            ),
+          ),
+        ),
+      )
           : SizedBox.shrink(),
-
       backgroundColor: whiteColor,
       body: SingleChildScrollView(
         child: Column(
@@ -224,9 +225,9 @@ class ViewMyPlaylistScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             Get.to(
-                              () => MusicPlayerScreen(
+                                  () => MusicPlayerScreen(
                                 imagePath:
-                                    controller.songsList[index].imagePath,
+                                controller.songsList[index].imagePath,
                               ),
                             );
                           },

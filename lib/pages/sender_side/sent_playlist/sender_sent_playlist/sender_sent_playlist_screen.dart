@@ -4,8 +4,7 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/saved_playlist_card.dart';
-import '../../charity_side/my_playlist/view_my_playlist/view_my_playlist_screen.dart';
-import '../profile/view_saved_playlist/view_saved_playlist_screen.dart';
+import '../view_sent_playlist/view_sent_playlist_screen.dart';
 import 'controller/sender_sent_playlist_controller.dart';
 
 class SenderSentPlaylistScreen extends StatelessWidget {
@@ -31,7 +30,7 @@ class SenderSentPlaylistScreen extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: (){
-                      Get.to(()=>ViewMyPlaylistScreen(model: controller.playlistList[index],));
+                      Get.to(()=>ViewSentPlaylistScreen(model: controller.playlistList[index],));
                     },
                     child: SavedPlaylistCard(
                       showDateTime: true,

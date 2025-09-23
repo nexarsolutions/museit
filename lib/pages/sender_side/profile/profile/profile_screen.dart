@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/pages/auth/login/login_screen.dart';
+import 'package:musit/pages/common_sections/about_app/about_app_screen.dart';
+import 'package:musit/pages/common_sections/privacy_policy/privacy_policy_screen.dart';
+import 'package:musit/pages/common_sections/terms_conditions/terms_conditions_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/profile_widget.dart';
@@ -32,7 +36,12 @@ class ProfileScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: blackColor,
               ),
-              child: Image.asset('assets/images/logout_icon.png', scale: 3.5),
+              child: GestureDetector(
+                onTap: (){
+                  Get.offAll(()=>LoginScreen(isSender: true));
+                },
+                child: Image.asset('assets/images/logout_icon.png', scale: 3.5),
+              ),
             ),
           ),
           Expanded(
@@ -93,41 +102,51 @@ class ProfileScreen extends StatelessWidget {
                     iconPath: 'assets/images/subscriptions.png',
                     title: 'Subscriptions',
                     onTap: () {
-                      Get.to(()=>SubscriptionScreen(
-                        isBack: true,
-                        paymentConfirmOnTap: (){
-                        Get.offAll(()=>SenderHomeScreen());
-                      },));
+                      Get.to(
+                        () => SubscriptionScreen(
+                          iSender: true,
+                          isBack: true,
+                          paymentConfirmOnTap: () {
+                            Get.offAll(() => SenderHomeScreen());
+                          },
+                        ),
+                      );
                     },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/purchase_history.png',
                     title: 'Purchase History',
                     onTap: () {
-                      Get.to(()=>PurchaseHistoryScreen());
+                      Get.to(() => PurchaseHistoryScreen());
                     },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/saved_playlists.png',
                     title: 'Saved Playlists',
                     onTap: () {
-                      Get.to(()=>SavedPlaylistScreen());
+                      Get.to(() => SavedPlaylistScreen());
                     },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/privacy_policy.png',
                     title: 'Privacy Policy',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => PrivacyPolicyScreen());
+                    },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/terms_conditions.png',
                     title: 'Terms & Conditions',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => TermsConditionsScreen());
+                    },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/about.png',
                     title: 'About',
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => AboutAppScreen());
+                    },
                   ),
                   SizedBox(height: 24),
                 ],

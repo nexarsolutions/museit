@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/pages/common_sections/notifications/notifications_screen.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_create_playlist/sender_create_playlist_bottom_sheet.dart';
 
 import '../../../../common_widgets/saved_playlist_card.dart';
 import '../../../charity_side/my_playlist/view_my_playlist/view_my_playlist_screen.dart';
 import '../../community/sender_community/sender_community_screen.dart';
+import '../../community/sender_view_community/sender_view_community_screen.dart';
 import '../../health/health_support/health_support_screen.dart';
 import '../../profile/profile/profile_screen.dart';
-import '../../profile/view_saved_playlist/view_saved_playlist_screen.dart';
-import '../../sender_sent_playlist/sender_sent_playlist_screen.dart';
+import '../../send_playlist/sender_send_playlist/sender_send_playlist_screen.dart';
+import '../../sent_playlist/sender_sent_playlist/sender_sent_playlist_screen.dart';
+import '../../sent_playlist/view_sent_playlist/view_sent_playlist_screen.dart';
 import 'controller/sender_home_controller.dart';
 
 class SenderHomeScreen extends StatelessWidget {
@@ -41,16 +44,21 @@ class SenderHomeScreen extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text('Hi, Katherine!', style: manRopeSemiBold),
                 const Spacer(),
-                Container(
-                  height: 44,
-                  width: 44,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: blackColor,
-                  ),
-                  child: Image.asset(
-                    'assets/images/notification.png',
-                    scale: 4,
+                GestureDetector(
+                  onTap: (){
+                    Get.to(()=>NotificationsScreen());
+                  },
+                  child: Container(
+                    height: 44,
+                    width: 44,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: blackColor,
+                    ),
+                    child: Image.asset(
+                      'assets/images/notification.png',
+                      scale: 4,
+                    ),
                   ),
                 ),
               ],
@@ -151,9 +159,16 @@ class SenderHomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 29),
                         Expanded(
-                          child: buildSmallCard(
-                            title: 'Send\nPlaylist',
-                            image: 'assets/images/send_paid_songs.png',
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => SenderSendPlaylistScreen());
+                            },
+
+                            child: buildSmallCard(
+
+                              title: 'Send\nPlaylist',
+                              image: 'assets/images/send_paid_songs.png',
+                            ),
                           ),
                         ),
                       ],
@@ -206,7 +221,7 @@ class SenderHomeScreen extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           Get.to(
-                            () => ViewMyPlaylistScreen(
+                            () => ViewSentPlaylistScreen(
                               model: controller.recentCardList[index],
                             ),
                           );
