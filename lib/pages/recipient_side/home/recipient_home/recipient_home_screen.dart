@@ -7,11 +7,13 @@ import 'package:musit/pages/sender_side/sender_home/sender_create_playlist/sende
 
 import '../../../../common_widgets/saved_playlist_card.dart';
 import '../../../sender_side/sent_playlist/view_sent_playlist/view_sent_playlist_screen.dart';
+import '../../health_support/recipient_health_support/recipient_health_support_screen.dart';
 import '../../recieved_playlist/recieved_playlist/recieved_playlist_screen.dart';
 import '../../recieved_playlist/view_recieved_playlist/view_recieved_playlist_screen.dart';
 import '../../recieved_songs/recieved_songs/recieved_songs_screen.dart';
 import '../../recipient_charity_compaign/recipient_charity_compaign/recipient_charity_compaign_screen.dart';
 import '../../recipient_community/recipient_community/recipient_community_screen.dart';
+import '../../recipient_profile/recipient_profile/recipient_profile_screen.dart';
 import '../../saved_playlist/recipient_saved_playlist_screen.dart';
 import 'controller/recipient_home_controller.dart';
 
@@ -35,7 +37,7 @@ class RecipientHomeScreen extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    // Get.to(() => ProfileScreen());
+                    Get.to(() => RecipientProfileScreen());
                   },
                   child: const CircleAvatar(
                     radius: 22,
@@ -208,7 +210,7 @@ class RecipientHomeScreen extends StatelessWidget {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              // Get.to(() => SenderSendPlaylistScreen());
+                              Get.to(() => RecipientHealthSupportScreen());
                             },
 
                             child: buildSmallCard(

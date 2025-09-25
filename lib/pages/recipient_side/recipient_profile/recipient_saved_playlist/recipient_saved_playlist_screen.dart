@@ -4,8 +4,8 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/saved_playlist_card.dart';
-import '../recieved_playlist/view_recieved_playlist/view_recieved_playlist_screen.dart';
-import 'controller/recipient_saved_playlist_controller.dart';
+import '../../recieved_playlist/view_recieved_playlist/view_recieved_playlist_screen.dart';
+import '../../saved_playlist/controller/recipient_saved_playlist_controller.dart';
 
 class RecipientSavedPlaylistScreen extends StatelessWidget {
   RecipientSavedPlaylistScreen({super.key});
@@ -16,7 +16,7 @@ class RecipientSavedPlaylistScreen extends StatelessWidget {
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          CustomAppBar(text: 'Saved Playlist', isBack: true),
+          CustomAppBar(text: 'Recieved Playlist', isBack: true),
           SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
@@ -39,7 +39,7 @@ class RecipientSavedPlaylistScreen extends StatelessWidget {
                   },
 
                   child: SavedPlaylistCard(
-                    showDateTime: false,
+                    showDateTime: true,
                     model: controller.recentCardList[index],
                   ),
                 ),

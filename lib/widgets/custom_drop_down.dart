@@ -124,14 +124,15 @@ class CustomDropDown extends StatelessWidget {
                     elevation: 0,
                     maxHeight: maxHeight,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF8C7FAC).withValues(alpha: 0.15),
-                          const Color(0xFF7695CA).withValues(alpha: 0.15),
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
+                      color: whiteColor,
+                      // gradient: LinearGradient(
+                      //   colors: [
+                      //     const Color(0xFF8C7FAC).withValues(alpha: 0.15),
+                      //     const Color(0xFF7695CA).withValues(alpha: 0.15),
+                      //   ],
+                      //   begin: Alignment.centerLeft,
+                      //   end: Alignment.centerRight,
+                      // ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
