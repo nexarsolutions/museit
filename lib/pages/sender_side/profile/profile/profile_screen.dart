@@ -6,6 +6,7 @@ import 'package:musit/pages/auth/login/login_screen.dart';
 import 'package:musit/pages/common_sections/about_app/about_app_screen.dart';
 import 'package:musit/pages/common_sections/privacy_policy/privacy_policy_screen.dart';
 import 'package:musit/pages/common_sections/terms_conditions/terms_conditions_screen.dart';
+import 'package:musit/pages/select_role/select_role_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/profile_widget.dart';
@@ -38,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: (){
-                  Get.offAll(()=>LoginScreen(isSender: true));
+                  Get.offAll(()=>SelectRoleScreen());
                 },
                 child: Image.asset('assets/images/logout_icon.png', scale: 3.5),
               ),

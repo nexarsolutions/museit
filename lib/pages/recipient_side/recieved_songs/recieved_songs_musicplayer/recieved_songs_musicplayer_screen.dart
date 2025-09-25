@@ -11,14 +11,16 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
-class MusicPlayerScreen extends StatefulWidget {
-  const MusicPlayerScreen({super.key, required this.imagePath});
+class RecievedSongsMusicPlayerScreen extends StatefulWidget {
+  const RecievedSongsMusicPlayerScreen({super.key, required this.imagePath});
   final String imagePath;
   @override
-  _MusicPlayerScreenState createState() => _MusicPlayerScreenState();
+  _RecievedSongsMusicPlayerScreenState createState() =>
+      _RecievedSongsMusicPlayerScreenState();
 }
 
-class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
+class _RecievedSongsMusicPlayerScreenState
+    extends State<RecievedSongsMusicPlayerScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   late PlayerController _waveformController;
 
@@ -26,7 +28,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
   final Rx<Duration> totalDuration = Duration.zero.obs;
   final Rx<Duration> playedDuration = Duration.zero.obs;
   final RxInt currentSongIndex = 0.obs;
-
+  final RxBool isSaved = false.obs;
   final List<Map<String, String>> playlist = [
     {"title": "Relaxing Vibes", "path": "songs/song_1.mp3"},
     {"title": "Morning Energy", "path": "songs/song_2.mp3"},
@@ -59,7 +61,10 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     final tempDir = await getTemporaryDirectory();
     final tempFile = File('${tempDir.path}/${assetPath.split('/').last}');
     await tempFile.writeAsBytes(
-      byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+      byteData.buffer.asUint8List(
+        byteData.offsetInBytes,
+        byteData.lengthInBytes,
+      ),
       flush: true,
     );
     return tempFile;
@@ -146,7 +151,6 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
 
   @override
   void dispose() {
-    _audioPlayer.stop(); // 👈 jab screen band hogi to song stop hojayega
     _audioPlayer.dispose();
     _waveformController.dispose();
     super.dispose();
@@ -173,7 +177,32 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
           ),
           Column(
             children: [
-              const CustomAppBar(text: '', isBack: true),
+              CustomAppBar(
+                text: '',
+                isBack: true,
+                showLastIcon: true,
+                lastWidget: Obx(
+                  () => GestureDetector(
+                    onTap: () {
+                      isSaved.value = !isSaved.value;
+                    },
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: blackColor,
+                      ),
+                      child: Image.asset(
+                        isSaved.value
+                            ? 'assets/images/saved_filled.png'
+                            : 'assets/images/saved_icon.png',
+                        scale: 4,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -192,7 +221,8 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                       ),
                       const SizedBox(height: 28),
                       Obx(() {
-                        final title = playlist[currentSongIndex.value]["title"]!;
+                        final title =
+                            playlist[currentSongIndex.value]["title"]!;
                         return Text(
                           title,
                           style: manRopeSemiBold.copyWith(
@@ -215,16 +245,20 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                           child: Obx(() {
                             // Check if a song is loaded before showing the waveform
                             if (totalDuration.value == Duration.zero) {
-                              return const Center(child: CircularProgressIndicator());
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
                             }
 
                             return AudioFileWaveforms(
                               waveformType: WaveformType.fitWidth,
                               size: Size(Get.width, 120),
                               playerController: _waveformController,
-                              enableSeekGesture: true, // Enable seeking via gesture
+                              enableSeekGesture:
+                                  true, // Enable seeking via gesture
                               playerWaveStyle: const PlayerWaveStyle(
-                                showSeekLine: false, // Keep the seek line hidden
+                                showSeekLine:
+                                    false, // Keep the seek line hidden
                                 spacing: 4,
                                 waveThickness: 1.5,
                                 // Use a gradient to create the "outlay" effect
@@ -241,7 +275,8 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                             );
                           }),
                         ),
-                      ),                      const SizedBox(height: 24),
+                      ),
+                      const SizedBox(height: 24),
                       Obx(() {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -250,11 +285,15 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                             children: [
                               Text(
                                 _formatDuration(playedDuration.value),
-                                style: manRopeSemiBold.copyWith(color: Colors.white),
+                                style: manRopeSemiBold.copyWith(
+                                  color: Colors.white,
+                                ),
                               ),
                               Text(
                                 _formatDuration(totalDuration.value),
-                                style: manRopeSemiBold.copyWith(color: Colors.white),
+                                style: manRopeSemiBold.copyWith(
+                                  color: Colors.white,
+                                ),
                               ),
                             ],
                           ),
@@ -264,24 +303,35 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset('assets/images/shuffle_icon.png', width: 20, height: 20),
+                          Image.asset(
+                            'assets/images/shuffle_icon.png',
+                            width: 20,
+                            height: 20,
+                          ),
                           const SizedBox(width: 30),
                           GestureDetector(
                             onTap: _playPreviousSong,
-                            child: Image.asset('assets/images/play_previous.png', width: 24, height: 24),
+                            child: Image.asset(
+                              'assets/images/play_previous.png',
+                              width: 24,
+                              height: 24,
+                            ),
                           ),
                           const SizedBox(width: 22),
                           GestureDetector(
                             onTap: () async {
-                              if (totalDuration.value == Duration.zero && !isPlaying.value) {
+                              if (totalDuration.value == Duration.zero &&
+                                  !isPlaying.value) {
                                 await _playSong(currentSongIndex.value);
                                 return;
                               }
                               await _togglePlayPause();
                             },
                             child: Obx(
-                                  () => Image.asset(
-                                isPlaying.value ? 'assets/images/pause.png' : 'assets/images/play.png',
+                              () => Image.asset(
+                                isPlaying.value
+                                    ? 'assets/images/pause.png'
+                                    : 'assets/images/play.png',
                                 width: 32,
                                 height: 32,
                               ),
@@ -290,12 +340,83 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                           const SizedBox(width: 22),
                           GestureDetector(
                             onTap: _playNextSong,
-                            child: Image.asset('assets/images/play_next.png', width: 24, height: 24),
+                            child: Image.asset(
+                              'assets/images/play_next.png',
+                              width: 24,
+                              height: 24,
+                            ),
                           ),
                           const SizedBox(width: 30),
-                          Image.asset('assets/images/repeat.png', width: 20, height: 20),
+                          Image.asset(
+                            'assets/images/repeat.png',
+                            width: 20,
+                            height: 20,
+                          ),
                         ],
                       ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                        'assets/images/dummy_profile.png',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Kathy James',
+                                  style: manRopeSemiBold.copyWith(
+                                    fontSize: 14,
+                                    color: whiteColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'Price Paid',
+                                style: manRopeSemiBold.copyWith(
+                                  fontSize: 12,
+                                  color: whiteColor,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                '25p',
+                                style: manRopeSemiBold.copyWith(
+                                  fontSize: 14,
+                                  color: whiteColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildRecordingCard(
+                        title: "Recording 1",
+                        duration: "05:47 min",
+                      ),
+                      const SizedBox(height: 8),
+                      _buildRecordingCard(
+                        title: "Recording 2",
+                        duration: "03:22 min",
+                      ),
+                      const SizedBox(height: 24),
+
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -307,13 +428,101 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
       ),
     );
   }
+
+  Widget _buildRecordingCard({
+    required String title,
+    required String duration,
+  }) {
+    return Container(
+      width: Get.width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.transparent,
+      ),
+      child: Stack(
+        children: [
+          // ✅ Custom Borders
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border(
+                  left: BorderSide(color: whiteColor, width: 0.3),
+                  right: BorderSide(color: whiteColor, width: 0.3),
+                  bottom: BorderSide(color: whiteColor, width: 0.3),
+                ),
+              ),
+            ),
+          ),
+
+          // ✅ Content
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 6,
+              right: 20,
+              top: 6,
+              bottom: 6,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Profile image
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: whiteColor,
+                  ),
+                  child: Image.asset(
+                    'assets/images/recording_icon.png',
+                    scale: 3,
+                    color: blackColor,
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // Name + Duration
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: manRopeSemiBold.copyWith(
+                          fontSize: 12,
+                          color: whiteColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        duration,
+                        style: manRope.copyWith(
+                          fontWeight: FontWeight.w200,
+                          fontSize: 10,
+                          color: lightWhite,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _LeftClipper extends CustomClipper<Rect> {
   final double width;
   _LeftClipper({required this.width});
   @override
-  Rect getClip(Size size) => Rect.fromLTWH(0, 0, width.clamp(0.0, size.width), size.height);
+  Rect getClip(Size size) =>
+      Rect.fromLTWH(0, 0, width.clamp(0.0, size.width), size.height);
   @override
-  bool shouldReclip(covariant _LeftClipper oldClipper) => oldClipper.width != width;
+  bool shouldReclip(covariant _LeftClipper oldClipper) =>
+      oldClipper.width != width;
 }

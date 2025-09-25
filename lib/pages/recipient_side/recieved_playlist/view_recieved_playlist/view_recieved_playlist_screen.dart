@@ -83,7 +83,10 @@ class ViewRecievedPlaylistScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                CustomAppBar(text: '', isBack: true,showLastIcon: true,lastWidget: Obx(
+                CustomAppBar(text: '', isBack: true,
+                  showLastIcon: true,
+
+                  lastWidget: Obx(
                       () => GestureDetector(
                     onTap: () {
                       isSaved.value = !isSaved.value;

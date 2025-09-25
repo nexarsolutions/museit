@@ -9,6 +9,7 @@ import 'package:musit/pages/common_sections/terms_conditions/terms_conditions_sc
 import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import '../../../../common_widgets/profile_widget.dart';
+import '../../../select_role/select_role_screen.dart';
 import '../../../sender_side/subscriptions/subscriptions/subscription_screen.dart';
 import '../../saved_playlist/recipient_saved_playlist_screen.dart';
 import '../recipient_change_password/recipient_change_password_bottomsheet.dart';
@@ -38,7 +39,7 @@ class RecipientProfileScreen extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: (){
-                  Get.offAll(()=>LoginScreen(isSender: false));
+                  Get.offAll(()=>SelectRoleScreen());
                 },
                 child: Image.asset('assets/images/logout_icon.png', scale: 3.5),
               ),

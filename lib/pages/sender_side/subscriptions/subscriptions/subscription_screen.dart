@@ -1,39 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 import 'package:musit/pages/sender_side/subscriptions/subscriptions/widget/subscription_widget.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import '../../sender_home/sender_home/sender_home_screen.dart';
 import '../payment_details/payment_details_screen.dart';
 
 class SubscriptionScreen extends StatelessWidget {
-  const SubscriptionScreen({super.key, this.paymentConfirmOnTap, this.isBack = false, required this.iSender});
-final void Function()? paymentConfirmOnTap;
-final bool isBack;
-final bool iSender;
+  const SubscriptionScreen({
+    super.key,
+    this.paymentConfirmOnTap,
+    this.isBack = false,
+    required this.iSender,
+  });
+  final void Function()? paymentConfirmOnTap;
+  final bool isBack;
+  final bool iSender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          CustomAppBar(text: 'Subscriptions',isBack: isBack,),
+          CustomAppBar(text: 'Subscriptions', isBack: isBack),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
                   SubscriptionWidget(
-
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(
-                        isSender: iSender,
+                      Get.to(
+                        () => PaymentDetailsScreen(
+                          isSender: iSender,
 
-                        confirmOnTap: paymentConfirmOnTap??(){
-                          iSender == true?
-                        Get.to(()=>SenderHomeScreen()):null;
-
-                      },));
+                          confirmOnTap:
+                              paymentConfirmOnTap ??
+                              () {
+                                iSender == true
+                                    ? Get.to(() => SenderHomeScreen())
+                                    : Get.to(() => RecipientHomeScreen());
+                              },
+                        ),
+                      );
                     },
                     isOption1True: true,
                     isOption2True: true,
@@ -43,17 +53,22 @@ final bool iSender;
                     planName: 'Silver',
                     price: 25,
                   ),
-                  SizedBox(height: 12,),
+                  SizedBox(height: 12),
                   SubscriptionWidget(
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(
-                        isSender: iSender,
+                      Get.to(
+                        () => PaymentDetailsScreen(
+                          isSender: iSender,
 
-                        confirmOnTap: paymentConfirmOnTap??(){
-                        Get.to(()=>SenderHomeScreen());
-
-                      },));
-
+                          confirmOnTap:
+                              paymentConfirmOnTap ??
+                              () {
+                                iSender == true
+                                    ? Get.to(() => SenderHomeScreen())
+                                    : Get.to(() => RecipientHomeScreen());
+                              },
+                        ),
+                      );
                     },
                     isOption1True: true,
                     isOption2True: true,
@@ -63,15 +78,21 @@ final bool iSender;
                     planName: 'Gold',
                     price: 50,
                   ),
-                  SizedBox(height: 12,),
+                  SizedBox(height: 12),
                   SubscriptionWidget(
                     subscribeOnTap: () {
-                      Get.to(()=>PaymentDetailsScreen(
-                        isSender: iSender,
-                        confirmOnTap: paymentConfirmOnTap??(){
-                        Get.to(()=>SenderHomeScreen());
-                      },));
-
+                      Get.to(
+                        () => PaymentDetailsScreen(
+                          isSender: iSender,
+                          confirmOnTap:
+                              paymentConfirmOnTap ??
+                              () {
+                                iSender == true
+                                    ? Get.to(() => SenderHomeScreen())
+                                    : Get.to(() => RecipientHomeScreen());
+                              },
+                        ),
+                      );
                     },
                     isOption1True: true,
                     isOption2True: true,
@@ -81,8 +102,7 @@ final bool iSender;
                     planName: 'Premium',
                     price: 100,
                   ),
-                  SizedBox(height: 24,)
-
+                  SizedBox(height: 24),
                 ],
               ),
             ),

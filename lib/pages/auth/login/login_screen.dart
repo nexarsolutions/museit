@@ -5,6 +5,7 @@ import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/auth/login/controller/login_controller.dart';
 import 'package:musit/pages/auth/signup/signup_screen.dart';
 import 'package:musit/pages/auth/widget/auth_header.dart';
+import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
@@ -107,7 +108,7 @@ final bool isSender;
                       child: CustomButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            isSender== true? Get.to(()=>SenderHomeScreen()):null;
+                            isSender== true? Get.to(()=>SenderHomeScreen()):Get.to(()=>RecipientHomeScreen());
 
                           }
                         },

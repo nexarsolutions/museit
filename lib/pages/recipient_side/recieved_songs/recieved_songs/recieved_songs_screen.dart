@@ -5,6 +5,7 @@ import 'package:musit/pages/recipient_side/recieved_songs/recieved_songs/control
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/song_card.dart';
+import '../recieved_songs_musicplayer/recieved_songs_musicplayer_screen.dart';
 
 class RecievedSongsScreen extends StatelessWidget {
    RecievedSongsScreen({super.key});
@@ -25,12 +26,12 @@ final controller = Get.put(RecievedSongsController());
                   padding: const EdgeInsets.only(bottom: 16,left: 16,right: 16),
                   child: GestureDetector(
                     onTap: () {
-                      // Get.to(
-                      //       () => MusicPlayerScreen(
-                      //     imagePath:
-                      //     controller.songsList[index].imagePath,
-                      //   ),
-                      // );
+                      Get.to(
+                            () => RecievedSongsMusicPlayerScreen(
+                          imagePath:
+                          controller.songsList[index].imagePath,
+                        ),
+                      );
                     },
                     child: SongCard(model: controller.songsList[index]),
                   ),

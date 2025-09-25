@@ -140,7 +140,7 @@ class SenderHomeScreen extends StatelessWidget {
                               senderCreatePlaylistBottomSheet();
                             },
                             child: buildSmallCard(
-                              title: 'Create\nPlaylist',
+                              title: 'Create Playlist',
                               image: 'assets/images/create_playlist.png',
                             ),
                           ),
@@ -152,7 +152,7 @@ class SenderHomeScreen extends StatelessWidget {
                               Get.to(() => SenderSentPlaylistScreen());
                             },
                             child: buildSmallCard(
-                              title: 'Sent\nPlaylist',
+                              title: 'Sent Playlist',
                               image: 'assets/images/sent_playlist.png',
                             ),
                           ),
@@ -166,7 +166,7 @@ class SenderHomeScreen extends StatelessWidget {
 
                             child: buildSmallCard(
 
-                              title: 'Send\nPlaylist',
+                              title: 'Send Playlist',
                               image: 'assets/images/send_paid_songs.png',
                             ),
                           ),
@@ -251,9 +251,10 @@ class SenderHomeScreen extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
+          constraints: BoxConstraints(maxHeight: 82, minHeight: 82),
           padding: const EdgeInsets.only(
-            left: 25,
-            right: 25,
+            left: 20,
+            right: 20,
             top: 41,
             bottom: 13,
           ),
@@ -271,7 +272,11 @@ class SenderHomeScreen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Text(title, style: manRopeSemiBold.copyWith(fontSize: 10)),
+              Text(
+                title,
+                style: manRopeSemiBold.copyWith(fontSize: 10),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),
