@@ -17,7 +17,7 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key, required this.isSender});
   final controller = Get.put(LoginController());
   final formKey = GlobalKey<FormState>();
-final bool isSender;
+  final bool isSender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +59,7 @@ final bool isSender;
                     ),
                     SizedBox(height: 8),
                     Obx(
-                      () => CustomTextField(
+                          () => CustomTextField(
                         controller: controller.passwordController,
                         hintText: '************',
                         obscureText: controller.showPassword.value,
@@ -81,8 +81,7 @@ final bool isSender;
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             size: 20,
-
-                            color: blackColor,
+                            color: blackColor.withOpacity(0.5),
                           ),
                         ),
                         validator: (value) {
@@ -95,7 +94,9 @@ final bool isSender;
                       alignment: Alignment.topRight,
                       child: GestureDetector(
                         onTap: () {
-                          Get.to(() => ForgotPasswordScreen(isSender: isSender,));
+                          Get.to(
+                            () => ForgotPasswordScreen(isSender: isSender),
+                          );
                         },
                         child: Text(
                           'Forget Password?',
@@ -108,8 +109,9 @@ final bool isSender;
                       child: CustomButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            isSender== true? Get.to(()=>SenderHomeScreen()):Get.to(()=>RecipientHomeScreen());
-
+                            isSender == true
+                                ? Get.offAll(() => SenderHomeScreen())
+                                : Get.offAll(() => RecipientHomeScreen());
                           }
                         },
                         text: 'Log In',
@@ -125,7 +127,7 @@ final bool isSender;
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.to(()=>SignupScreen(isSender: isSender,));
+                            Get.to(() => SignupScreen(isSender: isSender));
                           },
                           child: Text(
                             'Sign Up',

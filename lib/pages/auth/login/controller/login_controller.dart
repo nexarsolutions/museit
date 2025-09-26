@@ -4,5 +4,5 @@ import 'package:get/get.dart';
 class LoginController extends GetxController{
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final RxBool showPassword = false.obs;
+  final RxBool showPassword = true.obs;
 }
