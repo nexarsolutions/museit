@@ -251,7 +251,7 @@ class SenderHomeScreen extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          constraints: BoxConstraints(maxHeight: 82, minHeight: 82),
+          constraints: BoxConstraints(maxHeight: 86, minHeight: 82),
           padding: const EdgeInsets.only(
             left: 20,
             right: 20,
