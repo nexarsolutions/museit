@@ -49,7 +49,7 @@ class VoiceNoteScreen extends StatelessWidget {
                 children: [
                   SizedBox(height: 50),
                   Obx(
-                        () => Column(
+                    () => Column(
                       children: [
                         // Waveform Display Area - now without a background container
                         if (controller.isRecording.value)
@@ -105,12 +105,12 @@ class VoiceNoteScreen extends StatelessWidget {
                               ),
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   GestureDetector(
                                     onTap: () {
                                       if (controller.currentRecordingPath !=
-                                          null &&
+                                              null &&
                                           !controller.isRecording.value) {
                                         controller.togglePlayPause();
                                       }
@@ -230,24 +230,39 @@ class VoiceNoteScreen extends StatelessWidget {
                   SizedBox(height: Get.height * 0.05),
                   GestureDetector(
                     onTap: () {
-                      Get.to(()=>SenderViewRecipientScreen(
+                      Get.to(
+                        () => SenderViewRecipientScreen(
+                          onPressedSave: () {
+                            customBottomSheet(
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 20),
 
-                        onPressedSave: (){
-                        customBottomSheet(child: Column(
-                          children: [
-                            SizedBox(height: 20,),
-
-                            Text('Your MUSEiT songs has been sent',style: manRopeSemiBold.copyWith(fontSize: 14,fontWeight: FontWeight.w700,),),
-                            SizedBox(height: 20,),
-                            Image.asset('assets/images/playlist_icon_sent.png',scale: 3.5,),
-                            SizedBox(height: 42,),
-                            CustomButton(onPressed: (){
-                              Get.offAll(()=>SenderHomeScreen());
-                            }, text: 'Okay')
-
-                          ],
-                        ));
-                      },));
+                                  Text(
+                                    'Your MUSEiT songs has been sent',
+                                    style: manRopeSemiBold.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Image.asset(
+                                    'assets/images/playlist_icon_sent.png',
+                                    scale: 3.5,
+                                  ),
+                                  SizedBox(height: 42),
+                                  CustomButton(
+                                    onPressed: () {
+                                      Get.offAll(() => SenderHomeScreen());
+                                    },
+                                    text: 'Okay',
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      );
                     },
                     child: Stack(
                       clipBehavior: Clip.none,
@@ -270,25 +285,42 @@ class VoiceNoteScreen extends StatelessWidget {
                         ),
 
                         GestureDetector(
-                          onTap: (){
-                            Get.to(()=>SenderViewRecipientScreen(
+                          onTap: () {
+                            Get.to(
+                              () => SenderViewRecipientScreen(
+                                onPressedSave: () {
+                                  customBottomSheet(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: 20),
 
-                              onPressedSave: (){
-                                customBottomSheet(child: Column(
-                                  children: [
-                                    SizedBox(height: 20,),
-
-                                    Text('Your MUSEiT songs has been sent',style: manRopeSemiBold.copyWith(fontSize: 14,fontWeight: FontWeight.w700,),),
-                                    SizedBox(height: 20,),
-                                    Image.asset('assets/images/playlist_icon_sent.png',scale: 3.5,),
-                                    SizedBox(height: 42,),
-                                    CustomButton(onPressed: (){
-                                      Get.offAll(()=>SenderHomeScreen());
-                                    }, text: 'Okay')
-
-                                  ],
-                                ));
-                              },));
+                                        Text(
+                                          'Your MUSEiT songs has been sent',
+                                          style: manRopeSemiBold.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        SizedBox(height: 20),
+                                        Image.asset(
+                                          'assets/images/playlist_icon_sent.png',
+                                          scale: 3.5,
+                                        ),
+                                        SizedBox(height: 42),
+                                        CustomButton(
+                                          onPressed: () {
+                                            Get.offAll(
+                                              () => SenderHomeScreen(),
+                                            );
+                                          },
+                                          text: 'Okay',
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
                           },
                           child: Container(
                             width: 50,
