@@ -6,16 +6,35 @@ import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 
 import '../../../../common_widgets/song_card.dart';
-import '../../../charity_side/charity_home/charity_add_voice_note/charity_add_voice_note_screen.dart';
-import '../paid_songs_recipient/paid_songs_recipient_screen.dart';
-import 'controller/paid_songs_add_voice_note_controller.dart';
+import '../../../../widgets/custom_bottom_sheet.dart';
+import '../../../../widgets/custom_button.dart';
+import '../../sender_home/sender_home/sender_home_screen.dart';
+import '../../sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
+import 'controller/voice_note_controller.dart';
 
-class PaidSongsAddVoiceNoteScreen extends StatelessWidget {
-   PaidSongsAddVoiceNoteScreen({super.key, required this.imagePath, required this.title});
-final controller = Get.put(PaidSongsAddVoiceNoteController());
-final String imagePath;
-final String title;
+// New widget to display a straight line for the waveform
+class EmptyWaveform extends StatelessWidget {
+  const EmptyWaveform({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: Get.width * 0.9,
+      height: 100,
+      // Removed the background decoration to make it transparent
+      child: Center(
+        child: CustomPaint(
+          size: Size(Get.width * 0.7, 2),
+          painter: _StraightLinePainter(),
+        ),
+      ),
+    );
+  }
+}
+
+class VoiceNoteScreen extends StatelessWidget {
+  VoiceNoteScreen({super.key});
+  final controller = Get.put(VoiceNoteController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,100 +47,6 @@ final String title;
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  Container(
-                    width: Get.width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: whiteColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border(
-                                left: BorderSide(color: blueColor, width: 0.7),
-
-                                right: BorderSide(color: blueColor, width: 0.7),
-                                bottom: BorderSide(color: blueColor, width: 0.7),
-                                // top ko intentionally blank rakha
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // ✅ Content of card
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 6,
-                            right: 20,
-                            top: 6,
-                            bottom: 6,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // Profile image
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.asset(
-                                  imagePath,
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-
-                              const SizedBox(width: 12),
-
-                              // Name + Plan (left side text)
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      title,
-                                      style: manRopeSemiBold.copyWith(fontSize: 12),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Motivational',
-                                      style: manRope.copyWith(
-                                        fontSize: 12,
-                                        color: lightBlack,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                               Column(
-                                children: [
-                                  SizedBox(height: 24),
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Text(
-                                      'Price 25p',
-                                      style: manRopeSemiBold.copyWith(fontSize: 8),
-                                    ),
-                                  ),
-                                ],
-                              )
-                                  ,
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   SizedBox(height: 50),
                   Obx(
                         () => Column(
@@ -305,7 +230,24 @@ final String title;
                   SizedBox(height: Get.height * 0.05),
                   GestureDetector(
                     onTap: () {
-                      // Get.to(()=>SenderCreatedPlaylistScreen());
+                      Get.to(()=>SenderViewRecipientScreen(
+
+                        onPressedSave: (){
+                        customBottomSheet(child: Column(
+                          children: [
+                            SizedBox(height: 20,),
+
+                            Text('Your MUSEiT songs has been sent',style: manRopeSemiBold.copyWith(fontSize: 14,fontWeight: FontWeight.w700,),),
+                            SizedBox(height: 20,),
+                            Image.asset('assets/images/playlist_icon_sent.png',scale: 3.5,),
+                            SizedBox(height: 42,),
+                            CustomButton(onPressed: (){
+                              Get.offAll(()=>SenderHomeScreen());
+                            }, text: 'Okay')
+
+                          ],
+                        ));
+                      },));
                     },
                     child: Stack(
                       clipBehavior: Clip.none,
@@ -329,7 +271,24 @@ final String title;
 
                         GestureDetector(
                           onTap: (){
-                            Get.to(()=>PaidSongsRecipientScreen());
+                            Get.to(()=>SenderViewRecipientScreen(
+
+                              onPressedSave: (){
+                                customBottomSheet(child: Column(
+                                  children: [
+                                    SizedBox(height: 20,),
+
+                                    Text('Your MUSEiT songs has been sent',style: manRopeSemiBold.copyWith(fontSize: 14,fontWeight: FontWeight.w700,),),
+                                    SizedBox(height: 20,),
+                                    Image.asset('assets/images/playlist_icon_sent.png',scale: 3.5,),
+                                    SizedBox(height: 42,),
+                                    CustomButton(onPressed: (){
+                                      Get.offAll(()=>SenderHomeScreen());
+                                    }, text: 'Okay')
+
+                                  ],
+                                ));
+                              },));
                           },
                           child: Container(
                             width: 50,
@@ -354,5 +313,32 @@ final String title;
           ),
         ],
       ),
-    );  }
+    );
+  }
+}
+
+// Custom Painter for the straight line waveform
+class _StraightLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..shader = LinearGradient(
+        colors: [Color(0xFF8C7FAC), Color(0xFF7695CA)],
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..strokeWidth = size.height
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawLine(
+      Offset(0, size.height / 2),
+      Offset(size.width, size.height / 2),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
 }

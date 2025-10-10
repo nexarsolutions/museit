@@ -32,16 +32,16 @@ class NotificationsWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 border: Border(
                   left: BorderSide(
-                    color: purpleColor,
+                    color: blueColor,
                     width: 0.7,
                   ),
 
                   right: BorderSide(
-                    color: purpleColor,
+                    color: blueColor,
                     width: 0.7,
                   ),
                   bottom: BorderSide(
-                    color: purpleColor,
+                    color: blueColor,
                     width: 0.7,
                   ),
                   // top ko intentionally blank rakha
@@ -80,7 +80,7 @@ class NotificationsWidget extends StatelessWidget {
                           width: 10,
                           height: 10,
                           decoration: BoxDecoration(
-                            color: model.isUnread?purpleColor:Colors.transparent,
+                            color: model.isUnread?blueColor:Colors.transparent,
                             shape: BoxShape.circle
                           ),
                         ),

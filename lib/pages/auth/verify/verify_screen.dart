@@ -6,6 +6,8 @@ import 'package:musit/pages/auth/widget/auth_header.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../widgets/custom_button.dart';
+import '../../recipient_side/home/recipient_home/recipient_home_screen.dart';
+import '../../sender_side/sender_home/sender_home/sender_home_screen.dart';
 import '../../sender_side/subscriptions/subscriptions/subscription_screen.dart';
 import 'controller/verify_controller.dart';
 
@@ -103,7 +105,14 @@ final bool isSender;
                         controller.onClick.value = true;
                       } else if (controller.pinController.length == 6 ||
                           controller.isNumeric(pin)) {
-                        Get.offAll(() => SubscriptionScreen(iSender: isSender,));
+                        Get.offAll(() => SubscriptionScreen(
+                          isSkip: true,
+                          iSender: isSender,skipOnTap: (){
+                          isSender == true
+                              ? Get.to(() => SenderHomeScreen())
+                              : Get.to(() => RecipientHomeScreen());
+
+                        },));
                       }
                     },
                   ),

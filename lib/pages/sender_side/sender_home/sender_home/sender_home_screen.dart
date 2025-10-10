@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/common_sections/notifications/notifications_screen.dart';
+import 'package:musit/pages/sender_side/send_playlist/paid_songs_recipient/paid_songs_recipient_screen.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_add_songs/sender_add_songs_screen.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_create_playlist/sender_create_playlist_bottom_sheet.dart';
 
 import '../../../../common_widgets/saved_playlist_card.dart';
@@ -12,6 +14,8 @@ import '../../community/sender_view_community/sender_view_community_screen.dart'
 import '../../health/health_support/health_support_screen.dart';
 import '../../profile/profile/profile_screen.dart';
 import '../../send_playlist/sender_send_playlist/sender_send_playlist_screen.dart';
+import '../../sender_send_song/add_songs/add_songs_screen.dart';
+import '../../sender_send_song/sender_send_song/sender_send_song_screen.dart';
 import '../../sent_playlist/sender_sent_playlist/sender_sent_playlist_screen.dart';
 import '../../sent_playlist/view_sent_playlist/view_sent_playlist_screen.dart';
 import 'controller/sender_home_controller.dart';
@@ -45,8 +49,8 @@ class SenderHomeScreen extends StatelessWidget {
                 Text('Hi, Katherine!', style: manRopeSemiBold),
                 const Spacer(),
                 GestureDetector(
-                  onTap: (){
-                    Get.to(()=>NotificationsScreen());
+                  onTap: () {
+                    Get.to(() => NotificationsScreen());
                   },
                   child: Container(
                     height: 44,
@@ -145,7 +149,7 @@ class SenderHomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 29),
+                        const SizedBox(width: 19),
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
@@ -157,7 +161,7 @@ class SenderHomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 29),
+                        const SizedBox(width: 19),
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
@@ -165,8 +169,7 @@ class SenderHomeScreen extends StatelessWidget {
                             },
 
                             child: buildSmallCard(
-
-                              title: 'Send Playlist',
+                              title: 'Send a MUSE',
                               image: 'assets/images/send_paid_songs.png',
                             ),
                           ),
@@ -176,33 +179,50 @@ class SenderHomeScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 53),
-
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
                       children: [
                         Expanded(
-                          child: buildFullWidthCard(
-                            title: "Community",
-                            image: "assets/images/community.png",
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(()=>AddSongsScreen());
+                            },
+                            child: buildSmallCard(
+                              title: 'Send Song',
+                              image: 'assets/images/send_paid_songs.png',
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 19),
+                        Expanded(
+                          child: GestureDetector(
                             onTap: () {
                               Get.to(() => SenderCommunityScreen());
                             },
+                            child: buildSmallCard(
+                              title: "Community",
+                              image: "assets/images/community.png",
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 19),
                         Expanded(
-                          child: buildFullWidthCard(
-                            title: "Health Support",
-                            image: "assets/images/health_support.png",
+                          child: GestureDetector(
                             onTap: () {
                               Get.to(() => const HealthSupportScreen());
                             },
+
+                            child: buildSmallCard(
+                              title: "Health Support",
+                              image: "assets/images/health_support.png",
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
+
 
                   const SizedBox(height: 23),
                   Text(
@@ -251,10 +271,10 @@ class SenderHomeScreen extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          constraints: BoxConstraints(maxHeight: 82, minHeight: 82),
+          constraints: BoxConstraints(maxHeight: 84, minHeight: 84),
           padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
+            left: 18,
+            right: 18,
             top: 41,
             bottom: 13,
           ),

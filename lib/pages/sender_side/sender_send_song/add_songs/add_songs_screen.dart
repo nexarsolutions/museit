@@ -14,19 +14,19 @@ import '../../../../constants/text_styles.dart';
 import '../../../../utils/global_functions.dart';
 import '../../../../utils/image_picker_bottom_sheet.dart';
 import '../../../../widgets/custom_tab_button.dart';
-import '../sender_add_voice_note/sender_add_voice_note_screen.dart';
-import 'controller/sender_add_songs_controller.dart';
+import '../voice_note/voice_note_screen.dart';
+import 'controller/add_songs_controller.dart';
 
-class SenderAddSongsScreen extends StatelessWidget {
-  SenderAddSongsScreen({super.key});
-  final controller = Get.put(SenderAddSongsController());
+class AddSongsScreen extends StatelessWidget {
+  AddSongsScreen({super.key});
+  final controller = Get.put(AddSongsController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          CustomAppBar(text: 'Add Songs', isBack: true),
+          CustomAppBar(text: 'Select Songs', isBack: true),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: CustomTextField(
@@ -259,7 +259,7 @@ class SenderAddSongsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomButton(onPressed: () {
-                Get.to(()=>SenderAddVoiceNoteScreen());
+                Get.to(()=>VoiceNoteScreen());
 
               }, text: 'Save'),
               SizedBox(width: 8),
@@ -285,7 +285,7 @@ class SenderAddSongsScreen extends StatelessWidget {
 
                   GestureDetector(
                     onTap: (){
-                      Get.to(()=>SenderAddVoiceNoteScreen());
+                      Get.to(()=>VoiceNoteScreen());
                     },
                     child: Container(
                       width: 50,

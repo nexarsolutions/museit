@@ -35,9 +35,9 @@ class AddSongsWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border(
-                  left: BorderSide(color: purpleColor, width: 0.7),
-                  right: BorderSide(color: purpleColor, width: 0.7),
-                  bottom: BorderSide(color: purpleColor, width: 0.7),
+                  left: BorderSide(color: blueColor, width: 0.7),
+                  right: BorderSide(color: blueColor, width: 0.7),
+                  bottom: BorderSide(color: blueColor, width: 0.7),
                   // top ko intentionally blank rakha
                 ),
               ),

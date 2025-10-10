@@ -31,16 +31,16 @@ final SupportPlanModel model;
                 borderRadius: BorderRadius.circular(16),
                 border: Border(
                   left: BorderSide(
-                    color: purpleColor,
+                    color: blueColor,
                     width: 0.7,
                   ),
 
                   right: BorderSide(
-                    color: purpleColor,
+                    color: blueColor,
                     width: 0.7,
                   ),
                   bottom: BorderSide(
-                    color: purpleColor,
+                    color: blueColor,
                     width: 0.7,
                   ),
                   // top ko intentionally blank rakha

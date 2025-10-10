@@ -32,7 +32,7 @@ class HealthSupportScreen extends StatelessWidget {
                   crossAxisCount: 3,
                   crossAxisSpacing: 13.0,
                   mainAxisSpacing: 10.0,
-                  mainAxisExtent: 150,
+                  mainAxisExtent: 155,
                 ),
                 itemCount: controller.healthSupportList.length,
                 itemBuilder: (context, index) {

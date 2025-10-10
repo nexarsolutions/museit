@@ -24,8 +24,8 @@ class CharityCompaignWidget extends StatelessWidget {
         // This is the gradient that acts as the border.
         gradient: const LinearGradient(
           colors: [
-            Color(0xFFFFFFFF), // White at the top
-            Color(0xFF561F6C), // Dark at the bottom
+            whiteColor, // White at the top
+            blueColor, // Dark at the bottom
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

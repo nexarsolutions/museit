@@ -9,7 +9,7 @@ const greyColor = Color(0xFF898989);
 const lightGrey = Color(0xFF828282);
 const greenColor = Color(0xFF4BAE4F);
 const Color redColor = Color(0xFFE00000);
-const purpleColor = Color(0xFF561F6C);
+const blueColor = Color(0xFFA7BEDC);
 const darkGrey = Color(0xFF4B4B4B);
 const gradientColor = [
   Color(0xFF8C7FAC),

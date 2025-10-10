@@ -120,6 +120,9 @@ class RecipientProfileScreen extends StatelessWidget {
                     onTap: () {
                       Get.to(
                         () => SubscriptionScreen(
+                          isSkip: false,
+                          skipOnTap: (){},
+
                           iSender: true,
                           isBack: true,
                           paymentConfirmOnTap: () {

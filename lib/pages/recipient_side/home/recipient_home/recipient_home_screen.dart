@@ -189,7 +189,7 @@ class RecipientHomeScreen extends StatelessWidget {
 
                             },
                             child: buildSmallCard(
-                              title: "Community\n",
+                              title: "Community",
                               image: "assets/images/community.png",
                             ),
                           ),
@@ -272,10 +272,10 @@ class RecipientHomeScreen extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          constraints: BoxConstraints(maxHeight: 82, minHeight: 82),
+          constraints: BoxConstraints(maxHeight: 84, minHeight: 84),
           padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
+            left: 18,
+            right: 18,
             top: 41,
             bottom: 13,
           ),

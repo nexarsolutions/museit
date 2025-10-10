@@ -11,10 +11,10 @@ import 'package:musit/widgets/custom_button.dart';
 import '../../../../widgets/custom_text_field.dart';
 
 class SenderViewRecipientScreen extends StatelessWidget {
-  SenderViewRecipientScreen({super.key});
+  SenderViewRecipientScreen({super.key, required this.onPressedSave});
   final controller = Get.put(SenderViewRecipientController());
   final RxBool isSelected = true.obs;
-
+final  void Function() onPressedSave;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,9 +69,7 @@ class SenderViewRecipientScreen extends StatelessWidget {
                     },
                   ),
                   SizedBox(height: 42),
-                  CustomButton(onPressed: () {
-                    playlistSentBottomSheet();
-                  }, text: 'Send'),
+                  CustomButton(onPressed: onPressedSave, text: 'Send'),
 
                   SizedBox(height: 12),
                   Row(

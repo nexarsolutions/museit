@@ -76,7 +76,7 @@ class CustomButton extends StatelessWidget {
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
               ),
-              color: purpleColor,
+              color: blueColor,
             ),
           ),
         ),

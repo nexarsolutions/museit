@@ -8,6 +8,7 @@ import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
 import '../../../../common_widgets/song_card.dart';
+import '../playlist_sent_bottom_sheet/playlist_sent_bottom_sheet.dart';
 class SenderCreatedPlaylistScreen extends StatelessWidget {
   SenderCreatedPlaylistScreen({super.key});
   final controller = Get.put(SenderCreatedPlaylistController());
@@ -66,7 +67,7 @@ class SenderCreatedPlaylistScreen extends StatelessWidget {
                                     bottomLeft: Radius.circular(16),
                                     bottomRight: Radius.circular(16),
                                   ),
-                                  color: purpleColor,
+                                  color: blueColor,
                                 ),
                               ),
                             ),
@@ -89,7 +90,9 @@ class SenderCreatedPlaylistScreen extends StatelessWidget {
                       SizedBox(width: 8,),
                       GestureDetector(
                         onTap: () {
-                          Get.to(()=>SenderViewRecipientScreen());
+                          Get.to(()=>SenderViewRecipientScreen(onPressedSave: () {
+                            playlistSentBottomSheet();
+                          },));
                         },
                         child: Stack(
                           clipBehavior: Clip.none,
@@ -106,7 +109,7 @@ class SenderCreatedPlaylistScreen extends StatelessWidget {
                                     bottomLeft: Radius.circular(16),
                                     bottomRight: Radius.circular(16),
                                   ),
-                                  color: purpleColor,
+                                  color: blueColor,
                                 ),
                               ),
                             ),

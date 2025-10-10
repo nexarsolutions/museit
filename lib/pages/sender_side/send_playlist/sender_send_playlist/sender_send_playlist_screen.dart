@@ -18,7 +18,7 @@ final controller = Get.put(SenderSendPlaylistController());
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          CustomAppBar(text: 'Send Paid Songs',isBack: true,),
+          CustomAppBar(text: 'Send a MUSE',isBack: true,),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16),

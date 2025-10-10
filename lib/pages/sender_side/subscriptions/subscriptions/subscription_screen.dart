@@ -4,6 +4,7 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 import 'package:musit/pages/sender_side/subscriptions/subscriptions/widget/subscription_widget.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
+import '../../../../constants/text_styles.dart';
 import '../../sender_home/sender_home/sender_home_screen.dart';
 import '../payment_details/payment_details_screen.dart';
 
@@ -12,10 +13,12 @@ class SubscriptionScreen extends StatelessWidget {
     super.key,
     this.paymentConfirmOnTap,
     this.isBack = false,
-    required this.iSender,
+    required this.iSender, required this.skipOnTap, required this.isSkip,
   });
   final void Function()? paymentConfirmOnTap;
+  final void Function() skipOnTap;
   final bool isBack;
+  final bool isSkip;
   final bool iSender;
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,15 @@ class SubscriptionScreen extends StatelessWidget {
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          CustomAppBar(text: 'Subscriptions', isBack: isBack),
+          CustomAppBar(
+            text: 'Subscriptions',
+            isBack: isBack,
+            showLastIcon: isSkip,
+            lastWidget: GestureDetector(
+              onTap: skipOnTap,
+              child: Text('Skip', style: manRopeSemiBold),
+            ),
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16),

@@ -7,34 +7,25 @@ import '../model/health_support_model.dart';
 class HealthSupportCard extends StatelessWidget {
   final HealthSupportModel healthSupportModel;
 
-  const HealthSupportCard({
-    super.key,
-    required this.healthSupportModel,
-  });
+  const HealthSupportCard({super.key, required this.healthSupportModel});
 
   @override
   Widget build(BuildContext context) {
-    // Outer Container for the gradient border.
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        // This is the gradient that acts as the border.
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFFFFFFF), // White at the top
-            Color(0xFF561F6C), // Dark at the bottom
-          ],
+          colors: [whiteColor, blueColor],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      // The Padding widget creates the visible thickness of the border.
       child: Padding(
         padding: const EdgeInsets.only(left: 1, right: 1, bottom: 1),
         child: Container(
           decoration: BoxDecoration(
             color: whiteColor,
-            borderRadius: BorderRadius.circular(16), // Outer radius (16) - Padding (2) = 14
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
@@ -50,9 +41,7 @@ class HealthSupportCard extends StatelessWidget {
                 Text(
                   healthSupportModel.userName,
                   textAlign: TextAlign.center,
-                  style: manRopeSemiBold.copyWith(
-                    fontSize: 10,
-                  ),
+                  style: manRopeSemiBold.copyWith(fontSize: 10),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

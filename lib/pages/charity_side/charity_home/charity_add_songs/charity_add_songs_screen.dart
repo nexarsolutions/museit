@@ -133,7 +133,7 @@ class CharityAddSongsScreen extends StatelessWidget {
                               margin: const EdgeInsets.all(8),
                               padding: const EdgeInsets.all(4),
                               decoration: DottedDecoration(
-                                color: purpleColor,
+                                color: blueColor,
                                 strokeWidth: 1.2,
                                 shape: Shape.box,
                                 dash: const [3, 5],
@@ -256,7 +256,7 @@ class CharityAddSongsScreen extends StatelessWidget {
                           bottomLeft: Radius.circular(16),
                           bottomRight: Radius.circular(16),
                         ),
-                        color: purpleColor,
+                        color: blueColor,
                       ),
                     ),
                   ),

@@ -46,7 +46,7 @@ class SelectRoleScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: 23),
-          Text('Select Role', style: manRopeSemiBold),
+          Text('Select Account Type', style: manRopeSemiBold),
           SizedBox(height: 52),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
@@ -62,14 +62,14 @@ class SelectRoleScreen extends StatelessWidget {
             onPressed: () {
               Get.to(() => OnBoardingScreen(isSender: true));
             },
-            text: 'Sender',
+            text: 'MUSE',
           ),
           SizedBox(height: 16),
           CustomButton(
             onPressed: () {
               Get.to(() => OnBoardingScreen(isSender: false));
             },
-            text: 'Recipient',
+            text: 'Charity.',
             backgroundColor: whiteColor,
             borderColor: blackColor,
             isBorder: true,
