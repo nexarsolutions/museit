@@ -318,7 +318,7 @@ final String title;
                             height: 30,
                             width: 48,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadiusGeometry.only(
+                              borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(16),
                                 bottomRight: Radius.circular(16),
                               ),

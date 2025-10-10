@@ -33,7 +33,7 @@ class HealthSupportCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  radius: 35,
+                  radius: 33,
                   backgroundColor: lightGrey,
                   backgroundImage: AssetImage(healthSupportModel.imagePath),
                 ),

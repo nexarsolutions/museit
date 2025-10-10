@@ -32,7 +32,7 @@ class RenewSubscriptionWidget extends StatelessWidget {
     return Container(
       width: Get.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadiusGeometry.circular(16),
+        borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
           colors: [
             Color(0xFF8C7FAC).withValues(alpha: 0.15),
@@ -49,7 +49,7 @@ class RenewSubscriptionWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: blackColor,
-              borderRadius: BorderRadiusGeometry.only(
+              borderRadius: BorderRadius.only(
                 topRight: Radius.circular(16),
                 topLeft: Radius.circular(16),
               ),
