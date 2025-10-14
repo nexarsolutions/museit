@@ -4,19 +4,24 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/main.dart';
 
 ///date picker
 Future<void> selectDatePicker(
-    TextEditingController controller, {
-      bool selectPastDate = false, // 👈 new parameter
-    }) async {
+  TextEditingController controller, {
+  bool selectPastDate = false, // 👈 new parameter
+}) async {
   DateTime selectedDate = DateTime.now();
 
   final DateTime? picked = await showDatePicker(
     context: Get.context!,
     initialDate: DateTime.now(),
-    firstDate: selectPastDate ? DateTime(1900) : DateTime.now(), // 👈 agar past allowed h to 1900 se
-    lastDate: selectPastDate ? DateTime.now() : DateTime(DateTime.now().year + 5), // 👈 agar past h to max today
+    firstDate: selectPastDate
+        ? DateTime(1900)
+        : DateTime.now(), // 👈 agar past allowed h to 1900 se
+    lastDate: selectPastDate
+        ? DateTime.now()
+        : DateTime(DateTime.now().year + 5), // 👈 agar past h to max today
     builder: (BuildContext context, Widget? child) {
       return Theme(
         data: Theme.of(context).copyWith(
@@ -47,7 +52,7 @@ void selectTimePicker(TextEditingController controller) async {
     builder: (BuildContext context, Widget? child) {
       return Theme(
         data: Theme.of(context).copyWith(
-          colorScheme:  ColorScheme.light(
+          colorScheme: ColorScheme.light(
             primary: blackColor,
             onPrimary: whiteColor,
             onSurface: Colors.black,
@@ -62,7 +67,8 @@ void selectTimePicker(TextEditingController controller) async {
     selectedTime = picked;
 
     final now = DateTime.now();
-    final time = DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
+    final time =
+        DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
     controller.text = DateFormat('hh:mm a').format(time);
   }
 }
@@ -94,4 +100,14 @@ Future<String?> pickDocument() async {
     return result.files.single.path!;
   }
   return null;
+}
+
+void customPrint(String message, {int chunkSize = 800}) {
+  final pattern = RegExp('.{1,$chunkSize}', dotAll: true);
+
+  logger.i("🔍 LOG START 🔍");
+  for (final match in pattern.allMatches(message)) {
+    logger.i(match.group(0));
+  }
+  logger.i("✅ LOG END ✅");
 }

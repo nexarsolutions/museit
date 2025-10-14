@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/pages/auth/signup/controller/signup_controller.dart';
 import 'package:musit/pages/auth/widget/auth_header.dart';
+import 'package:musit/utils/dialog_utilities.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../widgets/custom_button.dart';
-import '../../recipient_side/home/recipient_home/recipient_home_screen.dart';
-import '../../sender_side/sender_home/sender_home/sender_home_screen.dart';
-import '../../sender_side/subscriptions/subscriptions/subscription_screen.dart';
-import 'controller/verify_controller.dart';
 
 class VerifyScreen extends StatelessWidget {
-  VerifyScreen({super.key, required this.isSender});
+  VerifyScreen({super.key});
 
-  final controller = Get.put(VerifyController());
-final bool isSender;
+  final controller = Get.put(SignupController());
+
+  final _verifyFormKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,151 +27,130 @@ final bool isSender;
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  SizedBox(height: 18),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'Enter the 6 digit code we have sent to xyzabc@gmail.com',
-                      style: manRopeSemiBold.copyWith(fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Pinput(
-                    defaultPinTheme: PinTheme(
-                      textStyle: manRopeSemiBold.copyWith(fontSize: 24),
-                      width: 48,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF8C7FAC).withValues(alpha: 0.15),
-                            Color(0xFF7695CA).withValues(alpha: 0.15),
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+              child: Form(
+                key: _verifyFormKey,
+                child: Column(
+                  children: [
+                    SizedBox(height: 18),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        'Enter the 6 digit code we have sent to ${controller.userModel.email.text.trim()}',
+                        style: manRopeSemiBold.copyWith(fontSize: 14),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                    length: 6,
-                    controller: controller.pinController,
-                  ),
-                  const SizedBox(height: 6),
-                  Obx(
-                    () =>
-                        controller.onClick.value == true &&
-                            controller.pinController.text.isEmpty
-                        ? Text(
-                            "Enter the code.",
-                            style: manRope.copyWith(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
-                        : controller.onClick.value == true &&
-                              controller.pinController.text.length != 6
-                        ? Text(
-                            "The code must be of 6 digits.",
-                            style: manRope.copyWith(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
-                        : controller.onClick.value == true &&
-                              !controller.isNumeric(
-                                controller.pinController.text,
-                              )
-                        ? Text(
-                            "Please enter a valid code.",
-                            style: manRope.copyWith(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  const SizedBox(height: 42),
-                  CustomButton(
-                    text: 'Verify',
-                    onPressed: () {
-                      controller.onClick.value = !controller.onClick.value;
-                      String pin = controller.pinController.text.trim();
-                      if (pin.isEmpty ||
-                          pin.length != 6 ||
-                          !controller.isNumeric(pin)) {
-                        controller.onClick.value = true;
-                      } else if (controller.pinController.length == 6 ||
-                          controller.isNumeric(pin)) {
-                        Get.offAll(() => SubscriptionScreen(
-                          isSkip: true,
-                          iSender: isSender,skipOnTap: (){
-                          isSender == true
-                              ? Get.to(() => SenderHomeScreen())
-                              : Get.to(() => RecipientHomeScreen());
-
-                        },));
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 58),
-                  Text(
-                    "Haven't received the OTP code yet?",
-                    style: manRopeSemiBold.copyWith(fontSize: 12),
-                  ),
-                  const SizedBox(height: 16),
-                  Obx(
-                    () => controller.isHide.value
-                        ? const SizedBox()
-                        : TweenAnimationBuilder<Duration>(
-                            duration: const Duration(seconds: 90),
-                            tween: Tween(
-                              begin: const Duration(seconds: 90),
-                              end: Duration.zero,
-                            ),
-                            builder:
-                                (
-                                  BuildContext context,
-                                  Duration value,
-                                  Widget? child,
-                                ) {
-                                  final minutes = value.inMinutes
-                                      .remainder(60)
-                                      .toString()
-                                      .padLeft(2, '0');
-                                  final seconds = value.inSeconds
-                                      .remainder(60)
-                                      .toString()
-                                      .padLeft(2, '0');
-                                  return Text(
-                                    '$minutes:$seconds',
-                                    style: manRopeSemiBold.copyWith(
-                                      color: blackColor,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      height: 0,
-                                    ),
-                                  );
-                                },
+                    const SizedBox(height: 24),
+                    Pinput(
+                      defaultPinTheme: PinTheme(
+                        textStyle: manRopeSemiBold.copyWith(fontSize: 24),
+                        width: 48,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFF8C7FAC).withValues(alpha: 0.15),
+                              Color(0xFF7695CA).withValues(alpha: 0.15),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
                           ),
-                  ),
-                  const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: () {
-                      controller.resend();
-                    },
-                    child: Text(
-                      'Resend!',
-                      style: manRopeSemiBold.copyWith(
-                        fontSize: 14,
-                        color: blackColor,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                      length: 6,
+                      controller: controller.pinController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Enter the code.";
+                        } else if (value.length != 6) {
+                          return "The code must be of 6 digits.";
+                        } else if (!GetUtils.isNum(value)) {
+                          return "Please enter a valid code.";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 42),
+                    CustomButton(
+                      text: 'Verify',
+                      onPressed: () {
+                        if (_verifyFormKey.currentState!.validate()) {
+                          int enteredOtp = int.tryParse(
+                                  controller.pinController.text.trim()) ??
+                              0;
+                          if (enteredOtp != controller.verificationCode.value) {
+                            errorDialog(content: "OTP is invalid or expired.");
+                            return;
+                          } else {
+                            controller.addUser();
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 58),
+                    Text(
+                      "Haven't received the OTP code yet?",
+                      style: manRopeSemiBold.copyWith(fontSize: 12),
+                    ),
+                    const SizedBox(height: 16),
+                    Obx(
+                      () => controller.isHide.value
+                          ? const SizedBox()
+                          : TweenAnimationBuilder<Duration>(
+                              duration: const Duration(seconds: 90),
+                              tween: Tween(
+                                begin: const Duration(seconds: 90),
+                                end: Duration.zero,
+                              ),
+                              onEnd: () {
+                                controller.isResendActive.value = true;
+                              },
+                              builder: (
+                                BuildContext context,
+                                Duration value,
+                                Widget? child,
+                              ) {
+                                final minutes = value.inMinutes
+                                    .remainder(60)
+                                    .toString()
+                                    .padLeft(2, '0');
+                                final seconds = value.inSeconds
+                                    .remainder(60)
+                                    .toString()
+                                    .padLeft(2, '0');
+                                return Text(
+                                  '$minutes:$seconds',
+                                  style: manRopeSemiBold.copyWith(
+                                    color: blackColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    height: 0,
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () {
+                        if (controller.isResendActive.value) {
+                          controller.sendEmail(isFromResendOtp: true);
+                        } else {
+                          errorDialog(content: "Wait for time to end");
+                        }
+                      },
+                      child: Text(
+                        'Resend!',
+                        style: manRopeSemiBold.copyWith(
+                          fontSize: 14,
+                          color: blackColor,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
           ),

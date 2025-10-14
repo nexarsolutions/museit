@@ -8,14 +8,18 @@ import '../../../constants/text_styles.dart';
 import '../../../utils/validators.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
-import '../verify/verify_screen.dart';
 import 'controller/signup_controller.dart';
 
 class SignupScreen extends StatelessWidget {
-  SignupScreen({super.key, required this.isSender});
+  SignupScreen({
+    super.key,
+    required this.roleId,
+  });
 
   final controller = Get.put(SignupController());
-  final bool isSender;
+  final int
+      roleId; //1- sender/muse, 2- receiver/charity, 3- charity organization
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,14 +43,14 @@ class SignupScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: controller.nameController,
+                      controller: controller.userModel.username,
                       hintText: 'Add text',
                       isPrefixIcon: true,
                       prefixIcon: Image.asset(
                         'assets/images/person_icon.png',
                         scale: 3,
                       ),
-                      validator: validateName,
+                      validator: validateUsername,
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -55,7 +59,7 @@ class SignupScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: controller.emailController,
+                      controller: controller.userModel.email,
                       hintText: 'Example@example.com',
                       keyboardType: TextInputType.emailAddress,
                       isPrefixIcon: true,
@@ -74,7 +78,7 @@ class SignupScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: controller.phoneNumberController,
+                      controller: controller.userModel.phone,
                       hintText: '+92 123456789',
                       keyboardType: TextInputType.phone,
                       isPrefixIcon: true,
@@ -149,7 +153,6 @@ class SignupScreen extends StatelessWidget {
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             size: 20,
-
                             color: blackColor.withOpacity(0.5),
                           ),
                           onTap: () {
@@ -169,7 +172,7 @@ class SignupScreen extends StatelessWidget {
                       child: CustomButton(
                         onPressed: () {
                           if (controller.formKey.currentState!.validate()) {
-                            Get.to(() => VerifyScreen(isSender: isSender));
+                          controller.checkEmailExists(roleId);
                           }
                         },
                         text: 'Sign up',
@@ -185,7 +188,7 @@ class SignupScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.to(() => LoginScreen(isSender: isSender));
+                            Get.offAll(() => LoginScreen());
                           },
                           child: Text(
                             'Log in',

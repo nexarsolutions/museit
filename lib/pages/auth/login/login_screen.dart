@@ -3,10 +3,8 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/auth/login/controller/login_controller.dart';
-import 'package:musit/pages/auth/signup/signup_screen.dart';
 import 'package:musit/pages/auth/widget/auth_header.dart';
-import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
+import 'package:musit/pages/select_role/select_role_screen.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 
@@ -14,10 +12,11 @@ import '../../../utils/validators.dart';
 import '../forgot_password/forgot_password_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key, required this.isSender});
+  LoginScreen({super.key});
+  
   final controller = Get.put(LoginController());
   final formKey = GlobalKey<FormState>();
-  final bool isSender;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +34,6 @@ class LoginScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 18),
-
                     Text(
                       'Email',
                       style: manRopeSemiBold.copyWith(fontSize: 12),
@@ -52,14 +50,13 @@ class LoginScreen extends StatelessWidget {
                       validator: validateEmail,
                     ),
                     SizedBox(height: 10),
-
                     Text(
                       'Password',
                       style: manRopeSemiBold.copyWith(fontSize: 12),
                     ),
                     SizedBox(height: 8),
                     Obx(
-                          () => CustomTextField(
+                      () => CustomTextField(
                         controller: controller.passwordController,
                         hintText: '************',
                         obscureText: controller.showPassword.value,
@@ -95,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           Get.to(
-                            () => ForgotPasswordScreen(isSender: isSender),
+                            () => ForgotPasswordScreen(),
                           );
                         },
                         child: Text(
@@ -109,9 +106,9 @@ class LoginScreen extends StatelessWidget {
                       child: CustomButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            isSender == true
-                                ? Get.offAll(() => SenderHomeScreen())
-                                : Get.offAll(() => RecipientHomeScreen());
+                            // isSender == true
+                            //     ? Get.offAll(() => SenderHomeScreen())
+                            //     : Get.offAll(() => RecipientHomeScreen());
                           }
                         },
                         text: 'Log In',
@@ -127,7 +124,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.to(() => SignupScreen(isSender: isSender));
+                            Get.to(() => SelectRoleScreen());
                           },
                           child: Text(
                             'Sign Up',

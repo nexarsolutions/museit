@@ -11,11 +11,10 @@ import '../../../widgets/custom_text_field.dart';
 import 'controller/forgot_password_controller.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  ForgotPasswordScreen({super.key, required this.isSender});
+  ForgotPasswordScreen({super.key});
 
   final controller = Get.put(ForgotPasswordController());
   final formKey = GlobalKey<FormState>();
-final bool isSender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,9 +84,11 @@ final bool isSender;
                                     textAlign: TextAlign.center,
                                   ),
                                   SizedBox(height: 50),
-                                  CustomButton(onPressed: () {
-                                    Get.back();
-                                  }, text: 'Okay'),
+                                  CustomButton(
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      text: 'Okay'),
                                 ],
                               ),
                             );

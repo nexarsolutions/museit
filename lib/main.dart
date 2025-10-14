@@ -1,14 +1,61 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
-import 'package:musit/pages/select_role/select_role_screen.dart';
+import 'package:logger/logger.dart';
+import 'package:musit/pages/sender_side/on_boarding/on_boarding_screen.dart';
+import 'package:musit/services/user_manager.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Future.delayed(const Duration(seconds: 2));
+  // Catch all uncaught async errors in the app
+  runZonedGuarded(
+    () async {
+      // Initialize bindings inside the same zone
+      WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+      // Optional: catch Flutter framework errors
+      FlutterError.onError = (FlutterErrorDetails details) {
+        logger.e(
+          "Flutter error caught",
+          error: details.exception,
+          stackTrace: details.stack,
+        );
+      };
+
+      // Start the app
+      runApp(MyApp());
+    },
+    (error, stackTrace) {
+      logger.e(
+        "Uncaught async error",
+        error: error,
+        stackTrace: stackTrace,
+        time: DateTime.now(),
+      );
+    },
+  );
 }
+
+final Logger logger = Logger(
+  printer: PrettyPrinter(
+    methodCount: 2, // number of method calls to display
+    errorMethodCount: 5, // how much stack trace to show for errors
+    lineLength: 120,
+    colors: true,
+    printEmojis: true,
+  ),
+  level: kDebugMode
+      ? Level.debug
+      : Level.warning, // only show detailed logs in debug
+);
+
+final userManager = UserManager();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -21,7 +68,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: SelectRoleScreen(),
+      home: OnBoardingScreen(),
     );
   }
 }

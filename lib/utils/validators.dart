@@ -4,7 +4,7 @@ String? validateUsername(String? value) {
   if (value == null || value.trim().isEmpty) {
     return 'Enter username.';
   }
-  if (!GetUtils.isAlphabetOnly(value.trim())) {
+  if (!GetUtils.isUsername(value)) {
     return 'Enter a valid username.';
   }
   return null;
