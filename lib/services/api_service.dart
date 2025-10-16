@@ -12,7 +12,7 @@ import 'api_exception.dart';
 
 class ApiService {
   ///[baseUrl] holds the base url
-  static String baseUrl = '';
+  static String baseUrl = 'http://192.168.18.13:8084/api/';
 
   ///get header with/without token
   Future<Map<String, String>> _getHeaders() async {
@@ -98,10 +98,10 @@ class ApiService {
   ///post
   Future<dynamic> post(String path, Map<String, dynamic> data) async {
     try {
-      // customPrint("$baseUrl$path");
+      customPrint("$baseUrl$path");
       final headers = await _getHeaders();
-      // customPrint("$headers");
-      // customPrint("Body: $data");
+      customPrint("$headers");
+      customPrint("Body: $data");
       final response = await http.post(
         Uri.parse('$baseUrl$path'),
         headers: headers,

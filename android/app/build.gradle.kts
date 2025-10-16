@@ -6,22 +6,22 @@ plugins {
 }
 
 android {
-    namespace = "com.example.musit"
+    namespace = "com.nexar.musit"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = "17"
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.musit"
+        applicationId = "com.nexar.musit"
         minSdkVersion(24)
         targetSdkVersion(34)
         versionCode = flutter.versionCode

@@ -38,7 +38,7 @@ class SignupController extends GetxController {
   final _authService = AuthService();
 
   //=================Check If Email Exists=========
-  checkEmailExists(int roleId) async {
+  Future<void> checkEmailExists(int roleId) async {
     this.roleId.value = roleId;
 
     ///api doesn't exist yet
@@ -91,7 +91,7 @@ class SignupController extends GetxController {
   }
 
   //=================Add Customer =================
-  addUser() async {
+  Future<void> addUser() async {
     try {
       loadingDialog(message: "Loading...");
       userModel.roleId = roleId.value ?? (-1);
@@ -105,7 +105,8 @@ class SignupController extends GetxController {
         onSuccess: (response) async {
           customPrint("Signup Response: $response");
 
-          UserModel currentUser = UserModel.fromJson(response['response']);
+          UserModel currentUser = UserModel.fromJson(response['response'])
+            ..roleId = userModel.roleId;
           await Future.delayed(const Duration(milliseconds: 800));
           //customErrorSnackBar(content: response['message']);
           currentUser.roleId == 1

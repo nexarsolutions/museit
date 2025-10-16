@@ -60,7 +60,7 @@ class SignupScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     CustomTextField(
                       controller: controller.userModel.email,
-                      hintText: 'Example@example.com',
+                      hintText: 'Example@nexar.com',
                       keyboardType: TextInputType.emailAddress,
                       isPrefixIcon: true,
                       prefixIcon: Image.asset(

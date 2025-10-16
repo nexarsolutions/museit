@@ -28,6 +28,8 @@ Future<void> main() async {
         );
       };
 
+      await userManager.init();
+
       // Start the app
       runApp(MyApp());
     },
