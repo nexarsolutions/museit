@@ -1,6 +1,3 @@
-//Created by MansoorSatti 7/18/2025
-//Created by MansoorSatti 6/18/2025
-
 import 'dart:convert';
 
 import 'package:get/get.dart';
@@ -24,6 +21,12 @@ class UserManager {
   ///save user to shared preference key
   static const String _userKey = 'user';
 
+  ///check if the app is opening for first time
+  static const String _firstOpen = 'firstOpen';
+  final RxBool _isFirstOpen = false.obs;
+
+  bool get isFirstOpen => _isFirstOpen.value;
+
   // In-memory cache of the company model
   final Rxn<UserModel> _cachedUserModel = Rxn<UserModel>();
 
@@ -43,6 +46,7 @@ class UserManager {
   Future<void> init() async {
     _preferences = await SharedPreferences.getInstance();
     await getCurrentUser(); // Load cached data during initialization
+    await checkFirstOpen();
 
     // Listen for changes to _cachedUserModel and persist changes
     ever<UserModel?>(_cachedUserModel, (user) async {
@@ -85,5 +89,11 @@ class UserManager {
   Future<void> clearUser() async {
     _cachedUserModel.value = null; // Clear in-memory cache
     await _preferences?.remove(_userKey);
+  }
+
+  Future<void> checkFirstOpen() async {
+    _isFirstOpen.value = _preferences?.getBool(_firstOpen) ?? false;
+    ///update shared preference
+    await _preferences?.setBool(_firstOpen, true);
   }
 }
