@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:musit/pages/auth/login/login_screen.dart';
+import 'package:musit/pages/charity_side/charity_home/charity_home/charity_home_screen.dart';
 import 'package:musit/pages/charity_side/charity_profile_creation/charity_profile_creation_screen.dart';
 import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 import 'package:musit/pages/sender_side/on_boarding/on_boarding_screen.dart';
@@ -33,6 +34,7 @@ Future<void> main() async {
       };
 
       await userManager.init();
+      await Future.delayed(const Duration(seconds: 1));
 
       // Start the app
       runApp(MyApp());
@@ -77,12 +79,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: userManager.cachedUser != null
-          ? userManager.cachedUser!.roleId == 1
+          ? userManager.cachedUser!.currentRoleId == 1
               ? SenderHomeScreen()
-              : userManager.cachedUser!.roleId == 2
+              : userManager.cachedUser!.currentRoleId == 2
                   ? RecipientHomeScreen()
-                  : userManager.cachedUser!.roleId == 3
-                      ? CharityProfileCreationScreen()
+                  : userManager.cachedUser!.currentRoleId == 3
+                      ? CharityHomeScreen()
                       : LoginScreen()
           : userManager.isFirstOpen
               ? OnBoardingScreen()

@@ -71,6 +71,7 @@ class CharityCreateCompaignScreen extends StatelessWidget {
                       onChanged: (value) {
                         controller.selectedPlaylist.value = value!;
                       },
+                      value: null,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Select Playlist';

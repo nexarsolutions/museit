@@ -13,7 +13,7 @@ import '../forgot_password/forgot_password_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
-  
+
   final controller = Get.put(LoginController());
   final formKey = GlobalKey<FormState>();
 
@@ -43,6 +43,7 @@ class LoginScreen extends StatelessWidget {
                       controller: controller.emailController,
                       hintText: 'Add text',
                       isPrefixIcon: true,
+                      keyboardType: TextInputType.emailAddress,
                       prefixIcon: Image.asset(
                         'assets/images/email.png',
                         scale: 3.5,
@@ -105,10 +106,9 @@ class LoginScreen extends StatelessWidget {
                     Center(
                       child: CustomButton(
                         onPressed: () {
+                          print(controller.emailController.text);
                           if (formKey.currentState!.validate()) {
-                            // isSender == true
-                            //     ? Get.offAll(() => SenderHomeScreen())
-                            //     : Get.offAll(() => RecipientHomeScreen());
+                            controller.login();
                           }
                         },
                         text: 'Log In',

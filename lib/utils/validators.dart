@@ -73,7 +73,7 @@ String? validateEditConfirmPassword(
 
 String? validateIsEmpty(String? value) {
   if (value == null || value.isEmpty) {
-    return 'This field is required.';
+    return 'Required.';
   }
   return null;
 }
@@ -87,7 +87,7 @@ String? validateDescription(String? value) {
 
 String? validateNumeric(String? value) {
   if (value == null || value.isEmpty) {
-    return 'This field is required.';
+    return 'Required.';
   }
   if (!GetUtils.isNumericOnly(value)) {
     return 'Please enter numeric data.';

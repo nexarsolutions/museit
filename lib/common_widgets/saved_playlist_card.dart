@@ -1,20 +1,24 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musit/utils/extensions.dart';
 
 import '../../../../../constants/colors.dart';
 import '../../../../../constants/text_styles.dart';
 import '../common_models/saved_playlist_model.dart';
+import '../globalModels/playlist_model.dart';
 
 class SavedPlaylistCard extends StatelessWidget {
   const SavedPlaylistCard({
     super.key,
-    required this.model,
-    this.showDateTime = false,  this.showContainer = false,
+    required this.playlist,
+    this.showDateTime = false,
+    this.showContainer = false,
   });
-  final SavedPlaylistModel model;
+
+  final PlaylistModel playlist;
   final bool showDateTime;
   final bool showContainer;
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +69,20 @@ class SavedPlaylistCard extends StatelessWidget {
                     // Profile image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        model.imagePath,
+                      child: CachedNetworkImage(
+                        imageUrl: playlist.image.value.showImage,
+                        // Your backend image URL
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (context, url, error) => const Icon(
+                          Icons.broken_image,
+                          size: 30,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
 
@@ -81,12 +94,12 @@ class SavedPlaylistCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            model.name,
+                            playlist.title.text.withNa,
                             style: manRopeSemiBold.copyWith(fontSize: 14),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            model.category,
+                            playlist.purposeName.withNa,
                             style: manRope.copyWith(
                               fontSize: 12,
                               color: lightBlack,
@@ -103,7 +116,7 @@ class SavedPlaylistCard extends StatelessWidget {
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: Text(
-                                  'Date 20-05-2025',
+                                  'Date ${playlist.createdAt.formatDate}',
                                   style: manRopeSemiBold.copyWith(fontSize: 8),
                                 ),
                               ),
@@ -119,14 +132,14 @@ class SavedPlaylistCard extends StatelessWidget {
         Positioned(
           top: 12,
           right: 12,
-          child: showContainer == true?Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: blueColor
-            ),
-          ):SizedBox(),
+          child: showContainer == true
+              ? Container(
+                  width: 8,
+                  height: 8,
+                  decoration:
+                      BoxDecoration(shape: BoxShape.circle, color: blueColor),
+                )
+              : SizedBox(),
         )
       ],
     );

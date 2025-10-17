@@ -94,6 +94,6 @@ class UserManager {
   Future<void> checkFirstOpen() async {
     _isFirstOpen.value = _preferences?.getBool(_firstOpen) ?? false;
     ///update shared preference
-    await _preferences?.setBool(_firstOpen, true);
+    await _preferences?.setBool(_firstOpen, false);
   }
 }

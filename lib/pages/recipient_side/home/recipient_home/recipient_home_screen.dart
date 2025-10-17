@@ -166,7 +166,6 @@ class RecipientHomeScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(() => RecipientSavedPlaylistScreen());
                             },
-
                             child: buildSmallCard(
                               title: 'Saved Playlist',
                               image: 'assets/images/saved_playlist.png',
@@ -186,7 +185,6 @@ class RecipientHomeScreen extends StatelessWidget {
                           child: GestureDetector(
                             onTap: () {
                               Get.to(() => RecipientCommunityScreen());
-
                             },
                             child: buildSmallCard(
                               title: "Community",
@@ -212,7 +210,6 @@ class RecipientHomeScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(() => RecipientHealthSupportScreen());
                             },
-
                             child: buildSmallCard(
                               title: "Health Support",
                               image: "assets/images/health_support.png",
@@ -236,8 +233,9 @@ class RecipientHomeScreen extends StatelessWidget {
                     shrinkWrap: true,
                     itemCount: controller.recentCardList.length,
                     itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.only(bottom: 30.0),
-                      child: GestureDetector(
+                        padding: const EdgeInsets.only(bottom: 30.0),
+                        child: const SizedBox
+                            .shrink() /*GestureDetector(
                         onTap: () {
                           Get.to(
                             () => ViewRecievedPlaylistScreen(
@@ -250,10 +248,10 @@ class RecipientHomeScreen extends StatelessWidget {
                         child: SavedPlaylistCard(
                           showContainer: true,
                           showDateTime: true,
-                          model: controller.recentCardList[index],
+                          playlist: controller.recentCardList[index],
                         ),
-                      ),
-                    ),
+                      ),*/
+                        ),
                   ),
                   const SizedBox(height: 23),
                 ],
@@ -306,5 +304,5 @@ class RecipientHomeScreen extends StatelessWidget {
     );
   }
 
-  // ===== Reusable Full Width Card =====
+// ===== Reusable Full Width Card =====
 }

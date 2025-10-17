@@ -28,7 +28,7 @@ class RecipientSavedPlaylistScreen extends StatelessWidget {
                   right: 16,
                   bottom: 12,
                 ),
-                child: GestureDetector(
+                child: const SizedBox.shrink() /*GestureDetector(
                   onTap: () {
                     Get.to(
                           () => ViewRecievedPlaylistScreen(
@@ -40,9 +40,9 @@ class RecipientSavedPlaylistScreen extends StatelessWidget {
 
                   child: SavedPlaylistCard(
                     showDateTime: true,
-                    model: controller.recentCardList[index],
+                    playlist: controller.recentCardList[index],
                   ),
-                ),
+                )*/,
               ),
             ),
           ),

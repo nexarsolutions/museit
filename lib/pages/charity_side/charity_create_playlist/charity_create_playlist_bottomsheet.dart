@@ -48,6 +48,7 @@ charityCreatePlaylistBottomSheet() {
           SizedBox(height: 8),
           CustomDropDown(
             maxHeight: 200,
+            value: null,
             dropdownItems: controller.purposeList,
             hintText: controller.selectedPurpose.value,
             onChanged: (value) {

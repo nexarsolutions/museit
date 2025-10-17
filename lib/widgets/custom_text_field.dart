@@ -73,111 +73,88 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormField<String>(
-      validator: validator,
-      builder: (FormFieldState<String> state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF8C7FAC).withValues(alpha: 0.15),
-                    Color(0xFF7695CA).withValues(alpha: 0.15),
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                border: isBorder == true
-                    ? Border.all(color: borderColor!, width: borderWidth)
-                    : const Border.fromBorderSide(BorderSide.none),
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-              child: TextFormField(
-                cursorColor: blackColor,
-                autofocus: autofocus,
-                readOnly: readOnly,
-                onTap: onTap,
-                textAlign: textAlign,
-                onChanged: (val) {
-                  state.didChange(val);
-                  if (onChanged != null) onChanged!(val);
-                },
-                maxLines: maxLines,
-                obscuringCharacter: '∗',
-                keyboardType: keyboardType,
-                obscureText: obscureText,
-                controller: controller,
-                style: TextStyle(
-                  fontWeight: fontWeight,
-                  fontSize: fontSize,
-                  fontFamily: fontFamily,
-                  color: textColor,
-                ),
-                decoration: InputDecoration(
-                  alignLabelWithHint: true,
-                  enabled: enabled,
-                  fillColor: Colors.transparent,
-                  filled: true,
-                  contentPadding: contentPadding ??
-                      const EdgeInsets.only(left: 16, top: 0, bottom: 0, right: 8),
-                  suffixText: suffixText,
-                  suffixStyle: TextStyle(
-                    fontWeight: fontWeight,
-                    fontSize: fontSize,
-                    fontFamily: fontFamily,
-                    color: hintColor,
-                  ),
-                  labelText: labelText,
-                  labelStyle: TextStyle(
-                    fontWeight: fontWeight,
-                    fontSize: fontSize,
-                    fontFamily: fontFamily,
-                    color: labelColor,
-                  ),
-                  hintText: hintText,
-                  hintStyle: hintStyle ??
-                      TextStyle(
-                        fontWeight: fontWeight,
-                        fontSize: fontSize,
-                        fontFamily: fontFamily,
-                        color: hintColor,
-                      ),
-                  suffixIcon: isSuffixIcon ? suffixIcon : null,
-                  prefixIcon: isPrefixIcon ? prefixIcon : null,
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-                  // hide default error inside TextField
-                  errorStyle: const TextStyle(height: 0, color: Colors.transparent),
-                ),
-              ),
-            ),
-            if (state.hasError) ...[
-              const SizedBox(height: 5),
-              Text(
-                state.errorText ?? '',
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF8C7FAC).withValues(alpha: 0.15),
+            Color(0xFF7695CA).withValues(alpha: 0.15),
           ],
-        );
-      },
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        border: isBorder == true
+            ? Border.all(color: borderColor!, width: borderWidth)
+            : const Border.fromBorderSide(BorderSide.none),
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: TextFormField(
+        cursorColor: blackColor,
+        autofocus: autofocus,
+        readOnly: readOnly,
+        onTap: onTap,
+        textAlign: textAlign,
+        onChanged: onChanged,
+        validator: validator,
+        maxLines: maxLines,
+        obscuringCharacter: '∗',
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+        controller: controller,
+        style: TextStyle(
+          fontWeight: fontWeight,
+          fontSize: fontSize,
+          fontFamily: fontFamily,
+          color: textColor,
+        ),
+        decoration: InputDecoration(
+          alignLabelWithHint: true,
+          enabled: enabled,
+          fillColor: Colors.transparent,
+          filled: true,
+          contentPadding: contentPadding ??
+              const EdgeInsets.only(left: 16, top: 0, bottom: 0, right: 8),
+          suffixText: suffixText,
+          suffixStyle: TextStyle(
+            fontWeight: fontWeight,
+            fontSize: fontSize,
+            fontFamily: fontFamily,
+            color: hintColor,
+          ),
+          labelText: labelText,
+          labelStyle: TextStyle(
+            fontWeight: fontWeight,
+            fontSize: fontSize,
+            fontFamily: fontFamily,
+            color: labelColor,
+          ),
+          hintText: hintText,
+          hintStyle: hintStyle ??
+              TextStyle(
+                fontWeight: fontWeight,
+                fontSize: fontSize,
+                fontFamily: fontFamily,
+                color: hintColor,
+              ),
+          suffixIcon: isSuffixIcon ? suffixIcon : null,
+          prefixIcon: isPrefixIcon ? prefixIcon : null,
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          // hide default error inside TextField
+          errorStyle: const TextStyle(height: 0, color: redColor),
+        ),
+      ),
     );
   }
 }

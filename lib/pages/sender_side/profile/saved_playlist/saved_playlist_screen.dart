@@ -28,14 +28,14 @@ class SavedPlaylistScreen extends StatelessWidget {
                     right: 16,
                     bottom: 16,
                   ),
-                  child: GestureDetector(
+                  child: const SizedBox.shrink() /*GestureDetector(
                     onTap: (){
                       Get.to(()=>ViewSavedPlaylistScreen(model: controller.playlistList[index],));
                     },
                     child: SavedPlaylistCard(
-                      model: controller.playlistList[index],
+                      playlist: controller.playlistList[index],
                     ),
-                  ),
+                  )*/,
                 );
               },
             ),

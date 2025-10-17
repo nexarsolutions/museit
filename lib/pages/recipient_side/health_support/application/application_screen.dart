@@ -49,6 +49,7 @@ class ApplicationScreen extends StatelessWidget {
                     CustomDropDown(
                       dropdownItems: controller.healthTypeList,
                       hintText: controller.selectedHealthType.value,
+                      value: null,
                       onChanged: (value) {
                         controller.selectedHealthType.value = value!;
                       },

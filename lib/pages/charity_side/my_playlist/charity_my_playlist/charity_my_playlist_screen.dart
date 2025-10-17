@@ -22,22 +22,24 @@ class CharityMyPlaylistScreen extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 30),
               itemCount: controller.playlistList.length,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.to(()=>ViewMyPlaylistScreen(model: controller.playlistList[index],));
-                    },
-                    child: SavedPlaylistCard(
-                      showDateTime: true,
-                      model: controller.playlistList[index],
-                    ),
-                  ),
-                );
+                return const SizedBox.shrink();
+
+                // return Padding(
+                //   padding: const EdgeInsets.only(
+                //     left: 16.0,
+                //     right: 16,
+                //     bottom: 16,
+                //   ),
+                //   child: GestureDetector(
+                //     onTap: () {
+                //       Get.to(()=>ViewMyPlaylistScreen(model: controller.playlistList[index],));
+                //     },
+                //     child: SavedPlaylistCard(
+                //       showDateTime: true,
+                //       playlist: controller.playlistList[index],
+                //     ),
+                //   ),
+                // );
               },
             ),
           ),

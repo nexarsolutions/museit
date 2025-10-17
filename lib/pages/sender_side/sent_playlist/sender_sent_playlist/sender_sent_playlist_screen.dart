@@ -9,7 +9,9 @@ import 'controller/sender_sent_playlist_controller.dart';
 
 class SenderSentPlaylistScreen extends StatelessWidget {
   SenderSentPlaylistScreen({super.key});
+
   final controller = Get.put(SenderSentPlaylistController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,15 +30,17 @@ class SenderSentPlaylistScreen extends StatelessWidget {
                     right: 16,
                     bottom: 16,
                   ),
-                  child: GestureDetector(
+                  child: const SizedBox
+                      .shrink() /*GestureDetector(
                     onTap: (){
                       Get.to(()=>ViewSentPlaylistScreen(model: controller.playlistList[index],));
                     },
                     child: SavedPlaylistCard(
                       showDateTime: true,
-                      model: controller.playlistList[index],
+                      playlist: controller.playlistList[index],
                     ),
-                  ),
+                  )*/
+                  ,
                 );
               },
             ),

@@ -56,15 +56,15 @@ class RecipientHistoryScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(
                           bottom: 12,
                         ),
-                        child: GestureDetector(
+                        child: const SizedBox.shrink()/* GestureDetector(
                           onTap: () {
                           },
 
                           child: SavedPlaylistCard(
                             showDateTime: true,
-                            model: controller.recentCardList[index],
+                            playlist: controller.recentCardList[index],
                           ),
-                        ),
+                        )*/,
                       ),
                     ),
                   ),

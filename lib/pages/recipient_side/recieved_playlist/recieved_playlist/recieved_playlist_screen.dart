@@ -9,7 +9,9 @@ import '../view_recieved_playlist/view_recieved_playlist_screen.dart';
 
 class RecievedPlaylistScreen extends StatelessWidget {
   RecievedPlaylistScreen({super.key});
+
   final controller = Get.put(RecievedPlaylistController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +30,8 @@ class RecievedPlaylistScreen extends StatelessWidget {
                   right: 16,
                   bottom: 12,
                 ),
-                child: GestureDetector(
+                child: const SizedBox
+                    .shrink() /*GestureDetector(
                   onTap: () {
                     Get.to(
                       () => ViewRecievedPlaylistScreen(
@@ -40,9 +43,10 @@ class RecievedPlaylistScreen extends StatelessWidget {
 
                   child: SavedPlaylistCard(
                     showDateTime: true,
-                    model: controller.recentCardList[index],
+                    playlist: controller.recentCardList[index],
                   ),
-                ),
+                )*/
+                ,
               ),
             ),
           ),

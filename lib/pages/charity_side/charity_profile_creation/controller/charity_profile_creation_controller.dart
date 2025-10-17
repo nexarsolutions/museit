@@ -10,5 +10,4 @@ class CharityProfileCreationController extends GetxController {
   final accountTitleController = TextEditingController();
   final ifOfOwnerController = TextEditingController();
   var pickedImagePath = ''.obs;
-
 }

@@ -11,8 +11,10 @@ import '../utils/global_functions.dart';
 import 'api_exception.dart';
 
 class ApiService {
-  ///[baseUrl] holds the base url
   static String baseUrl = 'http://192.168.18.13:8084/api/';
+  static String serverUrl = 'http://192.168.18.13:8084/';
+
+  static final String imageUrl = '${serverUrl}image/';
 
   ///get header with/without token
   Future<Map<String, String>> _getHeaders() async {
@@ -59,10 +61,11 @@ class ApiService {
   ///get
   Future<T> get<T>(String path) async {
     try {
+      printInfo(info: "****** get path: $path ******");
       final headers = await _getHeaders();
-      final response = await http.get(Uri.parse('$baseUrl$path'),
-          headers: headers) /*.timeout(const Duration(seconds: 15))*/;
-      // print("***************** 0");
+      final response =
+          await http.get(Uri.parse('$baseUrl$path'), headers: headers);
+
       return await _handleResponse(response);
     } on SocketException {
       throw NetworkException('No internet connection');
