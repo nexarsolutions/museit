@@ -34,7 +34,8 @@ class RecipientSavedSongsScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: SongCard(model: controller.songsList[index]),
+                    child: const SizedBox.shrink(),
+                    // child: SongCard(model: controller.songsList[index]),
                   ),
                 );
               },

@@ -162,8 +162,9 @@ class ViewMyCompaignsScreen extends StatelessWidget {
                     itemBuilder: (context, index) =>
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
-                          child: SongCard(model: model.attachedPlaylist[index]),
-                        ),
+                          // child: SongCard(model: model.attachedPlaylist[index]),
+
+                          child: const SizedBox.shrink(),),
                   ),
                   SizedBox(height: 24),
                 ],

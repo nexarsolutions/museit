@@ -7,18 +7,274 @@ import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 
 import '../../../../common_widgets/song_card.dart';
-import '../sender_created_playlist/sender_created_playlist_screen.dart';
+import '../sender_create_playlist/controller/sender_create_playlist_controller.dart';
 
-// New widget to display a straight line for the waveform
-class EmptyWaveform extends StatelessWidget {
-  const EmptyWaveform({super.key});
+class SenderAddVoiceNoteScreen extends StatelessWidget {
+  SenderAddVoiceNoteScreen({super.key});
+
+  final controller = Get.put(SenderAddVoiceNoteController());
+  final cPlayController = Get.put(SenderCreatePlaylistController());
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Scaffold(
+      backgroundColor: whiteColor,
+      body: Column(
+        children: [
+          CustomAppBar(text: 'Add Voice Note', isBack: true),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  const SizedBox(height: 50),
+                  Obx(
+                        () =>
+                        Column(
+                          children: [
+                            // --- Waveform display ---
+                            if (controller.isRecording.value)
+                              AudioWaveforms(
+                                size: Size(Get.width * 0.9, 100),
+                                recorderController: controller
+                                    .recorderController,
+                                waveStyle: const WaveStyle(
+                                  showDurationLabel: false,
+                                  spacing: 8.0,
+                                  waveColor: Color(0xFF8C7FAC),
+                                  middleLineColor: Color(0xFF7695CA),
+                                  showBottom: true,
+                                  extendWaveform: true,
+                                  showMiddleLine: false,
+                                ),
+                              )
+                            else
+                              if (controller.currentRecordingPath != null)
+                                AudioFileWaveforms(
+                                  size: Size(Get.width * 0.9, 100),
+                                  playerController: controller
+                                      .audioPlayerController,
+                                  enableSeekGesture: true,
+                                  playerWaveStyle: const PlayerWaveStyle(
+                                    spacing: 8.0,
+                                    fixedWaveColor: Color(0xFF8C7FAC),
+                                    liveWaveColor: Color(0xFF7695CA),
+                                    showSeekLine: true,
+                                    showBottom: true,
+                                    seekLineColor: Colors.white,
+                                  ),
+                                )
+                              else
+                                const _EmptyWaveform(),
+
+                            const SizedBox(height: 20),
+
+                            // --- Control Buttons (Play / Record / Reset) ---
+                            Stack(
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.none,
+                              children: [
+                                Container(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                                  width: 180,
+                                  height: 34,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        const Color(0xFF8C7FAC).withOpacity(
+                                            0.15),
+                                        const Color(0xFF7695CA).withOpacity(
+                                            0.15),
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (controller.currentRecordingPath !=
+                                              null &&
+                                              !controller.isRecording.value) {
+                                            controller.togglePlayPause();
+                                          }
+                                        },
+                                        child: Icon(
+                                          controller.isPlaying.value
+                                              ? Icons.pause_circle
+                                              : Icons.play_circle,
+                                          color: blackColor,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: controller.refreshRecording,
+                                        child: Image.asset(
+                                          'assets/images/refresh_icon.png',
+                                          scale: 3.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (controller.isRecording.value) {
+                                      controller.stopRecording();
+                                    } else {
+                                      controller.startRecording();
+                                    }
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: controller.isRecording.value
+                                          ? Colors.red
+                                          : blackColor,
+                                    ),
+                                    child: Image.asset(
+                                      'assets/images/recording_icon.png',
+                                      scale: 4,
+                                      color: controller.isRecording.value
+                                          ? Colors.white
+                                          : null,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // --- Save Button ---
+                  GestureDetector(
+                    onTap: () async {
+                      await controller.saveRecording();
+                    },
+                    child: Container(
+                      width: 110,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: blackColor,
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Save',
+                          style: manRopeSemiBold.copyWith(
+                            fontSize: 12,
+                            color: whiteColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // --- Divider ---
+                  Container(
+                    width: Get.width,
+                    height: 1,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF8C7FAC).withOpacity(0.3),
+                          const Color(0xFF7695CA).withOpacity(0.3),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // --- List of Saved Recordings ---
+                  Obx(
+                        () =>
+                        ListView.builder(
+                          padding: const EdgeInsets.only(bottom: 24),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.recordingList.length,
+                          itemBuilder: (context, index) =>
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: const SizedBox.shrink(),
+                                // child: SongCard(model: controller
+                                //     .recordingList[index]),
+                              ),
+                        ),
+                  ),
+
+                  SizedBox(height: Get.height * 0.05),
+
+                  // --- Next Button ---
+                  GestureDetector(
+                    onTap: () =>cPlayController.createPlaylist(controller.recordingList),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned(
+                          left: 1,
+                          right: 1,
+                          bottom: -3,
+                          child: Container(
+                            height: 30,
+                            width: 48,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(16),
+                                bottomRight: Radius.circular(16),
+                              ),
+                              color: blueColor,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: blackColor,
+                          ),
+                          child: Image.asset(
+                            'assets/images/double_forwareded_icon.png',
+                            scale: 3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// --- Empty waveform when nothing recorded ---
+class _EmptyWaveform extends StatelessWidget {
+  const _EmptyWaveform({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
       width: Get.width * 0.9,
       height: 100,
-      // Removed the background decoration to make it transparent
       child: Center(
         child: CustomPaint(
           size: Size(Get.width * 0.7, 2),
@@ -29,9 +285,47 @@ class EmptyWaveform extends StatelessWidget {
   }
 }
 
+// --- Custom Painter for straight waveform line ---
+class _StraightLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFF8C7FAC), Color(0xFF7695CA)],
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..strokeWidth = size.height
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawLine(
+      Offset(0, size.height / 2),
+      Offset(size.width, size.height / 2),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/*
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:musit/constants/colors.dart';
+import 'package:musit/constants/text_styles.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_add_voice_note/controller/sender_add_voice_note_controller.dart';
+import 'package:musit/widgets/custom_app_bar.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
+
+import '../../../../common_widgets/song_card.dart';
+import '../sender_created_playlist/sender_created_playlist_screen.dart';
+
 class SenderAddVoiceNoteScreen extends StatelessWidget {
   SenderAddVoiceNoteScreen({super.key});
+
   final controller = Get.put(SenderAddVoiceNoteController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +340,7 @@ class SenderAddVoiceNoteScreen extends StatelessWidget {
                 children: [
                   SizedBox(height: 50),
                   Obx(
-                        () => Column(
+                    () => Column(
                       children: [
                         // Waveform Display Area - now without a background container
                         if (controller.isRecording.value)
@@ -78,7 +372,7 @@ class SenderAddVoiceNoteScreen extends StatelessWidget {
                             ),
                           )
                         else
-                          EmptyWaveform(),
+                          _EmptyWaveform(),
                         SizedBox(height: 20),
                         // Control Buttons (Play, Mic, Refresh)
                         Stack(
@@ -102,12 +396,12 @@ class SenderAddVoiceNoteScreen extends StatelessWidget {
                               ),
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   GestureDetector(
                                     onTap: () {
                                       if (controller.currentRecordingPath !=
-                                          null &&
+                                              null &&
                                           !controller.isRecording.value) {
                                         controller.togglePlayPause();
                                       }
@@ -227,7 +521,7 @@ class SenderAddVoiceNoteScreen extends StatelessWidget {
                   SizedBox(height: Get.height * 0.05),
                   GestureDetector(
                     onTap: () {
-                      Get.to(()=>SenderCreatedPlaylistScreen());
+                      Get.to(() => SenderCreatedPlaylistScreen());
                     },
                     child: Stack(
                       clipBehavior: Clip.none,
@@ -248,10 +542,9 @@ class SenderAddVoiceNoteScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         GestureDetector(
-                          onTap: (){
-                            Get.to(()=>SenderCreatedPlaylistScreen());
+                          onTap: () {
+                            Get.to(() => SenderCreatedPlaylistScreen());
                           },
                           child: Container(
                             width: 50,
@@ -275,6 +568,26 @@ class SenderAddVoiceNoteScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// New widget to display a straight line for the waveform
+class _EmptyWaveform extends StatelessWidget {
+  const _EmptyWaveform({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: Get.width * 0.9,
+      height: 100,
+      // Removed the background decoration to make it transparent
+      child: Center(
+        child: CustomPaint(
+          size: Size(Get.width * 0.7, 2),
+          painter: _StraightLinePainter(),
+        ),
       ),
     );
   }
@@ -305,3 +618,4 @@ class _StraightLinePainter extends CustomPainter {
     return false;
   }
 }
+*/

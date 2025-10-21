@@ -35,12 +35,12 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
+      id: json['id'],
       username: TextEditingController(text: json['username'] ?? ''),
       email: TextEditingController(text: json['email'] ?? ''),
       phone: TextEditingController(text: json['phone'] ?? ''),
-      roleId: json['roleId'],
-      id: json['id'],
       statusId: json['statusId'],
+      roleId: json['roleId'],
       token: json['token'],
       profile: RxString(json['profile'] ?? ''),
       currentRoleId: json['currentRoleId'],
@@ -101,4 +101,64 @@ class UserCharity {
       'organtization': organtization,
     };
   }
+}
+
+class ReceiptResponseModel {
+  int? statusCode;
+  String? message;
+  ReceiptResponseData? response;
+
+  ReceiptResponseModel({
+    this.statusCode,
+    this.message,
+    this.response,
+  });
+
+  ReceiptResponseModel copyWith({
+    int? statusCode,
+    String? message,
+    ReceiptResponseData? response,
+  }) =>
+      ReceiptResponseModel(
+        statusCode: statusCode ?? this.statusCode,
+        message: message ?? this.message,
+        response: response ?? this.response,
+      );
+
+  factory ReceiptResponseModel.fromJson(Map<String, dynamic> json) =>
+      ReceiptResponseModel(
+        statusCode: json["statusCode"],
+        message: json["message"],
+        response: json["response"] == null
+            ? null
+            : ReceiptResponseData.fromJson(json["response"]),
+      );
+}
+
+class ReceiptResponseData {
+  int? count;
+  List<UserModel>? users;
+
+  ReceiptResponseData({
+    this.count,
+    this.users,
+  });
+
+  ReceiptResponseData copyWith({
+    int? count,
+    List<UserModel>? users,
+  }) =>
+      ReceiptResponseData(
+        count: count ?? this.count,
+        users: users ?? this.users,
+      );
+
+  factory ReceiptResponseData.fromJson(Map<String, dynamic> json) =>
+      ReceiptResponseData(
+        count: json["count"],
+        users: json["rows"] == null
+            ? []
+            : List<UserModel>.from(
+                json["rows"]!.map((x) => UserModel.fromJson(x))),
+      );
 }

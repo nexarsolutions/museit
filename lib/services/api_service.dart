@@ -101,10 +101,10 @@ class ApiService {
   ///post
   Future<dynamic> post(String path, Map<String, dynamic> data) async {
     try {
-      customPrint("$baseUrl$path");
+      printInfo(info:  "$baseUrl$path");
       final headers = await _getHeaders();
-      customPrint("$headers");
-      customPrint("Body: $data");
+      // printInfo(info:"$headers");
+      // printInfo(info:"Body: $data");
       final response = await http.post(
         Uri.parse('$baseUrl$path'),
         headers: headers,

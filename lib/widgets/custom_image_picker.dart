@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:musit/utils/extensions.dart';
 
 import '../constants/text_styles.dart';
 import '../utils/global_functions.dart';
@@ -88,30 +89,37 @@ class CustomImagePicker extends StatelessWidget {
                     ),
                   ],
                 )
-              : Center(
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    alignment: Alignment.topRight,
-                    children: [
-                      Image.file(
-                        File(pickedImagePath.value),
+              : pickedImagePath.value.contains('http')
+                  ? Center(
+                      child: Image.network(
+                        pickedImagePath.value.showImage,
                         fit: BoxFit.cover,
                       ),
-                      Positioned(
-                        top: -5,
-                        right: -5,
-                        child: GestureDetector(
-                          onTap: () => pickedImagePath.value = '',
-                          child: const Icon(
-                            Icons.cancel,
-                            color: Colors.red,
-                            size: 20,
+                    )
+                  : Center(
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.topRight,
+                        children: [
+                          Image.file(
+                            File(pickedImagePath.value),
+                            fit: BoxFit.cover,
                           ),
-                        ),
+                          Positioned(
+                            top: -5,
+                            right: -5,
+                            child: GestureDetector(
+                              onTap: () => pickedImagePath.value = '',
+                              child: const Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
         ),
       ),
     );

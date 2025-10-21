@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:musit/globalModels/song_model.dart';
 
 class PlaylistResponseModel {
   int? statusCode;
@@ -84,7 +85,9 @@ class PlaylistModel {
   DateTime? createdAt;
   DateTime? updatedAt;
   int? isSaved;
-  List<SongModel>? songs;
+  RxList<SongModel> songs;
+  RxList<PlaylistVoiceModel> voiceNotes;
+  PlayListUser? user;
 
   PlaylistModel({
     this.purposeName,
@@ -96,34 +99,31 @@ class PlaylistModel {
     this.createdAt,
     this.updatedAt,
     this.isSaved,
-    this.songs,
+    RxList<SongModel>? songs,
+    RxList<PlaylistVoiceModel>? voiceNotes,
+    this.user,
   })  : title = title ?? TextEditingController(),
-        image = image ?? RxString('');
+        image = image ?? RxString(''),
+        songs = songs ?? <SongModel>[].obs,
+        voiceNotes = voiceNotes ?? <PlaylistVoiceModel>[].obs;
 
-  PlaylistModel copyWith({
-    String? purposeName,
-    int? id,
-    int? userId,
-    TextEditingController? title,
-    RxString? image,
-    int? purposeId,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    int? isSaved,
-    List<SongModel>? songs,
-  }) =>
-      PlaylistModel(
-        purposeName: purposeName ?? this.purposeName,
-        id: id ?? this.id,
-        userId: userId ?? this.userId,
-        title: title ?? this.title,
-        image: image ?? this.image,
-        purposeId: purposeId ?? this.purposeId,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        isSaved: isSaved ?? this.isSaved,
-        songs: songs ?? this.songs,
-      );
+  PlaylistModel.copyWith(PlaylistModel other)
+      : purposeName = other.purposeName,
+        id = other.id,
+        userId = other.userId,
+        title = TextEditingController(text: other.title.text),
+        image = RxString(other.image.value),
+        purposeId = other.purposeId,
+        createdAt = other.createdAt,
+        updatedAt = other.updatedAt,
+        isSaved = other.isSaved,
+        songs = RxList<SongModel>.from(other.songs.map(
+          (element) => element,
+        )),
+        voiceNotes = RxList<PlaylistVoiceModel>.from(other.voiceNotes.map(
+          (element) => element,
+        )),
+        user = other.user != null ? PlayListUser.copy(other.user!) : null;
 
   factory PlaylistModel.fromJson(Map<String, dynamic> json) => PlaylistModel(
         purposeName: json["purposeName"],
@@ -140,58 +140,83 @@ class PlaylistModel {
             : DateTime.parse(json["updatedAt"]),
         isSaved: json["isSaved"],
         songs: json["Songs"] == null
-            ? []
-            : List<SongModel>.from(
-                json["Songs"]!.map((x) => SongModel.fromJson(x))),
+            ? <SongModel>[].obs
+            : RxList<SongModel>.from(
+                json["Songs"]?.map((x) => SongModel.fromJson(x) ?? [])),
+        voiceNotes: json["voiceNotes"] == null
+            ? <PlaylistVoiceModel>[].obs
+            : RxList<PlaylistVoiceModel>.from(
+                json["voiceNotes"]!.map((x) => PlaylistVoiceModel.fromJson(x))),
+        user: json["User"] == null ? null : PlayListUser.fromJson(json["User"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "purposeName": purposeName,
-        "id": id,
-        "userId": userId,
         "title": title.text.trim(),
-        "image": image,
+        // "image": image.value,
         "purposeId": purposeId,
-        "createdAt": createdAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
-        "isSaved": isSaved,
-        "Songs": songs == null
-            ? []
-            : List<dynamic>.from(songs!.map((x) => x.toJson())),
+        "songs": songs
+            .map(
+              (element) => element.toJson(),
+            )
+            .toList(),
+        // "voiceNotes": voiceNotes
+        //     .map(
+        //       (element) => element.toJson(),
+        //     )
+        //     .toList(),
       };
+
+  /// ✅ Clears all reactive and controller data
+  void clear() {
+    purposeName = null;
+    id = null;
+    userId = null;
+    purposeId = null;
+    createdAt = null;
+    updatedAt = null;
+    isSaved = null;
+
+    title.clear(); // clear TextEditingController
+    image.value = ''; // reset RxString
+    songs.clear(); // clear RxList
+  }
 }
 
-class SongModel {
-  int? id;
+class PlaylistVoiceModel {
   String? name;
   String? link;
 
-  SongModel({
-    this.id,
-    this.name,
-    this.link,
-  });
+  PlaylistVoiceModel({this.name, this.link});
 
-  SongModel copyWith({
-    int? id,
-    String? name,
-    String? link,
-  }) =>
-      SongModel(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        link: link ?? this.link,
-      );
-
-  factory SongModel.fromJson(Map<String, dynamic> json) => SongModel(
-        id: json["id"],
+  factory PlaylistVoiceModel.fromJson(Map<String, dynamic> json) =>
+      PlaylistVoiceModel(
         name: json["name"],
         link: json["link"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
+        "name": name?.split('.').first,
         "link": link,
       };
+}
+
+class PlayListUser {
+  int? id;
+  String? username;
+  String? profile;
+
+  PlayListUser({this.id, this.username, this.profile});
+
+  PlayListUser.copy(PlayListUser other)
+      : id = other.id,
+        username = other.username,
+        profile = other.profile;
+
+  factory PlayListUser.fromJson(Map<String, dynamic> json) {
+    return PlayListUser(
+      id: json['id'],
+      username: json['username'],
+      profile: json['profile'],
+    );
+  }
 }

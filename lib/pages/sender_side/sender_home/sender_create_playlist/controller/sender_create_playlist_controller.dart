@@ -1,26 +1,119 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:musit/common_models/song_model.dart' as fend;
 import 'package:musit/constants/global_list.dart';
 import 'package:musit/globalModels/playlist_model.dart';
+import 'package:musit/services/upload_file_service.dart';
 import 'package:musit/utils/dialog_utilities.dart';
+
+import '../../../../../globalModels/song_model.dart';
+import '../../../../../services/api_service.dart';
+import '../../../../../services/paylist_service.dart';
+import '../../sender_created_playlist/sender_created_playlist_screen.dart';
 
 class SenderCreatePlaylistController extends GetxController {
   final PlaylistModel playlistModel = PlaylistModel();
 
-  RxnString selectedPurpose =RxnString();
+  RxnString selectedPurpose = RxnString();
+  RxInt songTypeId = 0.obs;
 
-  Future<void> createPlaylist() async {
+  final _fileService = UploadFileService();
+  final _apiService = ApiService();
+  final _playlistService = PlaylistService();
+
+  final searchController = TextEditingController();
+  RxString searchQuery = ''.obs;
+
+  Future<void> createPlaylist(RxList<fend.SongModel> recordingList) async {
     try {
-      loadingDialog(message: "Creating");
       playlistModel.purposeId = getPurposeIndex();
-      Get.back();
+      var data = playlistModel.toJson();
+
+      if (playlistModel.image.value != '') {
+        try {
+          String? imageUrl = await _fileService.fileUploadResult(
+              uploadData: playlistModel.image.value);
+          if (imageUrl != '') {
+            data['image'] = imageUrl ?? '';
+          } else {
+            return;
+          }
+        } catch (e) {
+          errorDialog(content: e.toString());
+          return;
+        }
+      }
+
+      if (recordingList.isNotEmpty) {
+        List<String> recordingPaths =
+            recordingList.map((e) => e.songName).toList();
+
+        try {
+          List<String> recordingUrls =
+              await _fileService.uploadMultipleImagesFast(recordingPaths);
+          if (recordingUrls.isNotEmpty) {
+            data['voiceNotes'] = recordingUrls
+                .map((vc) => {"name": vc.split('.').first, "link": vc});
+          }
+        } catch (e) {
+          errorDialog(content: e.toString());
+          return;
+        }
+      }
+
+      await _apiService.handleResponse(
+        apiMethod: () => _playlistService.createPlaylist(data),
+        onSuccess: (response) async {
+          printInfo(info: "success response: $response");
+          int? playListId = response['response']['id'];
+          await Future.delayed(Duration(seconds: 2));
+          Get.close(3); //close last three screen
+          // Get.to(() => SenderAddVoiceNoteScreen(playListId: playListId));
+          Get.off(() => SenderCreatedPlaylistScreen(playListId: playListId));
+          successDialog(content: response['message']);
+          playlistModel.clear();
+          selectedPurpose.value = null;
+          songTypeId.value = 0;
+          searchQuery.value = '';
+        },
+      );
     } catch (e) {
-      Get.back();
       errorDialog(content: e.toString());
+    }
+  }
+
+  Future<List<SongModel>> getSongs({int typeId = 3, String search = ''}) async {
+    try {
+      List<SongModel> songs = [];
+      await _apiService.handleGetResponse(
+        apiMethod: () =>
+            _playlistService.getPaidSongs(typeId: typeId, search: search),
+        onSuccess: (response) {
+          final responseData = SongResponseModel.fromJson(response);
+          final songsList = responseData.response?.songs ?? [];
+          if (songsList.isNotEmpty) {
+            songs.assignAll(songsList);
+          }
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+      return songs;
+    } catch (e) {
+      rethrow;
     }
   }
 
   int getPurposeIndex() {
     return playlistPurposes.indexOf(selectedPurpose.value!);
+  }
+
+  List<SongModel> getUploadedSongs() {
+    return playlistModel.songs
+        .where(
+          (songs) => songs.typeId == 4,
+        )
+        .toList();
   }
 }

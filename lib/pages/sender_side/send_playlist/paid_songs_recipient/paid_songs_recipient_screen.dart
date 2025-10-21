@@ -62,12 +62,15 @@ class PaidSongsRecipientScreen extends StatelessWidget {
                     ),
                     itemCount: controller.recipientsList.length,
                     itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {},
-                        child: RecipientsCard(
-                          model: controller.recipientsList[index],
-                        ),
-                      );
+
+
+                      return const SizedBox.shrink();
+                      // return GestureDetector(
+                      //   onTap: () {},
+                      //   child: RecipientsCard(
+                      //     user: controller.recipientsList[index],
+                      //   ),
+                      // );
                     },
                   ),
                   SizedBox(height: 42),

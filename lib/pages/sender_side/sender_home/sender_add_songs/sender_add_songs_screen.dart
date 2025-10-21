@@ -1,25 +1,23 @@
-import 'dart:io';
-
-import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/globalModels/song_model.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
-import 'package:musit/pages/charity_side/charity_home/charity_add_voice_note/charity_add_voice_note_screen.dart';
+import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 import '../../../../constants/text_styles.dart';
-import '../../../../utils/global_functions.dart';
-import '../../../../utils/image_picker_bottom_sheet.dart';
+import '../../../../widgets/audio_picker_widget.dart';
 import '../../../../widgets/custom_tab_button.dart';
 import '../sender_add_voice_note/sender_add_voice_note_screen.dart';
-import 'controller/sender_add_songs_controller.dart';
+import '../sender_create_playlist/controller/sender_create_playlist_controller.dart';
 
 class SenderAddSongsScreen extends StatelessWidget {
   SenderAddSongsScreen({super.key});
-  final controller = Get.put(SenderAddSongsController());
+
+  final controller = Get.put(SenderCreatePlaylistController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +29,7 @@ class SenderAddSongsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: CustomTextField(
               borderRadius: 50,
-              controller: TextEditingController(),
+              controller: controller.searchController,
               hintText: 'Search',
               isSuffixIcon: true,
               suffixIcon: Container(
@@ -43,18 +41,24 @@ class SenderAddSongsScreen extends StatelessWidget {
                 ),
                 child: Image.asset('assets/images/search_icon.png', scale: 3),
               ),
+              onChanged: (value) {
+                if (value.trim().isEmpty) {
+                  controller.searchQuery.value = '';
+                } else {
+                  controller.searchQuery.value = value.trim();
+                }
+              },
             ),
           ),
           SizedBox(height: 24),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Obx(
-                  () => CustomTabButtonWithIcon(
-                selectedIndex: controller
-                    .selectedIndex
-                    .value, // GetX ya setState use kar sakte ho
+              () => CustomTabButtonWithIcon(
+                selectedIndex: controller.songTypeId.value,
+                // GetX ya setState use kar sakte ho
                 onTabSelected: (index) {
-                  controller.selectedIndex.value = index;
+                  controller.songTypeId.value = index;
                 },
                 tabs: [
                   TabItem(
@@ -83,186 +87,157 @@ class SenderAddSongsScreen extends StatelessWidget {
           ),
           SizedBox(height: 24),
           Obx(
-                () => controller.selectedIndex.value == 0
+            () => controller.songTypeId.value == 0
                 ? Expanded(
-              child: ListView.builder(
-                itemCount: controller.spotifyList.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16,
-                    bottom: 12,
-                  ),
-                  child: AddSongsWidget(
-                    model: controller.spotifyList[index],
-                  ),
-                ),
-              ),
-            )
-                : controller.selectedIndex.value == 1
-                ? Expanded(
-              child: ListView.builder(
-                itemCount: controller.youtubeList.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16,
-                    bottom: 12,
-                  ),
-                  child: AddSongsWidget(
-                    model: controller.youtubeList[index],
-                  ),
-                ),
-              ),
-            )
-                :controller.selectedIndex.value == 2
-                ? Expanded(
-              child: ListView.builder(
-                itemCount: controller.paidList.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16,
-                    bottom: 12,
-                  ),
-                  child: AddSongsWidget(
-                    model: controller.paidList[index],
-                  ),
-                ),
-              ),
-            )
-                : Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    Container(
-                      width: Get.width,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF8C7FAC).withValues(alpha: 0.15),
-                            Color(0xFF7695CA).withValues(alpha: 0.15),
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+                    child: Center(
+                      child: Text("No Songs Found"),
+                    ),
+                  )
+                : controller.songTypeId.value == 1
+                    ? Expanded(
+                        child: Center(
+                          child: Text("No Songs Found"),
                         ),
+                      )
+                    : controller.songTypeId.value == 2
+                        ? Expanded(
+                            child: Obx(
+                              () => FutureBuilder(
+                                  key: ValueKey(controller.searchQuery.value),
+                                  future: controller.getSongs(
+                                      search: controller.searchQuery.value),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                          child: Text(snapshot.error.toString(),
+                                              style: manRopeSemiBold));
+                                    }
 
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Container(
-                        margin: const EdgeInsets.all(8),
-                        padding: const EdgeInsets.all(4),
-                        decoration: DottedDecoration(
-                          color: blueColor,
-                          strokeWidth: 1.2,
-                          shape: Shape.box,
-                          dash: const [3, 5],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Obx(
-                              () => controller.pickedImagePath.value.isEmpty
-                              ? Column(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  pickImageBottomSheetFromCameraGallery(
-                                        () async {
-                                      String? pickedImagePath =
-                                      await pickImage(
-                                        ImageSource.camera,
-                                      );
-                                      controller
-                                          .pickedImagePath
-                                          .value =
-                                      pickedImagePath!;
-                                      Get.back();
-                                    },
-                                        () async {
-                                      String? pickedImagePath =
-                                      await pickImage(
-                                        ImageSource.gallery,
-                                      );
-                                      controller
-                                          .pickedImagePath
-                                          .value =
-                                      pickedImagePath!;
-                                      Get.back();
-                                    },
-                                  );
-                                },
-                                child: Image.asset(
-                                  'assets/images/upload_icon.png',
-                                  height: 30,
-                                  width: 30,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              const SizedBox(height: 13),
-                              Text(
-                                'Upload',
-                                style: manRopeSemiBold.copyWith(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w900,
-                                  color: blackColor,
-                                ),
-                              ),
-                            ],
+                                    if (!snapshot.hasData ||
+                                        snapshot.data == null ||
+                                        snapshot.data!.isEmpty) {
+                                      return Center(
+                                          child: Text("No Songs Found",
+                                              style: manRopeSemiBold));
+                                    }
+
+                                    final songsList = snapshot.requireData;
+
+                                    return ListView.builder(
+                                      itemCount: songsList.length,
+                                      itemBuilder: (context, index) {
+                                        return Obx(
+                                          () {
+                                            bool? isSelected = controller
+                                                .playlistModel.songs
+                                                .any(
+                                              (element) =>
+                                                  element.id ==
+                                                  songsList[index].id,
+                                            );
+
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 16.0,
+                                                right: 16,
+                                                bottom: 12,
+                                              ),
+                                              child: AddSongsWidget(
+                                                  song: songsList[index],
+                                                  isSelected: isSelected.obs,
+                                                  onTap: () {
+                                                    bool? isAlreadySelected =
+                                                        controller
+                                                            .playlistModel.songs
+                                                            .any(
+                                                      (element) =>
+                                                          element.id ==
+                                                          songsList[index]
+                                                              .id,
+                                                    );
+                                                    if (isAlreadySelected) {
+                                                      controller
+                                                          .playlistModel.songs
+                                                          .removeWhere((element) =>
+                                                              element
+                                                                  .id ==
+                                                              songsList[index]
+                                                                  .id);
+                                                    } else {
+                                                      controller
+                                                          .playlistModel.songs
+                                                          .add(songsList[index]
+                                                            ..typeId = 3);
+                                                    }
+                                                  }),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  }),
+                            ),
                           )
-                              : Center(
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              alignment: Alignment.topRight,
+                        : Expanded(
+                            child: Column(
                               children: [
-                                Image.file(
-                                  File(
-                                    controller
-                                        .pickedImagePath
-                                        .value,
-                                  ),
+                                AudioPickerWidget(
+                                  onUploadComplete: (uploadedFileNames) {
+                                    for (var name in uploadedFileNames) {
+                                      final song = SongModel(
+                                        typeId: 4,
+                                        name: name.split('.').first, // optional
+                                        link: name,
+                                      );
+                                      controller.playlistModel.songs.add(song);
+                                    }
+                                  },
                                 ),
-                                Positioned(
-                                  top: -5,
-                                  right: -5,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      controller
-                                          .pickedImagePath
-                                          .value =
-                                      '';
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Expanded(
+                                    child: Obx(
+                                  () => ListView.builder(
+                                    itemCount:
+                                        controller.playlistModel.songs.length,
+                                    itemBuilder: (context, index) {
+                                      final song =
+                                          controller.playlistModel.songs[index];
+
+                                      return song.typeId != 4
+                                          ? const SizedBox.shrink()
+                                          : AddSongsWidget(
+                                              song: song,
+                                              isSelected: false.obs,
+                                              showSelected: false,
+                                            );
                                     },
-                                    child: const Icon(
-                                      size: 20,
-                                      Icons.cancel,
-                                      color: Colors.red,
-                                    ),
                                   ),
-                                ),
+                                )),
                               ],
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ),
           SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CustomButton(onPressed: () {
-                Get.to(()=>SenderAddVoiceNoteScreen());
-
-              }, text: 'Save'),
-              SizedBox(width: 8),
+              CustomButton(
+                  onPressed: () {
+                    if (controller.playlistModel.songs.isEmpty) {
+                      errorDialog(content: "Add songs to continue");
+                      return;
+                    }
+                    Get.to(() => SenderAddVoiceNoteScreen());
+                  },
+                  text: 'Save'),
+              /* SizedBox(width: 8),
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -282,10 +257,9 @@ class SenderAddSongsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   GestureDetector(
-                    onTap: (){
-                      Get.to(()=>SenderAddVoiceNoteScreen());
+                    onTap: () {
+                      Get.to(() => SenderAddVoiceNoteScreen());
                     },
                     child: Container(
                       width: 50,
@@ -302,6 +276,7 @@ class SenderAddSongsScreen extends StatelessWidget {
                   ),
                 ],
               ),
+           */
             ],
           ),
           SizedBox(height: 24),

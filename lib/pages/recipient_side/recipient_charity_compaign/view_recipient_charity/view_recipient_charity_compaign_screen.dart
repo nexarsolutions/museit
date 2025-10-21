@@ -225,7 +225,8 @@ class ViewRecipientCharityCompaignScreen extends StatelessWidget {
                     itemCount: model.attachedPlaylist.length,
                     itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: SongCard(model: model.attachedPlaylist[index]),
+                      child: const SizedBox.shrink(),
+                      // child: SongCard(model: model.attachedPlaylist[index]),
                     ),
                   ),
                   SizedBox(height: 24),

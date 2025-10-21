@@ -1,16 +1,26 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musit/utils/extensions.dart';
 
 import '../../../../../constants/colors.dart';
 import '../../../../../constants/text_styles.dart';
-import '../model/add_songs_model.dart';
+import '../../../../../globalModels/song_model.dart';
 
 class AddSongsWidget extends StatelessWidget {
-  AddSongsWidget({super.key, required this.model});
-  final AddSongsModel model;
+  const AddSongsWidget(
+      {super.key,
+      required this.song,
+      this.onTap,
+      required this.isSelected,
+      this.showSelected = true});
 
-  // ✅ isSelected ko reactive banaya
-  final RxBool isSelected = false.obs;
+  final SongModel song;
+
+  final RxBool isSelected;
+
+  final bool showSelected;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +39,6 @@ class AddSongsWidget extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // ✅ Custom Borders banane ke liye Positioned widgets
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -58,11 +67,20 @@ class AddSongsWidget extends StatelessWidget {
                 // Profile image
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    model.imagePath,
+                  child: CachedNetworkImage(
+                    imageUrl: song.image.showImage,
+                    // Your backend image URL
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    errorWidget: (context, url, error) => const Icon(
+                      Icons.broken_image,
+                      size: 30,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
 
@@ -74,12 +92,12 @@ class AddSongsWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        model.title,
+                        song.name ?? "N/A",
                         style: manRopeSemiBold.copyWith(fontSize: 14),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        model.duration,
+                        song.price?.toString() ?? 'N/A',
                         style: manRope.copyWith(
                           fontSize: 12,
                           color: lightBlack,
@@ -89,40 +107,33 @@ class AddSongsWidget extends StatelessWidget {
                   ),
                 ),
 
-                // ✅ Obx lagaya for reactive state
-                Obx(() {
-                  return isSelected.value
-                      ? GestureDetector(
-                    onTap: () {
-                      isSelected.value = false;
-                    },
-                    child: Image.asset(
-                      'assets/images/tick_purple.png',
-                      width: 22,
-                      height: 22,
-                    ),
-                  )
-                      : GestureDetector(
-                    onTap: () {
-                      isSelected.value = true;
-                    },
-                    child: Container(
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF8C7FAC).withValues(alpha: 0.15),
-                            Color(0xFF7695CA).withValues(alpha: 0.15),
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
+                if (showSelected)
+                  Obx(() {
+                    return GestureDetector(
+                      onTap: onTap,
+                      child: isSelected.value
+                          ? Image.asset(
+                              'assets/images/tick_purple.png',
+                              width: 22,
+                              height: 22,
+                            )
+                          : Container(
+                              width: 22,
+                              height: 22,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFF8C7FAC).withValues(alpha: 0.15),
+                                    Color(0xFF7695CA).withValues(alpha: 0.15),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                              ),
+                            ),
+                    );
+                  }),
               ],
             ),
           ),

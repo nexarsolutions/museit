@@ -299,8 +299,9 @@ final String title;
                     itemCount: controller.recordingList.length,
                     itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: SongCard(model: controller.recordingList[index]),
-                    ),
+                      // child: SongCard(model: controller.recordingList[index]),
+
+                      child: const SizedBox.shrink(),),
                   ),
                   SizedBox(height: Get.height * 0.05),
                   GestureDetector(

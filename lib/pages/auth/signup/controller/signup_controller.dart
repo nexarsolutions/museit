@@ -42,15 +42,15 @@ class SignupController extends GetxController {
     this.roleId.value = roleId;
 
     ///api doesn't exist yet
-    // await _apiService.handleResponse(
-    //   loadingMsg: "Loading...",
-    //   apiMethod: () => _authService.emailAlreadyExists(
-    //       email: userModel.email.text.trim(), phone: userModel.phone.value),
-    //   onSuccess: (response) async {
-    //     await Future.delayed(const Duration(milliseconds: 800));
-    sendEmail();
-    //   },
-    // );
+    await _apiService.handleResponse(
+      loadingMsg: "Loading...",
+      apiMethod: () => _authService.emailAlreadyExists(
+          email: userModel.email.text.trim(), phone: userModel.phone.text),
+      onSuccess: (response) async {
+        await Future.delayed(const Duration(milliseconds: 800));
+        sendEmail();
+      },
+    );
   }
 
   //=================Send Mail=====================
@@ -107,7 +107,7 @@ class SignupController extends GetxController {
 
           UserModel currentUser = UserModel.fromJson(response['response'])
             ..roleId = userModel.roleId;
-          await Future.delayed(const Duration(milliseconds: 800));
+          await Future.delayed(const Duration(milliseconds: 2));
           //customErrorSnackBar(content: response['message']);
           currentUser.roleId == 1
               ? Get.offAll(() => SenderHomeScreen())

@@ -1,39 +1,37 @@
 import 'package:get/get.dart';
+import 'package:musit/globalModels/playlist_model.dart';
+import 'package:musit/services/api_service.dart';
+import 'package:musit/services/paylist_service.dart';
 
-import '../../../../../common_models/song_model.dart';
+import '../../../../../globalModels/song_model.dart';
 
-class SenderCreatedPlaylistController extends GetxController{
-  List <SongModel> songsList = [
-    SongModel(
-      imagePath: 'assets/images/thumbnail_1.png',
-      songName: 'Lost Umbrella',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/thumbnail_2.png',
-      songName: 'Clockwork Hearts',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/thumbnail_3.png',
-      songName: 'The Lighthouse Whispered',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/thumbnail_4.png',
-      songName: 'Recording 1',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/recording_thumbnail.png',
-      songName: 'The Lighthouse Whispered',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/recording_thumbnail.png',
-      songName: 'Recording 1',
-      length: '05:47 min',
-    ),
-  ];
+class SenderCreatedPlaylistController extends GetxController {
+  final _apiService = ApiService();
+  final _palylistService = PlaylistService();
 
+  List<SongModel> songsList = [];
+
+  Future<List<SongModel>> getPlayListById([int? playListId]) async {
+    List<SongModel> songs = [];
+    try {
+      await _apiService.handleGetResponse(
+        apiMethod: () =>
+            _palylistService.playListById(playListId: playListId ?? (-1)),
+        onSuccess: (success) {
+          final response = success['response'];
+          if (response != null) {
+            final playlist = PlaylistModel.fromJson(response);
+            songs = playlist.songs;
+          }
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+
+      return songs;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

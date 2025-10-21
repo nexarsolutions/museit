@@ -82,7 +82,7 @@ class AddSongsScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 24),
-          Obx(
+        /*  Obx(
                 () => controller.selectedIndex.value == 0
                 ? Expanded(
               child: ListView.builder(
@@ -94,7 +94,7 @@ class AddSongsScreen extends StatelessWidget {
                     bottom: 12,
                   ),
                   child: AddSongsWidget(
-                    model: controller.spotifyList[index],
+                    song: controller.spotifyList[index],
                   ),
                 ),
               ),
@@ -110,7 +110,7 @@ class AddSongsScreen extends StatelessWidget {
                     bottom: 12,
                   ),
                   child: AddSongsWidget(
-                    model: controller.youtubeList[index],
+                    song: controller.youtubeList[index],
                   ),
                 ),
               ),
@@ -126,7 +126,7 @@ class AddSongsScreen extends StatelessWidget {
                     bottom: 12,
                   ),
                   child: AddSongsWidget(
-                    model: controller.paidList[index],
+                    song: controller.paidList[index],
                   ),
                 ),
               ),
@@ -254,7 +254,7 @@ class AddSongsScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 24),
+        */  SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

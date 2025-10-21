@@ -36,10 +36,11 @@ class CharityCreatedPlaylistScreen extends StatelessWidget {
                         ),
                         child: GestureDetector(
                           onTap: () {},
-                          child: SongCard(
-                            showPlaylistIcon: true,
-                            model: controller.songsList[index],
-                          ),
+                          child: const SizedBox.shrink(),
+                          // child: SongCard(
+                          //   showPlaylistIcon: true,
+                          //   model: controller.songsList[index],
+                          // ),
                         ),
                       );
                     },

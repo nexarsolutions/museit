@@ -224,13 +224,14 @@ class VoiceNoteScreen extends StatelessWidget {
                     itemCount: controller.recordingList.length,
                     itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: SongCard(model: controller.recordingList[index]),
+                      child: const SizedBox.shrink(),
+                      // child: SongCard(model: controller.recordingList[index]),
                     ),
                   ),
                   SizedBox(height: Get.height * 0.05),
                   GestureDetector(
                     onTap: () {
-                      Get.to(
+                    /*  Get.to(
                         () => SenderViewRecipientScreen(
                           onPressedSave: () {
                             customBottomSheet(
@@ -262,7 +263,7 @@ class VoiceNoteScreen extends StatelessWidget {
                             );
                           },
                         ),
-                      );
+                      );*/
                     },
                     child: Stack(
                       clipBehavior: Clip.none,
@@ -286,7 +287,7 @@ class VoiceNoteScreen extends StatelessWidget {
 
                         GestureDetector(
                           onTap: () {
-                            Get.to(
+                          /*  Get.to(
                               () => SenderViewRecipientScreen(
                                 onPressedSave: () {
                                   customBottomSheet(
@@ -320,7 +321,7 @@ class VoiceNoteScreen extends StatelessWidget {
                                   );
                                 },
                               ),
-                            );
+                            );*/
                           },
                           child: Container(
                             width: 50,

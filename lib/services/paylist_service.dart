@@ -8,7 +8,7 @@ class PlaylistService {
   ///****************** APIs ********************
   ///
   Future<Map<String, dynamic>> playlists(
-      {int limit = 10, int? offset = 1}) async {
+      {int? limit = 10, int? offset = 1}) async {
     // Build query parameters
     final Map<String, String> queryParams = {};
 
@@ -33,6 +33,59 @@ class PlaylistService {
     }
 
     return await _api.get(url);
+  }
+
+  ///fetch paid songs
+  /// type id 3 for paid songs
+  ///
+  Future<Map<String, dynamic>> getPaidSongs(
+      {int typeId = 3, String search = ''}) async {
+    // Build query parameters
+    final Map<String, String> queryParams = {};
+
+    if (typeId > 0) {
+      queryParams['typeId'] = typeId.toString();
+    }
+    if (search != '') {
+      queryParams['search'] = search.toString();
+    }
+
+    // Construct URL with query parameters
+    String url = "songs/paid";
+    if (queryParams.isNotEmpty) {
+      final queryString = queryParams.entries
+          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+          .join('&');
+      url += '?$queryString';
+    }
+
+    return await _api.get(url);
+  }
+
+  ///create a playlist
+  ///
+  Future<Map<String, dynamic>> createPlaylist(Map<String, dynamic> data) async {
+    return await _api.post("playlist", data);
+  }
+
+  Future<Map<String, dynamic>> playListById({required int playListId}) async {
+    return await _api.get("playlist?playlistId=$playListId");
+  }
+
+  Future<Map<String, dynamic>> sentPlaylistApi() async {
+    return await _api.get("playlist/sent");
+  }
+
+  Future<Map<String, dynamic>> share(
+      {required List<int> toUserIds, int? typeId, int? id}) async {
+    var data = {
+      "typeId": typeId, //1-Playlist, 2-PaidSongs
+      "playlistId": id,
+      // "voiceNoteId": 5,
+      "toUserIds": toUserIds.map((e) => e).toList()
+    };
+
+    return await _api.post("share", data);
   }
 
   ///******************** Function **********************

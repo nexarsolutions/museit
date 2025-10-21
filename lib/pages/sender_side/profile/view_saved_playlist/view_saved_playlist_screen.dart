@@ -199,9 +199,10 @@ class ViewSavedPlaylistScreen extends StatelessWidget {
                           onTap: (){
                             Get.to(()=>MusicPlayerScreen(imagePath: controller.songsList[index].imagePath));
                           },
-                          child: SongCard(
-                            model: controller.songsList[index],
-                          ),
+                          child: const SizedBox.shrink(),
+                          // child: SongCard(
+                          //   model: controller.songsList[index],
+                          // ),
                         ),
                       );
                     },

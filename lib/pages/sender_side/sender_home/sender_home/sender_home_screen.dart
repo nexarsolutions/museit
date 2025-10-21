@@ -156,11 +156,11 @@ class SenderHomeScreen extends StatelessWidget {
                               padding: const EdgeInsets.only(bottom: 30.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  // Get.to(
-                                  //   () => ViewSentPlaylistScreen(
-                                  //     model: controller.recentCardList[index],
-                                  //   ),
-                                  // );
+                                  Get.to(
+                                    () => ViewSentPlaylistScreen(
+                                      playListId: playlist.id,
+                                    ),
+                                  );
                                 },
                                 child: SavedPlaylistCard(
                                   showDateTime: true,

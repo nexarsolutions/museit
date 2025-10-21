@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
-import 'package:musit/pages/charity_side/charity_home/charity_home/charity_home_screen.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_created_playlist/controller/sender_created_playlist_controller.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
+import 'package:musit/services/api_service.dart';
+import 'package:musit/services/paylist_service.dart';
+import 'package:musit/utils/custom_error_snack_bar.dart';
+import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
-import 'package:musit/widgets/custom_button.dart';
-
 import '../../../../common_widgets/song_card.dart';
 import '../playlist_sent_bottom_sheet/playlist_sent_bottom_sheet.dart';
+import 'controller/sender_created_playlist_controller.dart';
+import '../../../../../globalModels/song_model.dart';
+
 class SenderCreatedPlaylistScreen extends StatelessWidget {
-  SenderCreatedPlaylistScreen({super.key});
+  SenderCreatedPlaylistScreen({super.key, this.playListId});
+
+  final int? playListId;
   final controller = Get.put(SenderCreatedPlaylistController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,121 +27,155 @@ class SenderCreatedPlaylistScreen extends StatelessWidget {
         children: [
           CustomAppBar(text: 'Created Playlist', isBack: true),
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    primary: false,
-                    padding: EdgeInsets.only(bottom: 30),
-                    itemCount: controller.songsList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 16,
-                        ),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: SongCard(
-                            showPlaylistIcon: true,
-                            model: controller.songsList[index],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            child: FutureBuilder<List<SongModel>>(
+              future: controller.getPlayListById(playListId),
+              builder: (context, snapshot) {
+                // 🌀 Loading State
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                // ⚠️ Error State
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      "Something went wrong: ${snapshot.error}",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                // 📭 Empty Data
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No songs found in this playlist",
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  );
+                }
+
+                // ✅ Data Available
+                final songs = snapshot.data!;
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
                     children: [
-                      GestureDetector(
-                        onTap: () {
-
+                      // inside FutureBuilder (replace ListView.builder)
+                      ReorderableListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        onReorder: (oldIndex, newIndex) {
+                          if (newIndex > oldIndex) newIndex -= 1;
+                          final item = songs.removeAt(oldIndex);
+                          songs.insert(newIndex, item);
                         },
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned(
-                              left: 1,
-                              right: 1,
-                              bottom: -3,
-                              child: Container(
-                                height: 30,
-                                width: 48,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  ),
-                                  color: blueColor,
-                                ),
-                              ),
-                            ),
-
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color: redColor,
-                              ),
-                              child: Image.asset(
-                                'assets/images/delete_icon.png',
-                                scale: 3,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 8,),
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(()=>SenderViewRecipientScreen(onPressedSave: () {
-                            playlistSentBottomSheet();
-                          },));
+                        itemCount: songs.length,
+                        buildDefaultDragHandles: false,
+                        // we'll use custom handle
+                        itemBuilder: (context, index) {
+                          final song = songs[index];
+                          return SongCard(
+                            key: ValueKey(song.id),
+                            model: song,
+                            showPlaylistIcon: true, // drag handle icon inside
+                          );
                         },
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned(
-                              left: 1,
-                              right: 1,
-                              bottom: -3,
-                              child: Container(
-                                height: 30,
-                                width: 48,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  ),
-                                  color: blueColor,
-                                ),
-                              ),
-                            ),
-
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color: blackColor,
-                              ),
-                              child: Image.asset(
-                                'assets/images/double_forwareded_icon.png',
-                                scale: 3,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 24,),
-                ],
+                );
+              },
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildActionButton(
+                color: redColor,
+                iconPath: 'assets/images/delete_icon.png',
+                onTap: () {
+                  // TODO: Add delete playlist logic
+                },
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                color: blackColor,
+                iconPath: 'assets/images/double_forwareded_icon.png',
+                onTap: () {
+                  Get.to(() => SenderViewRecipientScreen(
+                        onPressedSave: (List<int> selectedUsers) async {
+                          if (selectedUsers.isNotEmpty) {
+                            await ApiService().handleResponse(
+                              apiMethod: () => PlaylistService().share(
+                                  toUserIds: selectedUsers,
+                                  typeId: 1,
+                                  id: playListId),
+                              onSuccess: (success) async {
+                                await Future.delayed(
+                                    Duration(milliseconds: 1500));
+                                playlistSentBottomSheet(() {
+                                  Get.offAll(() => SenderHomeScreen());
+                                });
+                              },
+                            );
+                          } else {
+                            errorDialog(content: "Nothing to share");
+                          }
+                        },
+                      ));
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  // 🔘 Reusable Action Button
+  Widget _buildActionButton({
+    required Color color,
+    required String iconPath,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            left: 1,
+            right: 1,
+            bottom: -3,
+            child: Container(
+              height: 30,
+              width: 48,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                ),
+                color: blueColor,
               ),
             ),
+          ),
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: color,
+            ),
+            child: Image.asset(iconPath, scale: 3),
           ),
         ],
       ),

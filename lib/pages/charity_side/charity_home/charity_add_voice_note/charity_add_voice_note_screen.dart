@@ -221,7 +221,8 @@ class CharityAddVoiceNoteScreen extends StatelessWidget {
                     itemCount: controller.recordingList.length,
                     itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: SongCard(model: controller.recordingList[index]),
+                      child: const SizedBox.shrink(),
+                      // child: SongCard(model: controller.recordingList[index]),
                     ),
                   ),
                   SizedBox(height: Get.height * 0.05),

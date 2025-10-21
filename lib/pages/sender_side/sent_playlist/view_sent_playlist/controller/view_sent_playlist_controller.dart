@@ -1,28 +1,33 @@
 import 'package:get/get.dart';
-
-import '../../../../../common_models/song_model.dart';
+import 'package:musit/globalModels/playlist_model.dart';
+import 'package:musit/services/api_service.dart';
+import 'package:musit/services/paylist_service.dart';
 
 class ViewSentPlaylistController extends GetxController {
-  List<SongModel> songsList = [
-    SongModel(
-      imagePath: 'assets/images/thumbnail_1.png',
-      songName: 'Lost Umbrella',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/thumbnail_2.png',
-      songName: 'Clockwork Hearts',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/thumbnail_3.png',
-      songName: 'The Lighthouse Whispered',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/thumbnail_4.png',
-      songName: 'Recording 1',
-      length: '05:47 min',
-    ),
-  ];
+  final _apiService = ApiService();
+  final _playlistService = PlaylistService();
+
+  Future<PlaylistModel?> getPlayListById([int? playListId]) async {
+    try {
+      PlaylistModel? playlist;
+
+      await _apiService.handleGetResponse(
+        apiMethod: () =>
+            _playlistService.playListById(playListId: playListId ?? -1),
+        onSuccess: (success) {
+          final response = success['response'];
+          if (response != null) {
+            playlist = PlaylistModel.fromJson(response);
+          }
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+
+      return playlist;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -33,7 +33,8 @@ final controller = Get.put(RecievedSongsController());
                         ),
                       );
                     },
-                    child: SongCard(model: controller.songsList[index]),
+                    child: const SizedBox.shrink(),
+                    // child: SongCard(model: controller.songsList[index]),
                   ),
                 );
               },

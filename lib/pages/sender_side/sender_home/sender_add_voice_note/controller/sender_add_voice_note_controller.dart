@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musit/utils/custom_error_snack_bar.dart';
+import 'package:musit/utils/dialog_utilities.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter_sound/flutter_sound.dart' as fs;
+import 'dart:io';
 
 import '../../../../../common_models/song_model.dart';
 
@@ -13,73 +16,101 @@ class SenderAddVoiceNoteController extends GetxController {
   final PlayerController audioPlayerController = PlayerController();
 
   RxBool isRecording = false.obs;
+  RxBool isPlaying = false.obs;
+
   String? currentRecordingPath;
   Rx<PlayerState> playerState = PlayerState.stopped.obs;
+
+  final recordingList = <SongModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Initialize both controllers.
     recorder.openRecorder();
+
+    // Listen to player state updates
     audioPlayerController.onPlayerStateChanged.listen((state) {
       playerState.value = state;
+      isPlaying.value = (state == PlayerState.playing);
     });
   }
 
+  // --- Start recording ---
   Future<void> startRecording() async {
-    final status = await Permission.microphone.request();
-    if (status.isGranted) {
-      final dir = await getTemporaryDirectory();
-      currentRecordingPath = '${dir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
-
-      // The codec parameter is not needed here.
-      await recorderController.record(
-        path: currentRecordingPath!,
-      );
-      isRecording.value = true;
-    } else {
-      Get.snackbar("Permission Denied", "Microphone access is required to record voice notes.");
+    final micPermission = await Permission.microphone.request();
+    if (!micPermission.isGranted) {
+      Get.snackbar("Permission Denied",
+          "Microphone access is required to record voice notes.");
+      return;
     }
+
+    final dir = await getTemporaryDirectory();
+    currentRecordingPath =
+        '${dir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
+
+    await recorderController.record(path: currentRecordingPath!);
+    isRecording.value = true;
   }
+
+  // --- Stop recording ---
   Future<void> stopRecording() async {
-    // Stop the waveform recorder controller.
     final path = await recorderController.stop();
     isRecording.value = false;
+
     if (path != null) {
       currentRecordingPath = path;
-      // Prepare the player controller with the recorded file.
-      audioPlayerController.preparePlayer(path: path, shouldExtractWaveform: true);
+      await audioPlayerController.preparePlayer(
+        path: path,
+        shouldExtractWaveform: true,
+      );
     }
   }
 
+  // --- Play or Pause current recording ---
   Future<void> togglePlayPause() async {
     if (currentRecordingPath == null) return;
+
     if (audioPlayerController.playerState == PlayerState.playing) {
-      audioPlayerController.pausePlayer();
+      await audioPlayerController.pausePlayer();
+      isPlaying.value = false;
     } else {
-      audioPlayerController.startPlayer();
+      await audioPlayerController.startPlayer();
+      isPlaying.value = true;
     }
   }
 
-  void refreshRecording() {
+  // --- Reset current recording session ---
+  Future<void> refreshRecording() async {
+    await audioPlayerController.stopPlayer();
+    recorderController.reset();
+
     currentRecordingPath = null;
     isRecording.value = false;
-    audioPlayerController.stopPlayer();
-    recorderController.reset();
+    isPlaying.value = false;
   }
 
-  List<SongModel> recordingList = [
-    SongModel(
-      imagePath: 'assets/images/recording_thumbnail.png',
-      songName: 'Recording 1',
-      length: '05:47 min',
-    ),
-    SongModel(
-      imagePath: 'assets/images/recording_thumbnail.png',
-      songName: 'Recording 2',
-      length: '05:47 min',
-    ),
-  ];
+  // --- Save current recording and reset UI ---
+  Future<void> saveRecording() async {
+    if (currentRecordingPath == null ||
+        !(File(currentRecordingPath!).existsSync())) {
+      errorDialog(title: "No Recording", content: "Record something before saving.");
+      return;
+    }
+
+    final fileName = "Recording ${recordingList.length + 1}";
+    recordingList.add(
+      SongModel(
+        imagePath: 'assets/images/recording_thumbnail.png',
+        songName: fileName,
+        link: currentRecordingPath,
+        length: '00:00 min', // can update if you track duration later
+      ),
+    );
+
+    await refreshRecording();
+
+    customErrorSnackBar(content: "$fileName has been added to your list.");
+  }
 
   @override
   void onClose() {
