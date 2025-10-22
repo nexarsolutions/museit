@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/utils/dialog_utilities.dart';
@@ -8,7 +7,7 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter_sound/flutter_sound.dart' as fs;
 import 'dart:io';
 
-import '../../../../../common_models/song_model.dart';
+import '../../../../../globalModels/song_model.dart';
 
 class SenderAddVoiceNoteController extends GetxController {
   final fs.FlutterSoundRecorder recorder = fs.FlutterSoundRecorder();
@@ -93,17 +92,17 @@ class SenderAddVoiceNoteController extends GetxController {
   Future<void> saveRecording() async {
     if (currentRecordingPath == null ||
         !(File(currentRecordingPath!).existsSync())) {
-      errorDialog(title: "No Recording", content: "Record something before saving.");
+      errorDialog(
+          title: "No Recording", content: "Record something before saving.");
       return;
     }
 
     final fileName = "Recording ${recordingList.length + 1}";
     recordingList.add(
       SongModel(
-        imagePath: 'assets/images/recording_thumbnail.png',
-        songName: fileName,
+        image: 'assets/images/recording_thumbnail.png',
+        name: fileName,
         link: currentRecordingPath,
-        length: '00:00 min', // can update if you track duration later
       ),
     );
 

@@ -11,10 +11,12 @@ class SongCard extends StatelessWidget {
     super.key,
     required this.model,
     this.showPlaylistIcon = false,
+    this.index,
   });
 
   final SongModel model;
   final bool showPlaylistIcon;
+  final int? index;
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +58,8 @@ class SongCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: _buildImageWithShimmer(model.paidSong != null
-                      ? model.paidSong!.image
-                      : model.image),
+                      ? model.paidSong!.image.showImage
+                      : model.image.showImage),
                 ),
 
                 const SizedBox(width: 12),
@@ -69,8 +71,8 @@ class SongCard extends StatelessWidget {
                     children: [
                       Text(
                         model.paidSong != null
-                            ? model.paidSong!.name ?? "Unknown Song"
-                            : "Unknown Song",
+                            ? model.paidSong?.name ?? "Unknown Song"
+                            : model.name ?? "Unknown Song",
                         style: manRopeSemiBold.copyWith(fontSize: 14),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -91,7 +93,7 @@ class SongCard extends StatelessWidget {
 
                 if (showPlaylistIcon)
                   ReorderableDragStartListener(
-                    index: model.id ?? 0,
+                    index: index??0,
                     child: Image.asset('assets/images/playlist_icon.png',
                         scale: 3.5),
                   ),

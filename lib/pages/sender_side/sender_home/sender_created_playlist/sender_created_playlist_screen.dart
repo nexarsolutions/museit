@@ -76,13 +76,28 @@ class SenderCreatedPlaylistScreen extends StatelessWidget {
                         },
                         itemCount: songs.length,
                         buildDefaultDragHandles: false,
-                        // we'll use custom handle
+                        // 🧩 Custom feedback UI to remove double shadow
+                        proxyDecorator: (Widget child, int index,
+                            Animation<double> animation) {
+                          return Material(
+                            color: Colors.transparent,
+                            elevation: 0, // remove any extra shadow
+                            child:
+                                child, // still shows the same widget, but no extra overlay shadow
+                          );
+                        },
+
                         itemBuilder: (context, index) {
                           final song = songs[index];
-                          return SongCard(
+                          return Padding(
                             key: ValueKey(song.id),
-                            model: song,
-                            showPlaylistIcon: true, // drag handle icon inside
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: SongCard(
+                              key: ValueKey(song.id),
+                              model: song,
+                              index: index,
+                              showPlaylistIcon: true, // drag handle icon inside
+                            ),
                           );
                         },
                       ),
@@ -127,7 +142,13 @@ class SenderCreatedPlaylistScreen extends StatelessWidget {
                               },
                             );
                           } else {
-                            errorDialog(content: "Nothing to share");
+                            confirmationDialog(
+                                content: "No user selected.",
+                                confirmText: "Select Later",
+                                cancelText: "Select Now",
+                                onConfirm: () {
+                                  Get.offAll(() => SenderHomeScreen());
+                                });
                           }
                         },
                       ));

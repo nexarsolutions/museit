@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:musit/common_models/song_model.dart' as fend;
 import 'package:musit/constants/global_list.dart';
 import 'package:musit/globalModels/playlist_model.dart';
 import 'package:musit/services/upload_file_service.dart';
@@ -24,7 +23,7 @@ class SenderCreatePlaylistController extends GetxController {
   final searchController = TextEditingController();
   RxString searchQuery = ''.obs;
 
-  Future<void> createPlaylist(RxList<fend.SongModel> recordingList) async {
+  Future<void> createPlaylist(RxList<SongModel> recordingList) async {
     try {
       playlistModel.purposeId = getPurposeIndex();
       var data = playlistModel.toJson();
@@ -46,14 +45,19 @@ class SenderCreatePlaylistController extends GetxController {
 
       if (recordingList.isNotEmpty) {
         List<String> recordingPaths =
-            recordingList.map((e) => e.songName).toList();
+            recordingList.map((e) => e.link).whereType<String>().toList();
+
+        if (recordingPaths.isEmpty) {
+          errorDialog(content: "Something went wrong try again later");
+          return;
+        }
 
         try {
           List<String> recordingUrls =
               await _fileService.uploadMultipleImagesFast(recordingPaths);
           if (recordingUrls.isNotEmpty) {
             data['voiceNotes'] = recordingUrls
-                .map((vc) => {"name": vc.split('.').first, "link": vc});
+                .map((vc) => {"name": vc.split('.').first, "link": vc}).toList();
           }
         } catch (e) {
           errorDialog(content: e.toString());

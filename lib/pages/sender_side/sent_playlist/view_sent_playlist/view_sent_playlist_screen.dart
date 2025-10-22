@@ -36,7 +36,9 @@ class ViewSentPlaylistScreen extends StatelessWidget {
               child: Center(
                 child: GestureDetector(
                   onTap: () {
-                    Get.to(() => PlaylistRecipientScreen());
+                    Get.to(() => PlaylistRecipientScreen(
+                          playlistId: playListId,
+                        ));
                   },
                   child: Text(
                     'See Recipients',
@@ -295,16 +297,28 @@ class ViewSentPlaylistScreen extends StatelessWidget {
                           padding: EdgeInsets.only(bottom: 30),
                           itemCount: model.songs.length,
                           itemBuilder: (context, index) {
+                            final song = model.songs[index];
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: GestureDetector(
                                 onTap: () {
-                                  // Get.to(
-                                  //   () => MusicPlayerScreen(
-                                  //     imagePath:
-                                  //         controller.songsList[index].imagePath,
-                                  //   ),
-                                  // );
+                                  String songImage = song.paidSong != null
+                                      ? song.paidSong?.image.showImage ?? ''
+                                      : song.image.showImage;
+                                  String songTitle = song.paidSong != null
+                                      ? song.paidSong?.name.withNa ?? ''
+                                      : song.name.withNa;
+                                  String songUrl = song.paidSong != null
+                                      ? song.paidSong?.link.showImage ?? ''
+                                      : song.link.showImage;
+
+                                  Get.to(
+                                    () => MusicPlayerScreen(
+                                      imagePath: songImage,
+                                      songTitle: songTitle,
+                                      songUrl: songUrl,
+                                    ),
+                                  );
                                 },
                                 child: SongCard(model: model.songs[index]),
                               ),

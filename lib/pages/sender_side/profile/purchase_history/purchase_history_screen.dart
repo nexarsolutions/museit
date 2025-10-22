@@ -109,7 +109,7 @@ class PurchaseHistoryScreen extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
                                     onTap: () {
-                                      Get.to(()=>MusicPlayerScreen(imagePath: controller.paidSongsList[index].imagePath));
+                                      // Get.to(()=>MusicPlayerScreen(imagePath: controller.paidSongsList[index].imagePath));
 
                                     },
                                     child: PaidSongsWidget(

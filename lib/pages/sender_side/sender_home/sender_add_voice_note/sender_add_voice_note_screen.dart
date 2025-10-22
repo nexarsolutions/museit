@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/globalModels/song_model.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_add_voice_note/controller/sender_add_voice_note_controller.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
@@ -29,129 +30,123 @@ class SenderAddVoiceNoteScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 50),
                   Obx(
-                        () =>
-                        Column(
+                    () => Column(
+                      children: [
+                        // --- Waveform display ---
+                        if (controller.isRecording.value)
+                          AudioWaveforms(
+                            size: Size(Get.width * 0.9, 100),
+                            recorderController: controller.recorderController,
+                            waveStyle: const WaveStyle(
+                              showDurationLabel: false,
+                              spacing: 8.0,
+                              waveColor: Color(0xFF8C7FAC),
+                              middleLineColor: Color(0xFF7695CA),
+                              showBottom: true,
+                              extendWaveform: true,
+                              showMiddleLine: false,
+                            ),
+                          )
+                        else if (controller.currentRecordingPath != null)
+                          AudioFileWaveforms(
+                            size: Size(Get.width * 0.9, 100),
+                            playerController: controller.audioPlayerController,
+                            enableSeekGesture: true,
+                            playerWaveStyle: const PlayerWaveStyle(
+                              spacing: 8.0,
+                              fixedWaveColor: Color(0xFF8C7FAC),
+                              liveWaveColor: Color(0xFF7695CA),
+                              showSeekLine: true,
+                              showBottom: true,
+                              seekLineColor: Colors.white,
+                            ),
+                          )
+                        else
+                          const _EmptyWaveform(),
+
+                        const SizedBox(height: 20),
+
+                        // --- Control Buttons (Play / Record / Reset) ---
+                        Stack(
+                          alignment: Alignment.center,
+                          clipBehavior: Clip.none,
                           children: [
-                            // --- Waveform display ---
-                            if (controller.isRecording.value)
-                              AudioWaveforms(
-                                size: Size(Get.width * 0.9, 100),
-                                recorderController: controller
-                                    .recorderController,
-                                waveStyle: const WaveStyle(
-                                  showDurationLabel: false,
-                                  spacing: 8.0,
-                                  waveColor: Color(0xFF8C7FAC),
-                                  middleLineColor: Color(0xFF7695CA),
-                                  showBottom: true,
-                                  extendWaveform: true,
-                                  showMiddleLine: false,
-                                ),
-                              )
-                            else
-                              if (controller.currentRecordingPath != null)
-                                AudioFileWaveforms(
-                                  size: Size(Get.width * 0.9, 100),
-                                  playerController: controller
-                                      .audioPlayerController,
-                                  enableSeekGesture: true,
-                                  playerWaveStyle: const PlayerWaveStyle(
-                                    spacing: 8.0,
-                                    fixedWaveColor: Color(0xFF8C7FAC),
-                                    liveWaveColor: Color(0xFF7695CA),
-                                    showSeekLine: true,
-                                    showBottom: true,
-                                    seekLineColor: Colors.white,
-                                  ),
-                                )
-                              else
-                                const _EmptyWaveform(),
-
-                            const SizedBox(height: 20),
-
-                            // --- Control Buttons (Play / Record / Reset) ---
-                            Stack(
-                              alignment: Alignment.center,
-                              clipBehavior: Clip.none,
-                              children: [
-                                Container(
-                                  padding:
+                            Container(
+                              padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
-                                  width: 180,
-                                  height: 34,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        const Color(0xFF8C7FAC).withOpacity(
-                                            0.15),
-                                        const Color(0xFF7695CA).withOpacity(
-                                            0.15),
-                                      ],
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
+                              width: 180,
+                              height: 34,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    const Color(0xFF8C7FAC).withOpacity(0.15),
+                                    const Color(0xFF7695CA).withOpacity(0.15),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          if (controller.currentRecordingPath !=
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (controller.currentRecordingPath !=
                                               null &&
-                                              !controller.isRecording.value) {
-                                            controller.togglePlayPause();
-                                          }
-                                        },
-                                        child: Icon(
-                                          controller.isPlaying.value
-                                              ? Icons.pause_circle
-                                              : Icons.play_circle,
-                                          color: blackColor,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: controller.refreshRecording,
-                                        child: Image.asset(
-                                          'assets/images/refresh_icon.png',
-                                          scale: 3.5,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    if (controller.isRecording.value) {
-                                      controller.stopRecording();
-                                    } else {
-                                      controller.startRecording();
-                                    }
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    width: 44,
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: controller.isRecording.value
-                                          ? Colors.red
-                                          : blackColor,
+                                          !controller.isRecording.value) {
+                                        controller.togglePlayPause();
+                                      }
+                                    },
+                                    child: Icon(
+                                      controller.isPlaying.value
+                                          ? Icons.pause_circle
+                                          : Icons.play_circle,
+                                      color: blackColor,
                                     ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: controller.refreshRecording,
                                     child: Image.asset(
-                                      'assets/images/recording_icon.png',
-                                      scale: 4,
-                                      color: controller.isRecording.value
-                                          ? Colors.white
-                                          : null,
+                                      'assets/images/refresh_icon.png',
+                                      scale: 3.5,
                                     ),
                                   ),
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                if (controller.isRecording.value) {
+                                  controller.stopRecording();
+                                } else {
+                                  controller.startRecording();
+                                }
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: controller.isRecording.value
+                                      ? Colors.red
+                                      : blackColor,
                                 ),
-                              ],
+                                child: Image.asset(
+                                  'assets/images/recording_icon.png',
+                                  scale: 4,
+                                  color: controller.isRecording.value
+                                      ? Colors.white
+                                      : null,
+                                ),
+                              ),
                             ),
                           ],
                         ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 24),
 
@@ -200,27 +195,25 @@ class SenderAddVoiceNoteScreen extends StatelessWidget {
 
                   // --- List of Saved Recordings ---
                   Obx(
-                        () =>
-                        ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 24),
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: controller.recordingList.length,
-                          itemBuilder: (context, index) =>
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: const SizedBox.shrink(),
-                                // child: SongCard(model: controller
-                                //     .recordingList[index]),
-                              ),
-                        ),
+                    () => ListView.builder(
+                      padding: const EdgeInsets.only(bottom: 24),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.recordingList.length,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        // child: const SizedBox.shrink(),
+                        child: SongCard(model: SongModel()),
+                      ),
+                    ),
                   ),
 
                   SizedBox(height: Get.height * 0.05),
 
                   // --- Next Button ---
                   GestureDetector(
-                    onTap: () =>cPlayController.createPlaylist(controller.recordingList),
+                    onTap: () => cPlayController
+                        .createPlaylist(controller.recordingList),
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [

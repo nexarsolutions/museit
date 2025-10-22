@@ -197,7 +197,7 @@ class ViewSavedPlaylistScreen extends StatelessWidget {
                         ),
                         child: GestureDetector(
                           onTap: (){
-                            Get.to(()=>MusicPlayerScreen(imagePath: controller.songsList[index].imagePath));
+                            // Get.to(()=>MusicPlayerScreen(imagePath: controller.songsList[index].imagePath));
                           },
                           child: const SizedBox.shrink(),
                           // child: SongCard(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:musit/services/upload_file_service.dart';
+import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AudioPickerWidget extends StatefulWidget {
@@ -92,21 +93,19 @@ class _AudioPickerWidgetState extends State<AudioPickerWidget> {
         if (fileName != null) {
           uploadedFileNames.add(fileName);
         } else {
-          Get.snackbar(
-              'Upload Error', 'Failed to upload ${audioPath.split('/').last}',
-              snackPosition: SnackPosition.BOTTOM);
+          customErrorSnackBar(
+              content: 'Failed to upload ${audioPath.split('/').last}');
         }
       }
 
       if (uploadedFileNames.isNotEmpty) {
         widget.onUploadComplete(uploadedFileNames);
-        Get.snackbar('Success',
-            'Uploaded ${uploadedFileNames.length} file(s) successfully!',
-            snackPosition: SnackPosition.BOTTOM);
+        customErrorSnackBar(
+            content:
+                'Uploaded ${uploadedFileNames.length} file(s) successfully!');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Upload failed: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      customErrorSnackBar(content: 'Upload failed: $e');
     } finally {
       // 3️⃣ Reset for reuse
       setState(() {

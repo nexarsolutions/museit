@@ -14,7 +14,7 @@ class ApiService {
   static String baseUrl = 'http://192.168.18.13:8084/api/';
   static String serverUrl = 'http://192.168.18.13:8084/';
 
-  static final String imageUrl = '${serverUrl}image/';
+  static final String imageUrl = '${serverUrl}file/';
 
   ///get header with/without token
   Future<Map<String, String>> _getHeaders() async {

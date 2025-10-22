@@ -224,12 +224,12 @@ class SenderViewCommunityScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 16),
                         child: GestureDetector(
                           onTap: () {
-                            Get.to(
-                                  () => MusicPlayerScreen(
-                                imagePath:
-                                controller.songsList[index].imagePath,
-                              ),
-                            );
+                            // Get.to(
+                            //       () => MusicPlayerScreen(
+                            //     imagePath:
+                            //     controller.songsList[index].imagePath,
+                            //   ),
+                            // );
                           },
                           child: const SizedBox.shrink(),
                           // child: SongCard(model: controller.songsList[index]),
