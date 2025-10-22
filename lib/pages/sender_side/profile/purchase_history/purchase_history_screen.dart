@@ -112,9 +112,10 @@ class PurchaseHistoryScreen extends StatelessWidget {
                                       // Get.to(()=>MusicPlayerScreen(imagePath: controller.paidSongsList[index].imagePath));
 
                                     },
-                                    child: PaidSongsWidget(
-                                      model: controller.paidSongsList[index],
-                                    ),
+                                    child: const SizedBox.shrink(),
+                                    // child: PaidSongsWidget(
+                                    //   model: controller.paidSongsList[index],
+                                    // ),
                                   );
                                 },
                               ),

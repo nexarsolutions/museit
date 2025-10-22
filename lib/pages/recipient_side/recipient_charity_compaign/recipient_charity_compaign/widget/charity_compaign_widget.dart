@@ -105,7 +105,7 @@ class CharityCompaignWidget extends StatelessWidget {
                             onTap: () {
                               Get.to(
                                 () => PaymentDetailsScreen(
-                                  isSender: false,
+                                  // isSender: false,
                                   confirmOnTap: () {
                                     Get.offAll(() => RecipientHomeScreen());
                                   },

@@ -44,8 +44,11 @@ class SenderCreatePlaylistController extends GetxController {
       }
 
       if (recordingList.isNotEmpty) {
-        List<String> recordingPaths =
-            recordingList.map((e) => e.link).whereType<String>().toList();
+        List<String> recordingPaths = recordingList
+            .map((e) => e.link)
+            .whereType<String>()
+            .where((path) => path.isNotEmpty)
+            .toList();
 
         if (recordingPaths.isEmpty) {
           errorDialog(content: "Something went wrong try again later");
@@ -57,7 +60,8 @@ class SenderCreatePlaylistController extends GetxController {
               await _fileService.uploadMultipleImagesFast(recordingPaths);
           if (recordingUrls.isNotEmpty) {
             data['voiceNotes'] = recordingUrls
-                .map((vc) => {"name": vc.split('.').first, "link": vc}).toList();
+                .map((vc) => {"name": vc.split('.').first, "link": vc})
+                .toList();
           }
         } catch (e) {
           errorDialog(content: e.toString());
@@ -83,29 +87,6 @@ class SenderCreatePlaylistController extends GetxController {
       );
     } catch (e) {
       errorDialog(content: e.toString());
-    }
-  }
-
-  Future<List<SongModel>> getSongs({int typeId = 3, String search = ''}) async {
-    try {
-      List<SongModel> songs = [];
-      await _apiService.handleGetResponse(
-        apiMethod: () =>
-            _playlistService.getPaidSongs(typeId: typeId, search: search),
-        onSuccess: (response) {
-          final responseData = SongResponseModel.fromJson(response);
-          final songsList = responseData.response?.songs ?? [];
-          if (songsList.isNotEmpty) {
-            songs.assignAll(songsList);
-          }
-        },
-        onError: (error) {
-          throw Exception(error);
-        },
-      );
-      return songs;
-    } catch (e) {
-      rethrow;
     }
   }
 

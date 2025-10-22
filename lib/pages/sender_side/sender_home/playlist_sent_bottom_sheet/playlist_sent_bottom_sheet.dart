@@ -5,7 +5,7 @@ import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_scre
 import 'package:musit/widgets/custom_bottom_sheet.dart';
 import 'package:musit/widgets/custom_button.dart';
 
-void playlistSentBottomSheet([void Function()? onPressed]) {
+void playlistSentBottomSheet([void Function()? onPressed, String? content]) {
   customBottomSheet(
       child: Column(
     children: [
@@ -13,7 +13,7 @@ void playlistSentBottomSheet([void Function()? onPressed]) {
         height: 20,
       ),
       Text(
-        'Your MUSEiT playlist has been sent',
+        content ?? 'Your MUSEiT playlist has been sent',
         style: manRopeSemiBold.copyWith(
           fontSize: 14,
           fontWeight: FontWeight.w700,

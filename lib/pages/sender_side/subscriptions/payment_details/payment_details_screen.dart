@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
@@ -10,11 +9,11 @@ import '../../../../widgets/custom_text_field.dart';
 import 'controller/payment_details_controller.dart';
 
 class PaymentDetailsScreen extends StatelessWidget {
-  PaymentDetailsScreen({super.key, this.confirmOnTap, required this.isSender});
+  PaymentDetailsScreen({super.key, this.confirmOnTap});
+
   final controller = Get.put(PaymentDetailsController());
   final formKey = GlobalKey<FormState>();
   final void Function()? confirmOnTap;
-  final bool isSender;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,10 @@ class PaymentDetailsScreen extends StatelessWidget {
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          CustomAppBar(text: 'Payment Details',isBack: true,),
+          CustomAppBar(
+            text: 'Payment Details',
+            isBack: true,
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -49,8 +51,7 @@ class PaymentDetailsScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Expiry',
@@ -71,8 +72,7 @@ class PaymentDetailsScreen extends StatelessWidget {
                         SizedBox(width: 12),
                         Expanded(
                           child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'CVV',
@@ -106,22 +106,26 @@ class PaymentDetailsScreen extends StatelessWidget {
                       keyboardType: TextInputType.name,
                       validator: (p0) => isCardValid(p0),
                     ),
-                    SizedBox(height: Get.height*0.4,),
+                    SizedBox(
+                      height: Get.height * 0.4,
+                    ),
                     Center(
                       child: CustomButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             if (confirmOnTap != null) {
                               confirmOnTap!();
-                            }
-                            else
+                            } else {
                               Get.back();
+                            }
                           }
                         },
                         text: 'Pay Now',
                       ),
                     ),
-                    SizedBox(height: 24,),
+                    SizedBox(
+                      height: 24,
+                    ),
                   ],
                 ),
               ),
@@ -132,9 +136,3 @@ class PaymentDetailsScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-

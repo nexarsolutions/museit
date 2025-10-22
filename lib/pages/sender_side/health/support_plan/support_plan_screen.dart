@@ -28,7 +28,7 @@ class SupportPlanScreen extends StatelessWidget {
                     subscribeOnTap: () {
                       Get.to(
                         () => PaymentDetailsScreen(
-                          isSender: true,
+                          // isSender: true,
 
                           confirmOnTap: () {
                             customBottomSheet(
@@ -71,7 +71,7 @@ class SupportPlanScreen extends StatelessWidget {
                     subscribeOnTap: () {
                       Get.to(
                         () => PaymentDetailsScreen(
-                          isSender: true,
+                          // isSender: true,
                           confirmOnTap: () {
                             customBottomSheet(
                               padding: EdgeInsets.only(
@@ -113,7 +113,7 @@ class SupportPlanScreen extends StatelessWidget {
                     subscribeOnTap: () {
                       Get.to(
                         () => PaymentDetailsScreen(
-                          isSender: true,
+                          // isSender: true,
 
                           confirmOnTap: () {
                             customBottomSheet(

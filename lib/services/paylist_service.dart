@@ -4,6 +4,7 @@ import 'package:musit/globalModels/playlist_model.dart';
 import 'package:musit/services/api_service.dart';
 
 import '../globalModels/recipient_response_model.dart';
+import '../globalModels/song_model.dart';
 
 class PlaylistService {
   final _api = ApiService();
@@ -42,11 +43,11 @@ class PlaylistService {
   /// type id 3 for paid songs
   ///
   Future<Map<String, dynamic>> getPaidSongs(
-      {int typeId = 3, String search = ''}) async {
+      {int? typeId, String search = ''}) async {
     // Build query parameters
     final Map<String, String> queryParams = {};
 
-    if (typeId > 0) {
+    if (typeId != null && typeId > 0) {
       queryParams['typeId'] = typeId.toString();
     }
     if (search != '') {
@@ -84,15 +85,22 @@ class PlaylistService {
   }
 
   Future<Map<String, dynamic>> share(
-      {required List<int> toUserIds, int? typeId, int? id}) async {
+      {required List<int> toUserIds,
+      int? typeId,
+      int? id,
+      int? voiceNoteId}) async {
     var data = {
       "typeId": typeId, //1-Playlist, 2-PaidSongs
-      "playlistId": id,
-      // "voiceNoteId": 5,
+      if (typeId == 1) "playlistId": id else if (typeId == 2) "paidSongsId": id,
+      if (voiceNoteId != null) "voiceNoteId": 5,
       "toUserIds": toUserIds.map((e) => e).toList()
     };
 
     return await _api.post("share", data);
+  }
+
+  Future<Map<String, dynamic>> voicenote(Map<String, dynamic> data) async {
+    return await _api.post("voicenote", data);
   }
 
   ///******************** Function **********************
@@ -118,7 +126,8 @@ class PlaylistService {
     }
   }
 
-  Future<List<RecipientUserModel>> getPlaylistRecipientUsers({int? playlistId}) async {
+  Future<List<RecipientUserModel>> getPlaylistRecipientUsers(
+      {int? playlistId}) async {
     try {
       List<RecipientUserModel> userList = [];
       await _api.handleGetResponse(
@@ -135,6 +144,28 @@ class PlaylistService {
         },
       );
       return userList;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<SongModel>> getSongs({int? typeId, String search = ''}) async {
+    try {
+      List<SongModel> songs = [];
+      await _api.handleGetResponse(
+        apiMethod: () => getPaidSongs(typeId: typeId, search: search),
+        onSuccess: (response) {
+          final responseData = SongResponseModel.fromJson(response);
+          final songsList = responseData.response?.songs ?? [];
+          if (songsList.isNotEmpty) {
+            songs.assignAll(songsList);
+          }
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+      return songs;
     } catch (e) {
       rethrow;
     }

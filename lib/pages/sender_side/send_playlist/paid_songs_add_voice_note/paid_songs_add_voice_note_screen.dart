@@ -1,20 +1,26 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/globalModels/song_model.dart';
+import 'package:musit/services/upload_file_service.dart';
+import 'package:musit/utils/extensions.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
-import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:musit/widgets/custom_voice_recording_screen.dart';
+import 'package:shimmer/shimmer.dart';
 
-import '../../../../common_widgets/song_card.dart';
-import '../../../charity_side/charity_home/charity_add_voice_note/charity_add_voice_note_screen.dart';
-import '../paid_songs_recipient/paid_songs_recipient_screen.dart';
-import 'controller/paid_songs_add_voice_note_controller.dart';
+import '../../../../services/api_service.dart';
+import '../../../../services/paylist_service.dart';
+import '../../../../utils/dialog_utilities.dart';
+import '../../sender_home/playlist_sent_bottom_sheet/playlist_sent_bottom_sheet.dart';
+import '../../sender_home/sender_home/sender_home_screen.dart';
+import '../../sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
 
 class PaidSongsAddVoiceNoteScreen extends StatelessWidget {
-   PaidSongsAddVoiceNoteScreen({super.key, required this.imagePath, required this.title});
-final controller = Get.put(PaidSongsAddVoiceNoteController());
-final String imagePath;
-final String title;
+  const PaidSongsAddVoiceNoteScreen({super.key, required, required this.song});
+
+  final SongModel song;
 
   @override
   Widget build(BuildContext context) {
@@ -23,337 +29,225 @@ final String title;
       body: Column(
         children: [
           CustomAppBar(text: 'Add Voice Note', isBack: true),
+          _buildPaidSongTile(),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  Container(
-                    width: Get.width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: whiteColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border(
-                                left: BorderSide(color: blueColor, width: 0.7),
+              child: CustomVoiceRecordingScreen(
+                onNext: (RxList<SongModel> songs) async {
+                  Get.to(() => SenderViewRecipientScreen(
+                        onPressedSave: (List<int> selectedUsers) async {
+                          ///if selected users are not empty
+                          if (selectedUsers.isNotEmpty) {
+                            ///if recording are not empty
+                            ///
+                            List<String> recordingUrls = [];
+                            Map<String, dynamic> recordingData = {};
+                            if (songs.isNotEmpty) {
+                              List<String> recordingPaths = songs
+                                  .map((e) => e.link)
+                                  .whereType<String>()
+                                  .where((path) => path.isNotEmpty)
+                                  .toList();
 
-                                right: BorderSide(color: blueColor, width: 0.7),
-                                bottom: BorderSide(color: blueColor, width: 0.7),
-                                // top ko intentionally blank rakha
-                              ),
-                            ),
-                          ),
-                        ),
+                              ///if recording urls are empty
+                              if (recordingPaths.isEmpty) {
+                                errorDialog(
+                                    content:
+                                        "Something went wrong try again later");
+                                return;
+                              }
 
-                        // ✅ Content of card
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 6,
-                            right: 20,
-                            top: 6,
-                            bottom: 6,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // Profile image
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.asset(
-                                  imagePath,
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-
-                              const SizedBox(width: 12),
-
-                              // Name + Plan (left side text)
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      title,
-                                      style: manRopeSemiBold.copyWith(fontSize: 12),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Motivational',
-                                      style: manRope.copyWith(
-                                        fontSize: 12,
-                                        color: lightBlack,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                               Column(
-                                children: [
-                                  SizedBox(height: 24),
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Text(
-                                      'Price 25p',
-                                      style: manRopeSemiBold.copyWith(fontSize: 8),
-                                    ),
-                                  ),
-                                ],
-                              )
-                                  ,
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 50),
-                  Obx(
-                        () => Column(
-                      children: [
-                        // Waveform Display Area - now without a background container
-                        if (controller.isRecording.value)
-                          AudioWaveforms(
-                            size: Size(Get.width * 0.9, 100),
-                            recorderController: controller.recorderController,
-                            waveStyle: WaveStyle(
-                              showDurationLabel: false,
-                              spacing: 8.0,
-                              waveColor: Color(0xFF8C7FAC),
-                              middleLineColor: Color(0xFF7695CA),
-                              showBottom: true,
-                              extendWaveform: true,
-                              showMiddleLine: false,
-                            ),
-                          )
-                        else if (controller.currentRecordingPath != null)
-                          AudioFileWaveforms(
-                            size: Size(Get.width * 0.9, 100),
-                            playerController: controller.audioPlayerController,
-                            enableSeekGesture: true,
-                            playerWaveStyle: PlayerWaveStyle(
-                              spacing: 8.0,
-                              fixedWaveColor: Color(0xFF8C7FAC),
-                              liveWaveColor: Color(0xFF7695CA),
-                              showSeekLine: true,
-                              showBottom: true,
-                              seekLineColor: Colors.white,
-                            ),
-                          )
-                        else
-                          EmptyWaveform(),
-                        SizedBox(height: 20),
-                        // Control Buttons (Play, Mic, Refresh)
-                        Stack(
-                          alignment: Alignment.center,
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              width: 180,
-                              height: 34,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFF8C7FAC).withOpacity(0.15),
-                                    Color(0xFF7695CA).withOpacity(0.15),
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ),
-                                borderRadius: BorderRadius.circular(22),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (controller.currentRecordingPath !=
-                                          null &&
-                                          !controller.isRecording.value) {
-                                        controller.togglePlayPause();
-                                      }
-                                    },
-                                    child: Image.asset(
-                                      'assets/images/play_icon.png',
-                                      scale: 3.5,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      controller.refreshRecording();
-                                    },
-                                    child: Image.asset(
-                                      'assets/images/refresh_icon.png',
-                                      scale: 3.5,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                if (controller.isRecording.value) {
-                                  controller.stopRecording();
-                                } else {
-                                  controller.startRecording();
+                              try {
+                                ///upload audio files to server
+                                recordingUrls = await UploadFileService()
+                                    .uploadMultipleImagesFast(recordingPaths);
+                              } catch (e) {
+                                errorDialog(content: e.toString());
+                                return;
+                              }
+                            }
+                            if (recordingUrls.isNotEmpty) {
+                              //later upload whole voice note list but for
+                              // now just 1
+                              // recordingData['notes'] = recordingUrls
+                              //    .map((vc) =>
+                              //        {"name": vc.split('.').first, "link": vc})
+                              //    .toList();
+                              recordingData['notes'] = [
+                                {
+                                  "name": recordingUrls[0].split('.').first,
+                                  "link": recordingUrls[0]
                                 }
+                              ];
+                            }
+
+                            int? voiceNoteId;
+
+                            ///now upload these notes to server and get id
+                            ///
+                            await ApiService().handleResponse(
+                              apiMethod: () =>
+                                  PlaylistService().voicenote(recordingData),
+                              onSuccess: (success) async {
+                                await Future.delayed(
+                                    Duration(milliseconds: 400));
+                                voiceNoteId = success['response']['id'];
                               },
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: blackColor,
-                                ),
-                                child: Image.asset(
-                                  'assets/images/recording_icon.png',
-                                  scale: 4,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 110,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: blackColor,
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Save',
-                            style: manRopeSemiBold.copyWith(
-                              fontSize: 12,
-                              color: whiteColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Container(
-                        width: 110,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: blackColor),
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.transparent,
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Add More',
-                            style: manRopeSemiBold.copyWith(
-                              fontSize: 12,
-                              color: blackColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24),
-                  Container(
-                    width: Get.width,
-                    height: 1,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF8C7FAC).withOpacity(0.3),
-                          Color(0xFF7695CA).withOpacity(0.3),
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  ListView.builder(
-                    padding: EdgeInsets.only(bottom: 24),
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    primary: false,
-                    itemCount: controller.recordingList.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      // child: SongCard(model: controller.recordingList[index]),
+                            );
 
-                      child: const SizedBox.shrink(),),
-                  ),
-                  SizedBox(height: Get.height * 0.05),
-                  GestureDetector(
-                    onTap: () {
-                      // Get.to(()=>SenderCreatedPlaylistScreen());
-                    },
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Positioned(
-                          left: 1,
-                          right: 1,
-                          bottom: -3,
-                          child: Container(
-                            height: 30,
-                            width: 48,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(16),
-                                bottomRight: Radius.circular(16),
-                              ),
-                              color: blueColor,
-                            ),
-                          ),
-                        ),
-
-                        GestureDetector(
-                          onTap: (){
-                            Get.to(()=>PaidSongsRecipientScreen());
-                          },
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: blackColor,
-                            ),
-                            child: Image.asset(
-                              'assets/images/double_forwareded_icon.png',
-                              scale: 3,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                ],
+                            ///now share paid songs
+                            await ApiService().handleResponse(
+                              apiMethod: () => PlaylistService().share(
+                                  toUserIds: selectedUsers,
+                                  typeId: 1,
+                                  id: song.id,
+                                  voiceNoteId: voiceNoteId),
+                              onSuccess: (success) async {
+                                await Future.delayed(
+                                    Duration(milliseconds: 1200));
+                                Get.offAll(() => SenderHomeScreen());
+                                playlistSentBottomSheet(() {
+                                  Get.back();
+                                }, "Your paid song has been shared.");
+                              },
+                            );
+                          } else {
+                            confirmationDialog(
+                                content: "No user selected.",
+                                confirmText: "Select Later",
+                                cancelText: "Select Now",
+                                onConfirm: () {
+                                  Get.offAll(() => SenderHomeScreen());
+                                });
+                          }
+                        },
+                      ));
+                },
               ),
             ),
           ),
         ],
       ),
-    );  }
+    );
+  }
+
+  Container _buildPaidSongTile() {
+    return Container(
+      width: Get.width,
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: whiteColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border(
+                  left: BorderSide(color: blueColor, width: 0.7),
+
+                  right: BorderSide(color: blueColor, width: 0.7),
+                  bottom: BorderSide(color: blueColor, width: 0.7),
+                  // top ko intentionally blank rakha
+                ),
+              ),
+            ),
+          ),
+
+          // ✅ Content of card
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 6,
+              right: 20,
+              top: 6,
+              bottom: 6,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImage(
+                    imageUrl: song.image.showImage,
+                    // Your backend image URL
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          height: 60,
+                          width: 60,
+                          color: Colors.grey.shade300,
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          height: 60,
+                          width: 60,
+                          color: Colors.grey.shade300,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(width: 12),
+
+                // Name + Plan (left side text)
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        song.name ?? "N/A",
+                        style: manRopeSemiBold.copyWith(fontSize: 12),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Motivational',
+                        style: manRope.copyWith(
+                          fontSize: 12,
+                          color: lightBlack,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  children: [
+                    SizedBox(height: 24),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Text(
+                        'Price ${song.price?.toString() ?? '-'}',
+                        style: manRopeSemiBold.copyWith(fontSize: 8),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

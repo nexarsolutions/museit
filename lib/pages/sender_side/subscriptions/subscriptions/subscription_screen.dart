@@ -44,7 +44,7 @@ class SubscriptionScreen extends StatelessWidget {
                     subscribeOnTap: () {
                       Get.to(
                         () => PaymentDetailsScreen(
-                          isSender: iSender,
+                          // isSender: iSender,
 
                           confirmOnTap:
                               paymentConfirmOnTap ??
@@ -69,7 +69,7 @@ class SubscriptionScreen extends StatelessWidget {
                     subscribeOnTap: () {
                       Get.to(
                         () => PaymentDetailsScreen(
-                          isSender: iSender,
+                          // isSender: iSender,
 
                           confirmOnTap:
                               paymentConfirmOnTap ??
@@ -94,7 +94,7 @@ class SubscriptionScreen extends StatelessWidget {
                     subscribeOnTap: () {
                       Get.to(
                         () => PaymentDetailsScreen(
-                          isSender: iSender,
+                          // isSender: iSender,
                           confirmOnTap:
                               paymentConfirmOnTap ??
                               () {

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/globalModels/song_model.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
+import 'package:musit/services/paylist_service.dart';
 import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
@@ -104,7 +105,7 @@ class SenderAddSongsScreen extends StatelessWidget {
                             child: Obx(
                               () => FutureBuilder(
                                   key: ValueKey(controller.searchQuery.value),
-                                  future: controller.getSongs(
+                                  future: PlaylistService().getSongs(
                                       search: controller.searchQuery.value),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==

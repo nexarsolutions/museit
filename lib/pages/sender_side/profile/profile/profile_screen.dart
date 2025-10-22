@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
@@ -7,9 +8,12 @@ import 'package:musit/pages/common_sections/about_app/about_app_screen.dart';
 import 'package:musit/pages/common_sections/privacy_policy/privacy_policy_screen.dart';
 import 'package:musit/pages/common_sections/terms_conditions/terms_conditions_screen.dart';
 import 'package:musit/pages/select_role/select_role_screen.dart';
+import 'package:musit/utils/dialog_utilities.dart';
+import 'package:musit/utils/extensions.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/profile_widget.dart';
+import '../../../../main.dart';
 import '../../sender_home/sender_home/sender_home_screen.dart';
 import '../../subscriptions/subscriptions/subscription_screen.dart';
 import '../change_password/change_password_bottomsheet.dart';
@@ -38,8 +42,19 @@ class ProfileScreen extends StatelessWidget {
                 color: blackColor,
               ),
               child: GestureDetector(
-                onTap: (){
-                  Get.offAll(()=>SelectRoleScreen());
+                onTap: () {
+                  confirmationDialog(
+                    title: "Logout",
+                    content: "Are you sure to "
+                        "logout?",
+                    onConfirm: () async {
+                      loadingDialog();
+
+                      await userManager.clearUser();
+                      Get.back(); //close loading dialog
+                      Get.offAll(() => LoginScreen());
+                    },
+                  );
                 },
                 child: Image.asset('assets/images/logout_icon.png', scale: 3.5),
               ),
@@ -50,39 +65,76 @@ class ProfileScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  Center(
-                    child: Container(
-                      width: 145,
-                      height: 145,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/dummy_profile.png'),
-                          fit: BoxFit.cover,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                            offset: Offset(0, 4),
+                  Obx(
+                    () {
+                      final image = userManager.cachedUser?.profile.value ?? '';
+                      final name =
+                          userManager.cachedUser?.username.value.text ?? '';
+                      final email =
+                          userManager.cachedUser?.email.value.text ?? '';
+                      return Column(
+                        children: [
+                          Center(
+                            child: Container(
+                              width: 145,
+                              height: 145,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    blurRadius: 12,
+                                    spreadRadius: 2,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ClipOval(
+                                child: image != ''
+                                    ? Image(
+                                        image: CachedNetworkImageProvider(
+                                          image.showImage,
+                                        ),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        color: greyColor,
+                                        child: Center(
+                                          child: Text(
+                                            name != ''
+                                                ? name
+                                                    .trim()
+                                                    .split('')
+                                                    .first
+                                                    .toUpperCase()
+                                                : '?',
+                                            style: manRopeSemiBold.copyWith(
+                                              color: whiteColor,
+                                              fontSize:
+                                                  50, // proportional to 145px size
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Text(
+                            name.withNa,
+                            style: manRopeSemiBold.copyWith(fontSize: 14),
+                          ),
+                          SizedBox(height: 3),
+                          Text(
+                            email.withNa,
+                            style: manRope.copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'Katherine James',
-                    style: manRopeSemiBold.copyWith(fontSize: 14),
-                  ),
-                  SizedBox(height: 3),
-                  Text(
-                    'abc@gmail.com',
-                    style: manRope.copyWith(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                    ),
+                      );
+                    },
                   ),
                   SizedBox(height: 52),
                   ProfileWidget(
@@ -106,7 +158,7 @@ class ProfileScreen extends StatelessWidget {
                       Get.to(
                         () => SubscriptionScreen(
                           isSkip: false,
-                          skipOnTap: (){},
+                          skipOnTap: () {},
                           iSender: true,
                           isBack: true,
                           paymentConfirmOnTap: () {
