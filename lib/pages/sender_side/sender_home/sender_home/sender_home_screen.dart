@@ -9,7 +9,6 @@ import 'package:musit/widgets/error_widget_future_stream.dart';
 import '../../../../common_widgets/saved_playlist_card.dart';
 import '../../../../widgets/custom_header.dart';
 import '../../community/sender_community/sender_community_screen.dart';
-import '../../health/health_support/health_support_screen.dart';
 import '../../send_playlist/sender_send_playlist/sender_send_playlist_screen.dart';
 import '../../sender_send_song/add_songs/add_songs_screen.dart';
 import '../../sent_playlist/sender_sent_playlist/sender_sent_playlist_screen.dart';
@@ -64,7 +63,7 @@ class SenderHomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 19),
                         _buildSmallCard(
-                          title: 'Send a MUSE',
+                          title: 'MUSEiT Moment',
                           image: 'assets/images/send_paid_songs.png',
                           onTap: () {
                             Get.to(() => SenderSendPlaylistScreen());
@@ -92,14 +91,6 @@ class SenderHomeScreen extends StatelessWidget {
                           image: "assets/images/community.png",
                           onTap: () {
                             Get.to(() => SenderCommunityScreen());
-                          },
-                        ),
-                        const SizedBox(width: 19),
-                        _buildSmallCard(
-                          title: "Health Support",
-                          image: "assets/images/health_support.png",
-                          onTap: () {
-                            Get.to(() =>  HealthSupportScreen());
                           },
                         ),
                       ],
