@@ -1,13 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 
-import '../model/health_support_model.dart';
+import '../../../../../globalModels/health_support_response_model.dart';
 
 class HealthSupportCard extends StatelessWidget {
-  final HealthSupportModel healthSupportModel;
+  final HealthSupportModel data;
 
-  const HealthSupportCard({super.key, required this.healthSupportModel});
+  const HealthSupportCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +36,32 @@ class HealthSupportCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 33,
                   backgroundColor: lightGrey,
-                  backgroundImage: AssetImage(healthSupportModel.imagePath),
+                  backgroundImage:
+                      data.user != null && data.user!.profile.value != ''
+                          ? CachedNetworkImageProvider(data.user!.profile.value)
+                          : null,
+                  child: data.user != null && data.user!.profile.value != ''
+                      ? null
+                      : Center(
+                          child: Text(
+                            data.user?.username.text != ''
+                                ? data.user?.username.text
+                                        .split('')
+                                        .first
+                                        .toUpperCase() ??
+                                    '?'
+                                : '?',
+                            style: manRopeSemiBold.copyWith(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  healthSupportModel.userName,
+                  data.user?.username.text != ''
+                      ? data.user?.username.text ?? 'Loading...'
+                      : 'Loading...',
                   textAlign: TextAlign.center,
                   style: manRopeSemiBold.copyWith(fontSize: 10),
                   maxLines: 1,
@@ -47,7 +69,7 @@ class HealthSupportCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  healthSupportModel.userRole,
+                  data.healthTypeName ?? "N/A",
                   textAlign: TextAlign.center,
                   style: manRope.copyWith(
                     fontSize: 10,

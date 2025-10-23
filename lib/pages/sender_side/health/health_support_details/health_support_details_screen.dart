@@ -1,16 +1,20 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/utils/extensions.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
-import '../health_support/model/health_support_model.dart';
+import '../../../../globalModels/health_support_response_model.dart';
 import '../support_plan/support_plan_screen.dart';
 
 class HealthSupportDetailsScreen extends StatelessWidget {
   const HealthSupportDetailsScreen({super.key, required this.model});
+
   final HealthSupportModel model;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,20 +28,56 @@ class HealthSupportDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(model.imagePath),
+                  Builder(builder: (context) {
+                    final image = model.user?.profile.value;
+                    final name = model.user?.username.text;
+                    return Column(
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: ClipOval(
+                              child: image != ''
+                                  ? Image(
+                                      image: CachedNetworkImageProvider(
+                                        image.showImage,
+                                      ),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      color: greyColor,
+                                      child: Center(
+                                        child: Text(
+                                          name != ''
+                                              ? name
+                                                      ?.trim()
+                                                      .split('')
+                                                      .first
+                                                      .toUpperCase() ??
+                                                  '?'
+                                              : '?',
+                                          style: manRopeSemiBold.copyWith(
+                                            color: whiteColor,
+                                            fontSize:
+                                                50, // proportional to 145px size
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Center(child: Text(model.userName, style: manRopeSemiBold)),
+                        SizedBox(height: 12),
+                        Center(
+                            child: Text(name ?? 'Loading...',
+                                style: manRopeSemiBold)),
+                      ],
+                    );
+                  }),
                   SizedBox(height: 30),
                   Row(
                     children: [
@@ -47,7 +87,7 @@ class HealthSupportDetailsScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 16),
                       Text(
-                        model.healthType,
+                        model.healthTypeName ?? "N/A",
                         style: manRope.copyWith(
                           fontSize: 12,
                           fontWeight: FontWeight.w200,
@@ -57,7 +97,6 @@ class HealthSupportDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 14),
-
                   Row(
                     children: [
                       Text(
@@ -66,7 +105,7 @@ class HealthSupportDetailsScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 16),
                       Text(
-                        model.disease,
+                        model.disease ?? "N/A",
                         style: manRope.copyWith(
                           fontSize: 12,
                           fontWeight: FontWeight.w200,
@@ -75,9 +114,7 @@ class HealthSupportDetailsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   SizedBox(height: 14),
-
                   Row(
                     children: [
                       Text(
@@ -99,7 +136,7 @@ class HealthSupportDetailsScreen extends StatelessWidget {
                   Text('Story', style: manRopeSemiBold.copyWith(fontSize: 12)),
                   SizedBox(height: 8),
                   Text(
-                    model.story,
+                    model.story ?? "N/A",
                     style: manRope.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w200,

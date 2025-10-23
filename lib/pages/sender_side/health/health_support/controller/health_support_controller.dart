@@ -1,128 +1,64 @@
 import 'package:get/get.dart';
+import 'package:musit/services/api_service.dart';
+import 'package:musit/services/health_support_service.dart';
 
-import '../model/health_support_model.dart';
+import '../../../../../globalModels/health_support_response_model.dart';
 
 class HealthSupportController extends GetxController {
-  List<HealthSupportModel> healthSupportList = [
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_1.png',
-      userName: 'Katherine',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 5000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_2.png',
-      userName: 'Alex George',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 2000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_3.png',
-      userName: 'George',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 8000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_4.png',
-      userName: 'George',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 20000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_5.png',
-      userName: 'Kathy James',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 20000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_6.png',
-      userName: 'J. Lesner',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 20000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_1.png',
-      userName: 'Katherine',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 5000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_2.png',
-      userName: 'Alex George',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 2000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_3.png',
-      userName: 'George',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 8000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_4.png',
-      userName: 'George',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 20000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_5.png',
-      userName: 'Kathy James',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 20000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-    HealthSupportModel(
-      imagePath: 'assets/images/dummy_rounded_6.png',
-      userName: 'J. Lesner',
-      userRole: 'Cancer Treatment',
-      healthType: 'Critical',
-      disease: 'Cancer',
-      monthlyAidGoal: 20000,
-      story:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed maximus, quam ac ultricies bibendum, ante ligula elementum dolor, vel pharetra diam nibh non risus. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales. Nam vel mauris nec lacus tempor sodales sit amet in lacus. Donec maximus tempus sodales.',
-    ),
-  ];
+  final _service = HealthSupportService();
+
+  var healthSupportList = <HealthSupportModel>[].obs;
+  var isLoading = false.obs;
+
+  RxnString errorString = RxnString();
+  var page = 1;
+  var hasMore = true;
+
+  final _apiservice = ApiService();
+
+  @override
+  void onInit() {
+    super.onInit();
+    getHealthSupports();
+  }
+
+  Future<void> getHealthSupports({bool refresh = false}) async {
+    if (isLoading.value) return; // prevent duplicate requests
+
+    if (refresh) {
+      page = 1;
+      hasMore = true;
+      healthSupportList.clear();
+    }
+
+    if (!hasMore) return;
+
+    try {
+      isLoading.value = true;
+
+      await _apiservice.handleGetResponse(
+        apiMethod: () => _service.getHealthSupportApi(limit: 40, offset: page),
+        onSuccess: (success) {
+          final data = HealthSupportResponseModel.fromJson(success);
+          final newItems = data.response?.healthSupporters ?? [];
+          if (newItems.isEmpty) {
+            hasMore = false;
+          } else {
+            healthSupportList.addAll(newItems);
+            page++;
+          }
+          errorString.value=null;
+        },
+        onError: (error) {
+          hasMore = false;
+          errorString.value = error.toString();
+        },
+      );
+    } catch (e) {
+      hasMore = false;
+      errorString.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

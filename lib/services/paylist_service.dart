@@ -3,6 +3,7 @@ import 'package:musit/common_models/recipients_model.dart';
 import 'package:musit/globalModels/playlist_model.dart';
 import 'package:musit/services/api_service.dart';
 
+import '../globalModels/receive_playlist_response_model.dart';
 import '../globalModels/recipient_response_model.dart';
 import '../globalModels/song_model.dart';
 
@@ -76,12 +77,20 @@ class PlaylistService {
     return await _api.get("playlist?playlistId=$playListId");
   }
 
+  Future<Map<String, dynamic>> receivePlayList() async {
+    return await _api.get("playlist/receive");
+  }
+
   Future<Map<String, dynamic>> sentPlaylistApi() async {
     return await _api.get("playlist/sent");
   }
 
   Future<Map<String, dynamic>> playlistRecipients({int? playlistId}) async {
     return await _api.get("playlist/recipients?playlistId=$playlistId");
+  }
+
+  Future<Map<String, dynamic>> receivedSongs() async {
+    return await _api.get("songs/receive");
   }
 
   Future<Map<String, dynamic>> share(
@@ -114,6 +123,29 @@ class PlaylistService {
           final playlistResponseModel =
               PlaylistResponseModel.fromJson(response);
           final newPlaylists = playlistResponseModel.response?.playLists ?? [];
+          playLists.assignAll(newPlaylists);
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+      return playLists;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<ReceivePlaylistSongModel>> getReceivedPlaylist(
+      {bool isPlaylist = true}) async {
+    try {
+      List<ReceivePlaylistSongModel> playLists = [];
+      await _api.handleGetResponse(
+        apiMethod: () => isPlaylist ? receivePlayList() : receivedSongs(),
+        onSuccess: (response) {
+          final playlistResponseModel =
+              ReceivePlaylistSongResponseModel.fromJson(response);
+          final newPlaylists =
+              playlistResponseModel.response?.receivedPlaylists ?? [];
           playLists.assignAll(newPlaylists);
         },
         onError: (error) {

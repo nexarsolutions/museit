@@ -77,6 +77,13 @@ class UserModel {
       'charity': charity?.toSharedJson(),
     };
   }
+
+  Map<String, String> toUpdateCustomerJson() {
+    return {
+      "username": username.text.trim(),
+      "phone": phone.text.trim(),
+    };
+  }
 }
 
 class UserCharity {

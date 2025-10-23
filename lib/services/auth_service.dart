@@ -11,7 +11,7 @@ class AuthService {
   ///
   Future<Map<String, dynamic>> emailAlreadyExists(
       {required String email, required String phone}) async {
-    String url = "${ApiService.baseUrl}user/isExists";
+    String url = "user/isExists";
 
     var body = {
       if (email != '') "email": email,
@@ -66,6 +66,20 @@ class AuthService {
     }
 
     return await _api.get(url);
+  }
+
+  ///getUserInfoById
+  ///
+  Future<Map<String, dynamic>> getUserInfoById({required int userId}) async {
+    return await _api.get("getUserInfoById?userId=$userId");
+  }
+
+  Future<Map<String, String>> updateProfile(Map<String, String> data) async {
+    return await _api.put("updateProfile", data);
+  }
+
+  Future<Map<String, String>> updatePassword(Map<String, String> data) async {
+    return await _api.put("updatePassword", data);
   }
 
   ///******************** Function **********************

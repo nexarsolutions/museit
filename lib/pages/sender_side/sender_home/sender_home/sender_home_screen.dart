@@ -99,7 +99,7 @@ class SenderHomeScreen extends StatelessWidget {
                           title: "Health Support",
                           image: "assets/images/health_support.png",
                           onTap: () {
-                            Get.to(() => const HealthSupportScreen());
+                            Get.to(() =>  HealthSupportScreen());
                           },
                         ),
                       ],

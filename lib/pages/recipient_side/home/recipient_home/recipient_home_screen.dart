@@ -6,6 +6,9 @@ import 'package:musit/pages/common_sections/notifications/notifications_screen.d
 import 'package:musit/pages/sender_side/sender_home/sender_create_playlist/sender_create_playlist_bottom_sheet.dart';
 
 import '../../../../common_widgets/saved_playlist_card.dart';
+import '../../../../services/paylist_service.dart';
+import '../../../../widgets/custom_header.dart';
+import '../../../../widgets/error_widget_future_stream.dart';
 import '../../../sender_side/sent_playlist/view_sent_playlist/view_sent_playlist_screen.dart';
 import '../../health_support/recipient_health_support/recipient_health_support_screen.dart';
 import '../../recieved_playlist/recieved_playlist/recieved_playlist_screen.dart';
@@ -28,46 +31,11 @@ class RecipientHomeScreen extends StatelessWidget {
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          const SizedBox(height: 50),
-
-          // ===== Top Profile Row =====
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Get.to(() => RecipientProfileScreen());
-                  },
-                  child: const CircleAvatar(
-                    radius: 22,
-                    backgroundImage: AssetImage('assets/images/profile_1.png'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text('Hi, Katherine!', style: manRopeSemiBold),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    Get.to(() => NotificationsScreen());
-                  },
-                  child: Container(
-                    height: 44,
-                    width: 44,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: blackColor,
-                    ),
-                    child: Image.asset(
-                      'assets/images/notification.png',
-                      scale: 4,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          CustomHeader(
+            onTap: () {
+              Get.to(() => RecipientProfileScreen());
+            },
           ),
-
           // ===== Scroll Body =====
           Expanded(
             child: SingleChildScrollView(
@@ -78,59 +46,7 @@ class RecipientHomeScreen extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // ==== Quote Box ====
-                  Container(
-                    width: Get.width,
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      top: 10,
-                      bottom: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: lightWhite,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: darkGrey.withOpacity(0.05)),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset(
-                                'assets/images/left_comma.png',
-                                height: 14,
-                                width: 14,
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                "Because everyone needs a soundtrack to rise, to heal, to fight, to feel alive again",
-                                style: manRope.copyWith(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w200,
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Image.asset(
-                                  'assets/images/right_comma.png',
-                                  height: 14,
-                                  width: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: Image.asset(
-                            'assets/images/music_waves.png',
-                            height: 64,
-                            width: Get.width,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildQuoteBox(),
 
                   const SizedBox(height: 53),
                   Padding(
@@ -140,7 +56,7 @@ class RecipientHomeScreen extends StatelessWidget {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              Get.to(() => RecievedPlaylistScreen());
+                              Get.to(() => ReceivedPlaylistScreen());
                             },
                             child: buildSmallCard(
                               title: 'Received Playlist',
@@ -152,7 +68,7 @@ class RecipientHomeScreen extends StatelessWidget {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              Get.to(() => RecievedSongsScreen());
+                              Get.to(() => ReceivedSongsScreen());
                             },
                             child: buildSmallCard(
                               title: 'Received Songs',
@@ -226,36 +142,117 @@ class RecipientHomeScreen extends StatelessWidget {
                     style: manRopeSemiBold.copyWith(fontSize: 14),
                   ),
                   const SizedBox(height: 23),
-                  ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: NeverScrollableScrollPhysics(),
-                    primary: false,
-                    shrinkWrap: true,
-                    itemCount: controller.recentCardList.length,
-                    itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.only(bottom: 30.0),
-                        child: const SizedBox
-                            .shrink() /*GestureDetector(
-                        onTap: () {
-                          Get.to(
-                            () => ViewRecievedPlaylistScreen(
-                              showRecipients: false,
-                              model: controller.recentCardList[index],
-                            ),
-                          );
-                        },
+                  FutureBuilder(
+                      future: PlaylistService().getReceivedPlaylist(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ErrorWidgetFutureStream();
+                        }
 
-                        child: SavedPlaylistCard(
-                          showContainer: true,
-                          showDateTime: true,
-                          playlist: controller.recentCardList[index],
-                        ),
-                      ),*/
-                        ),
-                  ),
+                        if (snapshot.hasError) {
+                          return ErrorWidgetFutureStream(
+                            error: snapshot.error.toString(),
+                          );
+                        }
+
+                        if (!snapshot.hasData ||
+                            snapshot.data == null ||
+                            snapshot.data!.isEmpty) {
+                          return const ErrorWidgetFutureStream(
+                            error: 'No Data Found',
+                          );
+                        }
+
+                        final playLists = snapshot.requireData;
+
+                        return ListView.builder(
+                          padding: EdgeInsets.zero,
+                          physics: NeverScrollableScrollPhysics(),
+                          primary: false,
+                          shrinkWrap: true,
+                          itemCount: playLists.length,
+                          itemBuilder: (context, index) {
+                            final playlist = playLists[index];
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 30.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.to(
+                                    () => ViewSentPlaylistScreen(
+                                      playListId: playlist?.playlistId,
+                                    ),
+                                  );
+                                },
+                                child: SavedPlaylistCard(
+                                  showDateTime: true,
+                                  playlist: playlist.playlist!,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }),
                   const SizedBox(height: 23),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container _buildQuoteBox() {
+    return Container(
+      width: Get.width,
+      padding: const EdgeInsets.only(
+        left: 16,
+        top: 10,
+        bottom: 10,
+      ),
+      decoration: BoxDecoration(
+        color: lightWhite,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: darkGrey.withOpacity(0.05)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset(
+                  'assets/images/left_comma.png',
+                  height: 14,
+                  width: 14,
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  "Because everyone needs a soundtrack to rise, to heal, to fight, to feel alive again",
+                  style: manRope.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w200,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Image.asset(
+                    'assets/images/right_comma.png',
+                    height: 14,
+                    width: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Image.asset(
+              'assets/images/music_waves.png',
+              height: 64,
+              width: Get.width,
             ),
           ),
         ],
@@ -293,6 +290,8 @@ class RecipientHomeScreen extends StatelessWidget {
             children: [
               Text(
                 title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: manRopeSemiBold.copyWith(fontSize: 10),
                 textAlign: TextAlign.center,
               ),

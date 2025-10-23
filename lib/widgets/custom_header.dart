@@ -10,7 +10,9 @@ import '../pages/common_sections/notifications/notifications_screen.dart';
 import '../pages/sender_side/profile/profile/profile_screen.dart';
 
 class CustomHeader extends StatelessWidget {
-  const CustomHeader({super.key});
+  const CustomHeader({super.key, this.onTap});
+
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,10 @@ class CustomHeader extends StatelessWidget {
         child: Row(
           children: [
             GestureDetector(
-              onTap: () {
-                Get.to(() => ProfileScreen());
-              },
+              onTap: onTap ??
+                  () {
+                    Get.to(() => ProfileScreen());
+                  },
               child: CircleAvatar(
                 radius: 22,
                 backgroundColor: greyColor,
