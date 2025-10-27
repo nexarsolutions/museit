@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 
@@ -30,9 +31,16 @@ class VoiceNoteScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: CustomVoiceRecordingScreen(
                 onNext: (song) {
-                  // controller.createPlaylist(song);
                   Get.to(() => SenderViewRecipientScreen(
-                        onPressedSave: (List<int> selectedUser) {},
+                        onPressedSave: (List<int> selectedUser, String? phone) {
+                          if (selectedUser.isEmpty && phone == null) {
+                            customErrorSnackBar(
+                                content:
+                                    "Select Users or enter phone number to continue");
+                            return;
+                          }
+
+                        },
                       ));
                 },
               ),

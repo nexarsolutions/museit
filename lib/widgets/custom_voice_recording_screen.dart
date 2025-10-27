@@ -119,10 +119,10 @@ class _CustomVoiceRecordingScreenState
     }
 
     final fileName = "Recording ${recordingList.length + 1}";
-    recordingList.clear();//if multiple change later
+    recordingList.clear(); //if multiple change later
     recordingList.add(
       SongModel(
-        image: 'assets/images/recording_thumbnail.png',
+        // image: 'assets/images/recording_thumbnail.png',
         name: fileName,
         link: currentRecordingPath,
       ),
@@ -315,7 +315,7 @@ class _CustomVoiceRecordingScreenState
                 Get.to(() => MusicPlayerScreen(
                     songTitle: recordingList[index].name!,
                     songUrl: recordingList[index].link!,
-                    imagePath: recordingList[index].image!));
+                    imagePath: /*recordingList[index].image!*/ ''));
               },
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),

@@ -17,7 +17,8 @@ class SenderViewRecipientScreen extends StatelessWidget {
 
   final controller = Get.put(SenderViewRecipientController());
   final RxBool isSelected = true.obs;
-  final Function(List<int>) onPressedSave;
+  final RxnString phoneString = RxnString();
+  final Function(List<int> selectedUsersId, String? phone) onPressedSave;
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +97,24 @@ class SenderViewRecipientScreen extends StatelessWidget {
                                 return SizedBox(
                                   height: Get.height / 3,
                                   child: Center(
-                                      child: Text("No User Found",
-                                          style: manRopeSemiBold)),
+                                    child: TextButton(
+                                        onPressed: () {},
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              WidgetStatePropertyAll(
+                                                  blackColor),
+                                          foregroundColor:
+                                              WidgetStatePropertyAll(
+                                                  whiteColor),
+                                        ),
+                                        child: Text(
+                                          "Send via Phone Number",
+                                          // style: manRopeSemiBold,
+                                        )),
+                                  ),
+                                  // child: Center(
+                                  //     child: Text("No User Found",
+                                  //         style: manRopeSemiBold)),
                                 );
                               }
 
@@ -158,7 +175,8 @@ class SenderViewRecipientScreen extends StatelessWidget {
                         //       content: "Select User/Receipt to continue.");
                         //   return;
                         // }
-                        onPressedSave(controller.selectedUsersId);
+                        onPressedSave(
+                            controller.selectedUsersId, phoneString.value);
                       },
                       text: 'Send'),
                   SizedBox(height: 12),

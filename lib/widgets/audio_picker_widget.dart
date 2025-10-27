@@ -7,8 +7,11 @@ import 'package:musit/services/upload_file_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../constants/app_enums.dart';
+
 class AudioPickerWidget extends StatefulWidget {
-  final Function(List<String> uploadedFileNames) onUploadComplete;
+  final Function(List<Map<AudioKey, dynamic>> uploadedFileNames)
+      onUploadComplete;
 
   const AudioPickerWidget({
     super.key,
@@ -20,7 +23,7 @@ class AudioPickerWidget extends StatefulWidget {
 }
 
 class _AudioPickerWidgetState extends State<AudioPickerWidget> {
-  List<String> pickedAudioPaths = [];
+  List<Map<AudioKey, dynamic>> pickedAudioPaths = [];
   bool isUploading = false;
 
   Future<void> pickAndUploadAudios() async {
@@ -50,15 +53,17 @@ class _AudioPickerWidgetState extends State<AudioPickerWidget> {
       setState(() {
         pickedAudioPaths = result.files
             .where((f) => f.path != null)
-            .map((f) => f.path!)
+            .map((f) => {
+                  AudioKey.path: f.path!,
+                  AudioKey.name: f.name,
+                })
             .toList();
       });
 
       // 2️⃣ Start uploading automatically
       await uploadAudios();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to pick files: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      customErrorSnackBar(content: 'Failed to pick files: $e');
     }
   }
 
@@ -84,17 +89,20 @@ class _AudioPickerWidgetState extends State<AudioPickerWidget> {
 
     setState(() => isUploading = true);
     final uploadService = UploadFileService();
-    List<String> uploadedFileNames = [];
+    List<Map<AudioKey, dynamic>> uploadedFileNames = [];
 
     try {
       for (final audioPath in pickedAudioPaths) {
-        final fileName =
-            await uploadService.fileUploadResult(uploadData: audioPath);
+        final fileName = await uploadService.fileUploadResult(
+            uploadData: audioPath[AudioKey.path]);
         if (fileName != null) {
-          uploadedFileNames.add(fileName);
+          uploadedFileNames.add({
+            AudioKey.path: fileName,
+            AudioKey.name: audioPath[AudioKey.name]
+          });
         } else {
           customErrorSnackBar(
-              content: 'Failed to upload ${audioPath.split('/').last}');
+              content: "Failed to upload ${audioPath[AudioKey.name]}");
         }
       }
 

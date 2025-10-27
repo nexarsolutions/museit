@@ -28,7 +28,7 @@ class LoginController extends GetxController {
       onSuccess: (response) async {
         customPrint("login success: $response");
         UserModel currentUser = UserModel.fromJson(response['response']);
-        await Future.delayed(const Duration(seconds: 2));
+        // await Future.delayed(const Duration(seconds: 2));
 
         currentUser.currentRoleId == 1
             ? Get.offAll(() => SenderHomeScreen())

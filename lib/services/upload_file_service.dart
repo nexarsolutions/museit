@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'package:musit/utils/global_functions.dart';
+
 import '../utils/dialog_utilities.dart';
-import '../utils/custom_alert_dialog.dart';
 import 'api_service.dart';
 
 class UploadFileService {
@@ -12,7 +13,7 @@ class UploadFileService {
     String fieldName = 'file',
   }) async {
     return await _api.postMultipartFile(
-      path: 'uploadFile',
+      path: 'bucket/uploadFile',
       fieldName: fieldName,
       filePath: filePath,
     );
@@ -26,7 +27,7 @@ class UploadFileService {
       loadingMsg: "Uploading...",
       apiMethod: () => uploadFile(filePath: uploadData),
       onSuccess: (uploadResponse) async {
-        final fileName = uploadResponse['fileName'];
+        final fileName = uploadResponse['response']['awsUrl'];
         if (fileName == null) {
           errorDialog(
             title: "Upload Failed",
@@ -62,7 +63,7 @@ class UploadFileService {
       final responses = await Future.wait(futures);
 
       return responses.map((r) {
-        final fileName = r['fileName'];
+        final fileName = r['response']['awsUrl'];
         if (fileName == null) {
           throw Exception('fileName missing in response');
         }

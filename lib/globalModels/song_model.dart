@@ -61,86 +61,89 @@ class SongResponseData {
 }
 
 class SongModel {
-  int? id;
+  // int? id;
   String? name;
   String? link;
-  double? price;
-  String? image;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  RxBool isBuy;
-  int? typeId;
-  PaidSongModel? paidSong;
 
-  SongModel(
-      {this.id,
-      this.name,
-      this.link,
-      this.price,
-      this.image,
-      this.createdAt,
-      this.updatedAt,
-      this.typeId,
-      RxBool? isBuy,
-      this.paidSong})
-      : isBuy = isBuy ?? RxBool(false);
+  // double? price;
+  // String? image;
+  // DateTime? createdAt;
+  // DateTime? updatedAt;
+  // RxBool isBuy;
+  int? typeId;
+
+  // PaidSongModel? paidSong;
+
+  SongModel({
+    // this.id,
+    this.name,
+    this.link,
+    // this.price,
+    // this.image,
+    // this.createdAt,
+    // this.updatedAt,
+    this.typeId,
+    // RxBool? isBuy,
+    // this.paidSong
+  }) /*: isBuy = isBuy ?? RxBool(false)*/;
 
   SongModel.copyWith(SongModel other)
-      : id = other.id,
+      :
+        // id = other.id,
         name = other.name,
         link = other.link,
-        price = other.price,
-        image = other.image,
-        createdAt = other.createdAt,
-        updatedAt = other.updatedAt,
-        isBuy = RxBool(other.isBuy.value),
-        typeId = other.typeId,
-        paidSong = other.paidSong != null
-            ? PaidSongModel.copyWith(other.paidSong!)
-            : null;
+
+        // price = other.price,
+        // image = other.image,
+        // createdAt = other.createdAt,
+        // updatedAt = other.updatedAt,
+        // isBuy = RxBool(other.isBuy.value),
+        typeId = other.typeId
+
+  // paidSong = other.paidSong != null
+  //     ? PaidSongModel.copyWith(other.paidSong!)
+  //     : null
+  ;
 
   factory SongModel.fromJson(Map<String, dynamic> json) => SongModel(
-        id: json["id"],
+        // id: json["id"],
         name: json["name"],
         link: json["link"],
-        price: json["price"],
-        image: json["image"],
+        // price: json["price"],
+        // image: json["image"],
         typeId: json["typeId"],
-        createdAt: json["createdAt"] == null
-            ? null
-            : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-        isBuy: RxBool(json['isBuy'] ?? false),
-        paidSong: json['PaidSongs'] == null
-            ? null
-            : PaidSongModel.fromJson(json['PaidSongs']),
+        // createdAt: json["createdAt"] == null
+        //     ? null
+        //     : DateTime.parse(json["createdAt"]),
+        // updatedAt: json["updatedAt"] == null
+        //     ? null
+        //     : DateTime.parse(json["updatedAt"]),
+        // isBuy: RxBool(json['isBuy'] ?? false),
+        // paidSong: json['PaidSongs'] == null
+        //     ? null
+        //     : PaidSongModel.fromJson(json['PaidSongs']),
       );
 
   Map<String, dynamic> toJson() => {
         "typeId": typeId,
-        if (typeId != null && typeId == 3) "paidSongId": id,
-        if (typeId != null && typeId == 4) ...{
-          "name": name,
-          "link": link,
-        }
+        "name": name,
+        "link": link,
       };
 
   void clear() {
-    isBuy.value = false;
-    id = null;
+    // isBuy.value = false;
+    // id = null;
     name = null;
     link = null;
-    price = null;
-    image = null;
-    createdAt = null;
-    updatedAt = null;
+    // price = null;
+    // image = null;
+    // createdAt = null;
+    // updatedAt = null;
     typeId = null;
   }
 }
 
-class PaidSongModel {
+/*class PaidSongModel {
   int? id;
   double? price;
   int? typeId;
@@ -189,4 +192,4 @@ class PaidSongModel {
         "link": link,
         "createdAt": createdAt?.toIso8601String(),
       };
-}
+}*/

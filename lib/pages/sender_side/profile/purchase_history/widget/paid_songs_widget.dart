@@ -46,7 +46,7 @@ class PaidSongsWidget extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: CachedNetworkImage(
-                    imageUrl: model.image.showImage,
+                    imageUrl: '' /*model.image.showImage*/,
                     // Your backend image URL
                     height: 87,
                     fit: BoxFit.fill,
@@ -84,7 +84,7 @@ class PaidSongsWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Price \$${model.price ?? 'N/A'}',
+                  'Price \$${/*model.price ?? 'N/A'*/''}',
                   textAlign: TextAlign.center,
                   style: manRope.copyWith(
                     fontSize: 10,

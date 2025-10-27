@@ -11,6 +11,7 @@ void customErrorSnackBar({required String content}) {
       backgroundColor: blackColor,
       showCloseIcon: true,
       behavior: SnackBarBehavior.floating,
+
     ),
   );
 }

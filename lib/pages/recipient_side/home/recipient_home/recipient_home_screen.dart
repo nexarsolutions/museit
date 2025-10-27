@@ -4,7 +4,7 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 
 import '../../../../common_widgets/saved_playlist_card.dart';
-import '../../../../services/paylist_service.dart';
+import '../../../../services/song_service.dart';
 import '../../../../widgets/custom_header.dart';
 import '../../../../widgets/error_widget_future_stream.dart';
 import '../../../sender_side/sent_playlist/view_sent_playlist/view_sent_playlist_screen.dart';
@@ -49,18 +49,18 @@ class RecipientHomeScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
                       children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.to(() => ReceivedPlaylistScreen());
-                            },
-                            child: buildSmallCard(
-                              title: 'Received Playlist',
-                              image: 'assets/images/recieved_playlist.png',
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 25),
+                        // Expanded(
+                        //   child: GestureDetector(
+                        //     onTap: () {
+                        //       Get.to(() => ReceivedPlaylistScreen());
+                        //     },
+                        //     child: buildSmallCard(
+                        //       title: 'Received Playlist',
+                        //       image: 'assets/images/recieved_playlist.png',
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 25),
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
@@ -125,64 +125,64 @@ class RecipientHomeScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 23),
-                  Text(
-                    'New Playlist Received',
-                    style: manRopeSemiBold.copyWith(fontSize: 14),
-                  ),
-                  const SizedBox(height: 23),
-                  FutureBuilder(
-                      future: PlaylistService().getReceivedPlaylist(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ErrorWidgetFutureStream();
-                        }
-
-                        if (snapshot.hasError) {
-                          return ErrorWidgetFutureStream(
-                            error: snapshot.error.toString(),
-                          );
-                        }
-
-                        if (!snapshot.hasData ||
-                            snapshot.data == null ||
-                            snapshot.data!.isEmpty) {
-                          return const ErrorWidgetFutureStream(
-                            error: 'No Data Found',
-                          );
-                        }
-
-                        final playLists = snapshot.requireData;
-
-                        return ListView.builder(
-                          padding: EdgeInsets.zero,
-                          physics: NeverScrollableScrollPhysics(),
-                          primary: false,
-                          shrinkWrap: true,
-                          itemCount: playLists.length,
-                          itemBuilder: (context, index) {
-                            final playlist = playLists[index];
-
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 30.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Get.to(
-                                    () => ViewSentPlaylistScreen(
-                                      playListId: playlist?.playlistId,
-                                    ),
-                                  );
-                                },
-                                child: SavedPlaylistCard(
-                                  showDateTime: true,
-                                  playlist: playlist.playlist!,
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                  const SizedBox(height: 23),
+                  // Text(
+                  //   'New Playlist Received',
+                  //   style: manRopeSemiBold.copyWith(fontSize: 14),
+                  // ),
+                  // const SizedBox(height: 23),
+                  // FutureBuilder(
+                  //     future: PlaylistService().getReceivedPlaylist(),
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ErrorWidgetFutureStream();
+                  //       }
+                  //
+                  //       if (snapshot.hasError) {
+                  //         return ErrorWidgetFutureStream(
+                  //           error: snapshot.error.toString(),
+                  //         );
+                  //       }
+                  //
+                  //       if (!snapshot.hasData ||
+                  //           snapshot.data == null ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return const ErrorWidgetFutureStream(
+                  //           error: 'No Data Found',
+                  //         );
+                  //       }
+                  //
+                  //       final playLists = snapshot.requireData;
+                  //
+                  //       return ListView.builder(
+                  //         padding: EdgeInsets.zero,
+                  //         physics: NeverScrollableScrollPhysics(),
+                  //         primary: false,
+                  //         shrinkWrap: true,
+                  //         itemCount: playLists.length,
+                  //         itemBuilder: (context, index) {
+                  //           final playlist = playLists[index];
+                  //
+                  //           return Padding(
+                  //             padding: const EdgeInsets.only(bottom: 30.0),
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 // Get.to(
+                  //                 //   () => ViewSentPlaylistScreen(
+                  //                 //     playListId: playlist?.playlistId,
+                  //                 //   ),
+                  //                 // );
+                  //               },
+                  //               child: SavedPlaylistCard(
+                  //                 showDateTime: true,
+                  //                 playlist: playlist.playlist!,
+                  //               ),
+                  //             ),
+                  //           );
+                  //         },
+                  //       );
+                  //     }),
+                  // const SizedBox(height: 23),
                 ],
               ),
             ),

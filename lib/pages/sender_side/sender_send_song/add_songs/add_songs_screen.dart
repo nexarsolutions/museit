@@ -1,20 +1,14 @@
-import 'dart:io';
-
-import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
-import 'package:musit/pages/charity_side/charity_home/charity_add_voice_note/charity_add_voice_note_screen.dart';
+import 'package:musit/pages/music_player/music_player_screen.dart';
+import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
-import '../../../../constants/text_styles.dart';
+import '../../../../constants/app_enums.dart';
 import '../../../../globalModels/song_model.dart';
-import '../../../../services/paylist_service.dart';
-import '../../../../utils/global_functions.dart';
-import '../../../../utils/image_picker_bottom_sheet.dart';
 import '../../../../widgets/audio_picker_widget.dart';
 import '../../../../widgets/custom_tab_button.dart';
 import '../voice_note/voice_note_screen.dart';
@@ -79,9 +73,9 @@ class AddSongsScreen extends StatelessWidget {
                     unselectedIcon: 'assets/images/youtube.png',
                   ),
                   TabItem(
-                    title: "Paid Songs",
-                    selectedIcon: 'assets/images/paid_icon_selected.png',
-                    unselectedIcon: 'assets/images/paid_icon.png',
+                    title: "Apple",
+                    selectedIcon: 'assets/images/selected_apple_music.png',
+                    unselectedIcon: 'assets/images/unselected_apple_music.png',
                   ),
                   TabItem(
                     title: "Upload",
@@ -108,119 +102,65 @@ class AddSongsScreen extends StatelessWidget {
                       )
                     : controller.songTypeId.value == 2
                         ? Expanded(
-                            child: Obx(
-                              () => FutureBuilder(
-                                  key: ValueKey(controller.searchQuery.value),
-                                  future: PlaylistService().getSongs(
-                                      search: controller.searchQuery.value),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Center(
-                                          child: Text(snapshot.error.toString(),
-                                              style: manRopeSemiBold));
-                                    }
-
-                                    if (!snapshot.hasData ||
-                                        snapshot.data == null ||
-                                        snapshot.data!.isEmpty) {
-                                      return Center(
-                                          child: Text("No Songs Found",
-                                              style: manRopeSemiBold));
-                                    }
-
-                                    final songsList = snapshot.requireData;
-
-                                    return ListView.builder(
-                                      itemCount: songsList.length,
-                                      itemBuilder: (context, index) {
-                                        return Obx(
-                                          () {
-                                            bool? isSelected =
-                                                controller.songs.any(
-                                              (element) =>
-                                                  element.id ==
-                                                  songsList[index].id,
-                                            );
-
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 16.0,
-                                                right: 16,
-                                                bottom: 12,
-                                              ),
-                                              child: AddSongsWidget(
-                                                  song: songsList[index],
-                                                  isSelected: isSelected.obs,
-                                                  onTap: () {
-                                                    bool? isAlreadySelected =
-                                                        controller.songs.any(
-                                                      (element) =>
-                                                          element.id ==
-                                                          songsList[index].id,
-                                                    );
-                                                    if (isAlreadySelected) {
-                                                      controller.songs
-                                                          .removeWhere(
-                                                              (element) =>
-                                                                  element.id ==
-                                                                  songsList[
-                                                                          index]
-                                                                      .id);
-                                                    } else {
-                                                      controller.songs.add(
-                                                          songsList[index]
-                                                            ..typeId = 3);
-                                                    }
-                                                  }),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  }),
+                            child: Center(
+                              child: Text("No Songs Found"),
                             ),
                           )
                         : Expanded(
-                            child: Column(
-                              children: [
-                                AudioPickerWidget(
-                                  onUploadComplete: (uploadedFileNames) {
-                                    for (var name in uploadedFileNames) {
-                                      final song = SongModel(
-                                        typeId: 4,
-                                        name: name.split('.').first, // optional
-                                        link: name,
-                                      );
-                                      controller.songs.add(song);
-                                    }
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                Expanded(
-                                    child: Obx(
-                                  () => ListView.builder(
-                                    itemCount: controller.songs.length,
-                                    itemBuilder: (context, index) {
-                                      final song = controller.songs[index];
-
-                                      return song.typeId != 4
-                                          ? const SizedBox.shrink()
-                                          : AddSongsWidget(
-                                              song: song,
-                                              isSelected: false.obs,
-                                              showSelected: false,
-                                            );
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Column(
+                                children: [
+                                  AudioPickerWidget(
+                                    onUploadComplete: (uploadedFileNames) {
+                                      for (var name in uploadedFileNames) {
+                                        final song = SongModel(
+                                          typeId: 4,
+                                          name: name[AudioKey.name], //
+                                          // optional
+                                          link: name[AudioKey.path],
+                                        );
+                                        controller.songs.add(song);
+                                      }
                                     },
                                   ),
-                                )),
-                              ],
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  Expanded(
+                                      child: Obx(
+                                    () => ListView.builder(
+                                      itemCount: controller.songs.length,
+                                      itemBuilder: (context, index) {
+                                        final song = controller.songs[index];
+
+                                        return song.typeId != 4
+                                            ? const SizedBox.shrink()
+                                            : GestureDetector(
+                                                onTap: () {
+                                                  Get.to(() =>
+                                                      MusicPlayerScreen(
+                                                          songTitle:
+                                                              song.name ??
+                                                                  'N/A',
+                                                          songUrl:
+                                                              song.link ?? '',
+                                                          imagePath:
+                                                              /* song.image ??*/
+                                                              ''));
+                                                },
+                                                child: AddSongsWidget(
+                                                  song: song,
+                                                  isSelected: false.obs,
+                                                  showSelected: false,
+                                                ),
+                                              );
+                                      },
+                                    ),
+                                  )),
+                                ],
+                              ),
                             ),
                           ),
           ),
@@ -230,7 +170,11 @@ class AddSongsScreen extends StatelessWidget {
             children: [
               CustomButton(
                   onPressed: () {
-                    Get.to(() => VoiceNoteScreen());
+                    if (controller.songs.isNotEmpty) {
+                      Get.to(() => VoiceNoteScreen());
+                    } else {
+                      customErrorSnackBar(content: "Select song to continue");
+                    }
                   },
                   text: 'Save'),
               // SizedBox(width: 8),

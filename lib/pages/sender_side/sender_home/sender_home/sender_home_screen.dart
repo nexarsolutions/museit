@@ -2,17 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_create_playlist/sender_create_playlist_bottom_sheet.dart';
-import 'package:musit/services/paylist_service.dart';
-import 'package:musit/widgets/error_widget_future_stream.dart';
 
-import '../../../../common_widgets/saved_playlist_card.dart';
 import '../../../../widgets/custom_header.dart';
 import '../../community/sender_community/sender_community_screen.dart';
-import '../../send_playlist/sender_send_playlist/sender_send_playlist_screen.dart';
 import '../../sender_send_song/add_songs/add_songs_screen.dart';
-import '../../sent_playlist/sender_sent_playlist/sender_sent_playlist_screen.dart';
-import '../../sent_playlist/view_sent_playlist/view_sent_playlist_screen.dart';
 import 'controller/sender_home_controller.dart';
 
 class SenderHomeScreen extends StatelessWidget {
@@ -45,47 +38,33 @@ class SenderHomeScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
+                      spacing: 19,
                       children: [
-                        _buildSmallCard(
-                          title: 'Create Playlist',
-                          image: 'assets/images/create_playlist.png',
-                          onTap: () {
-                            senderCreatePlaylistBottomSheet();
-                          },
-                        ),
-                        const SizedBox(width: 19),
-                        _buildSmallCard(
-                          title: 'Sent Playlist',
-                          image: 'assets/images/sent_playlist.png',
-                          onTap: () {
-                            Get.to(() => SenderSentPlaylistScreen());
-                          },
-                        ),
-                        const SizedBox(width: 19),
+                        // _buildSmallCard(
+                        //   title: 'Create Playlist',
+                        //   image: 'assets/images/create_playlist.png',
+                        //   onTap: () {
+                        //     senderCreatePlaylistBottomSheet();
+                        //   },
+                        // ),
+                        // const SizedBox(width: 19),
+                        // _buildSmallCard(
+                        //   title: 'Sent Playlist',
+                        //   image: 'assets/images/sent_playlist.png',
+                        //   onTap: () {
+                        //     Get.to(() => SenderSentPlaylistScreen());
+                        //   },
+                        // ),
+                        // const SizedBox(width: 19),
                         _buildSmallCard(
                           title: 'MUSEiT Moment',
                           image: 'assets/images/send_paid_songs.png',
                           onTap: () {
-                            Get.to(() => SenderSendPlaylistScreen());
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+                            // Get.to(() => SenderSendPlaylistScreen());
 
-                  const SizedBox(height: 53),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Row(
-                      children: [
-                        _buildSmallCard(
-                          title: 'Send Song',
-                          image: 'assets/images/send_paid_songs.png',
-                          onTap: () {
                             Get.to(() => AddSongsScreen());
                           },
                         ),
-                        const SizedBox(width: 19),
                         _buildSmallCard(
                           title: "Community",
                           image: "assets/images/community.png",
@@ -97,65 +76,89 @@ class SenderHomeScreen extends StatelessWidget {
                     ),
                   ),
 
+                  // const SizedBox(height: 53),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  //   child: Row(
+                  //     children: [
+                  //       // _buildSmallCard(
+                  //       //   title: 'Send Song',
+                  //       //   image: 'assets/images/send_paid_songs.png',
+                  //       //   onTap: () {
+                  //       //     Get.to(() => AddSongsScreen());
+                  //       //   },
+                  //       // ),
+                  //       // const SizedBox(width: 19),
+                  //       // _buildSmallCard(
+                  //       //   title: "Community",
+                  //       //   image: "assets/images/community.png",
+                  //       //   onTap: () {
+                  //       //     Get.to(() => SenderCommunityScreen());
+                  //       //   },
+                  //       // ),
+                  //     ],
+                  //   ),
+                  // ),
+
                   const SizedBox(height: 23),
-                  Text(
-                    'Recently Created Playlists',
-                    style: manRopeSemiBold.copyWith(fontSize: 14),
-                  ),
-                  const SizedBox(height: 23),
-                  FutureBuilder(
-                      future: PlaylistService().getPlayList(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ErrorWidgetFutureStream();
-                        }
-
-                        if (snapshot.hasError) {
-                          return ErrorWidgetFutureStream(
-                            error: snapshot.error.toString(),
-                          );
-                        }
-
-                        if (!snapshot.hasData ||
-                            snapshot.data == null ||
-                            snapshot.data!.isEmpty) {
-                          return const ErrorWidgetFutureStream(
-                            error: 'No Data Found',
-                          );
-                        }
-
-                        final playLists = snapshot.requireData;
-
-                        return ListView.builder(
-                          padding: EdgeInsets.zero,
-                          physics: NeverScrollableScrollPhysics(),
-                          primary: false,
-                          shrinkWrap: true,
-                          itemCount: playLists.length,
-                          itemBuilder: (context, index) {
-                            final playlist = playLists[index];
-
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 30.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Get.to(
-                                    () => ViewSentPlaylistScreen(
-                                      playListId: playlist.id,
-                                    ),
-                                  );
-                                },
-                                child: SavedPlaylistCard(
-                                  showDateTime: true,
-                                  playlist: playlist,
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                  const SizedBox(height: 23),
+                  // Text(
+                  //   'Recently Created Playlists',
+                  //   style: manRopeSemiBold.copyWith(fontSize: 14),
+                  // ),
+                  // const SizedBox(height: 23),
+                  // FutureBuilder(
+                  //     future: PlaylistService().getPlayList(),
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ErrorWidgetFutureStream();
+                  //       }
+                  //
+                  //       if (snapshot.hasError) {
+                  //         return ErrorWidgetFutureStream(
+                  //           error: snapshot.error.toString(),
+                  //         );
+                  //       }
+                  //
+                  //       if (!snapshot.hasData ||
+                  //           snapshot.data == null ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return const ErrorWidgetFutureStream(
+                  //           error: 'No Data Found',
+                  //         );
+                  //       }
+                  //
+                  //       final playLists = snapshot.requireData;
+                  //
+                  //       return ListView.builder(
+                  //         padding: EdgeInsets.zero,
+                  //         physics: NeverScrollableScrollPhysics(),
+                  //         primary: false,
+                  //         shrinkWrap: true,
+                  //         itemCount: playLists.length,
+                  //         itemBuilder: (context, index) {
+                  //           final playlist = playLists[index];
+                  //
+                  //           return Padding(
+                  //             padding: const EdgeInsets.only(bottom: 30.0),
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 Get.to(
+                  //                   () => ViewSentPlaylistScreen(
+                  //                     playListId: playlist.id,
+                  //                   ),
+                  //                 );
+                  //               },
+                  //               child: SavedPlaylistCard(
+                  //                 showDateTime: true,
+                  //                 playlist: playlist,
+                  //               ),
+                  //             ),
+                  //           );
+                  //         },
+                  //       );
+                  //     }),
+                  // const SizedBox(height: 23),
                 ],
               ),
             ),
@@ -227,91 +230,49 @@ class SenderHomeScreen extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: Stack(
-          alignment: Alignment.topCenter,
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              constraints: BoxConstraints(maxHeight: 84, minHeight: 84),
-              padding: const EdgeInsets.only(
-                left: 18,
-                right: 18,
-                top: 41,
-                bottom: 13,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF8C7FAC).withOpacity(0.15),
-                    const Color(0xFF7695CA).withOpacity(0.15),
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+        child: Center(
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              Container(width: (Get.width - 67) / 3,
+                constraints: BoxConstraints(
+                    maxHeight: 84,
+                    minHeight: 84,
+                    maxWidth: (Get.width - 67) / 3),
+                padding: const EdgeInsets.only(
+                  left: 18,
+                  right: 18,
+                  top: 41,
+                  bottom: 13,
                 ),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: darkGrey.withOpacity(0.1)),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    title,
-                    style: manRopeSemiBold.copyWith(fontSize: 10),
-                    textAlign: TextAlign.center,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF8C7FAC).withOpacity(0.15),
+                      const Color(0xFF7695CA).withOpacity(0.15),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
-                ],
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: darkGrey.withOpacity(0.1)),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      title,
+                      style: manRopeSemiBold.copyWith(fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-                top: -35, child: Image.asset(image, width: 70, height: 70)),
-          ],
+              Positioned(
+                  top: -35, child: Image.asset(image, width: 70, height: 70)),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  // ===== Reusable Full Width Card =====
-  Widget buildFullWidthCard({
-    required String title,
-    required String image,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Stack(
-        alignment: Alignment.topCenter,
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            width: Get.width,
-            padding: const EdgeInsets.only(
-              left: 25,
-              right: 25,
-              top: 41,
-              bottom: 13,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF8C7FAC).withOpacity(0.15),
-                  const Color(0xFF7695CA).withOpacity(0.15),
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: darkGrey.withOpacity(0.1)),
-            ),
-            child: Column(
-              children: [
-                Text(title, style: manRopeSemiBold.copyWith(fontSize: 10)),
-              ],
-            ),
-          ),
-          Positioned(
-            top: -35,
-            child: Image.asset(image, width: 70, height: 70),
-          ),
-        ],
       ),
     );
   }

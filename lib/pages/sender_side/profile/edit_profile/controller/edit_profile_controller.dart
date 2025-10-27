@@ -81,7 +81,7 @@ class EditProfileController extends GetxController {
       onSuccess: (response) async {
         UserModel newUser = UserModel.fromJson(response['response'])
           ..token = userManager.cachedUser?.token;
-        await Future.delayed(const Duration(milliseconds: 800));
+        // await Future.delayed(const Duration(milliseconds: 800));
         await userManager.clearUser();
         userManager.cachedUser = newUser;
         Get.back();
@@ -102,7 +102,7 @@ class EditProfileController extends GetxController {
       onSuccess: (response) async {
         // customPrint("Update Password: $response");
         //wait for loading dialog to close
-        await Future.delayed(const Duration(milliseconds: 800));
+        // await Future.delayed(const Duration(milliseconds: 800));
         Get.back(); //close dialog
         successDialog(content: response['message']);
       },

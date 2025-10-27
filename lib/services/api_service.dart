@@ -11,8 +11,8 @@ import '../utils/global_functions.dart';
 import 'api_exception.dart';
 
 class ApiService {
-  static String baseUrl = 'http://192.168.18.13:8084/api/';
-  static String serverUrl = 'http://192.168.18.13:8084/';
+  static String baseUrl = 'http://3.10.169.217:8084/api/';
+  static String serverUrl = 'http://3.10.169.217:8084/';
 
   static final String imageUrl = '${serverUrl}file/';
 
@@ -101,7 +101,7 @@ class ApiService {
   ///post
   Future<dynamic> post(String path, Map<String, dynamic> data) async {
     try {
-      printInfo(info:  "$baseUrl$path");
+      printInfo(info: "$baseUrl$path");
       final headers = await _getHeaders();
       // printInfo(info:"$headers");
       // printInfo(info:"Body: $data");
@@ -218,12 +218,21 @@ class ApiService {
     Function(Map<String, dynamic>)? onSuccess,
   }) async {
     String? errorMessage;
+    bool isDialogShown = false; // 🧩 track if we showed it
+
     try {
       loadingDialog(message: loadingMsg);
+      isDialogShown = true;
 
       final response = await apiMethod();
 
-      onSuccess?.call(response);
+      // Before calling onSuccess, close the loading dialog safely
+      if (isDialogShown && (Get.isDialogOpen ?? false)) {
+        Get.back();
+        isDialogShown = false;
+      }
+
+      await onSuccess?.call(response);
     } on AuthException catch (e) {
       errorMessage = e.message;
       customPrint('Auth Error: $e');
@@ -239,7 +248,13 @@ class ApiService {
       errorMessage = e.toString();
       customPrint('Unknown Error: $e');
     } finally {
-      if (Get.isDialogOpen ?? false) Get.back();
+      // Close dialog ONLY if we opened it and it's still open
+      if (isDialogShown && (Get.isDialogOpen ?? false)) {
+        Get.back();
+        isDialogShown = false;
+      }
+
+      // Show error (if any)
       if (errorMessage != null) {
         errorDialog(
           title: "Error",

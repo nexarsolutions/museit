@@ -68,7 +68,7 @@ class AddSongsWidget extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: CachedNetworkImage(
-                    imageUrl: song.image.showImage,
+                    imageUrl: ''/*song.image.showImage*/,
                     // Your backend image URL
                     width: 60,
                     height: 60,
@@ -111,7 +111,7 @@ class AddSongsWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        song.price?.toString() ?? 'N/A',
+                        /*song.price?.toString() ??*/ 'N/A',
                         style: manRope.copyWith(
                           fontSize: 12,
                           color: lightBlack,
