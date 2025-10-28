@@ -74,12 +74,21 @@ class AuthService {
     return await _api.get("getUserInfoById?userId=$userId");
   }
 
-  Future<Map<String, String>> updateProfile(Map<String, String> data) async {
+  Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
     return await _api.put("updateProfile", data);
   }
 
-  Future<Map<String, String>> updatePassword(Map<String, String> data) async {
+  Future<Map<String, dynamic>> updatePassword(Map<String, dynamic> data) async {
     return await _api.put("updatePassword", data);
+  }
+
+  Future<Map<String, dynamic>> createCharityProfile(
+      Map<String, dynamic> data) async {
+    return await _api.post("user/charity", data);
+  }
+
+  Future<Map<String, dynamic>> charityDashboard() async {
+    return await _api.get("/user/charity/dashboard");
   }
 
   ///******************** Function **********************

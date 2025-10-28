@@ -3,17 +3,10 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 
-import '../../../../common_widgets/saved_playlist_card.dart';
-import '../../../../services/song_service.dart';
 import '../../../../widgets/custom_header.dart';
-import '../../../../widgets/error_widget_future_stream.dart';
-import '../../../sender_side/sent_playlist/view_sent_playlist/view_sent_playlist_screen.dart';
-import '../../recieved_playlist/recieved_playlist/recieved_playlist_screen.dart';
-import '../../recieved_songs/recieved_songs/recieved_songs_screen.dart';
-import '../../recipient_charity_compaign/recipient_charity_compaign/recipient_charity_compaign_screen.dart';
+import '../../recieved_songs/recieved_songs_screen.dart';
 import '../../recipient_community/recipient_community/recipient_community_screen.dart';
 import '../../recipient_profile/recipient_profile/recipient_profile_screen.dart';
-import '../../saved_playlist/recipient_saved_playlist_screen.dart';
 import 'controller/recipient_home_controller.dart';
 
 class RecipientHomeScreen extends StatelessWidget {
@@ -48,6 +41,7 @@ class RecipientHomeScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
+                      spacing: 19,
                       children: [
                         // Expanded(
                         //   child: GestureDetector(
@@ -62,28 +56,23 @@ class RecipientHomeScreen extends StatelessWidget {
                         // ),
                         // const SizedBox(width: 25),
                         Expanded(
-                          child: GestureDetector(
+                          child: buildSmallCard(
+                            title: 'Received Songs',
+                            image: 'assets/images/recieved_songs.png',
                             onTap: () {
                               Get.to(() => ReceivedSongsScreen());
                             },
-                            child: buildSmallCard(
-                              title: 'Received Songs',
-                              image: 'assets/images/recieved_songs.png',
-                            ),
                           ),
                         ),
-                        const SizedBox(width: 25),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.to(() => RecipientSavedPlaylistScreen());
-                            },
-                            child: buildSmallCard(
-                              title: 'Saved Playlist',
-                              image: 'assets/images/saved_playlist.png',
-                            ),
-                          ),
-                        ),
+                        // Expanded(
+                        //   child: buildSmallCard(
+                        //     title: 'Saved Playlist',
+                        //     image: 'assets/images/saved_playlist.png',
+                        //     onTap: () {
+                        //       Get.to(() => RecipientSavedPlaylistScreen());
+                        //     },
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -92,34 +81,28 @@ class RecipientHomeScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
+                      spacing: 19,
                       children: [
                         // const SizedBox(width: 20),
 
                         Expanded(
-                          child: GestureDetector(
+                          child: buildSmallCard(
+                            title: "Community",
+                            image: "assets/images/community.png",
                             onTap: () {
                               Get.to(() => RecipientCommunityScreen());
                             },
-                            child: buildSmallCard(
-                              title: "Community",
-                              image: "assets/images/community.png",
-                            ),
                           ),
                         ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.to(() => RecipientCharityCompaignScreen());
-                            },
-                            child: buildSmallCard(
-                              title: 'Charity Campaign ',
-                              image: 'assets/images/charity_compaign.png',
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Spacer(),
+                        // Expanded(
+                        //   child: buildSmallCard(
+                        //     title: 'Charity Campaign ',
+                        //     image: 'assets/images/charity_compaign.png',
+                        //     onTap: () {
+                        //       Get.to(() => RecipientCharityCompaignScreen());
+                        //     },
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -249,45 +232,56 @@ class RecipientHomeScreen extends StatelessWidget {
   }
 
   // ===== Reusable Small Card =====
-  Widget buildSmallCard({required String title, required String image}) {
-    return Stack(
-      alignment: Alignment.topCenter,
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          constraints: BoxConstraints(maxHeight: 84, minHeight: 84),
-          padding: const EdgeInsets.only(
-            left: 18,
-            right: 18,
-            top: 41,
-            bottom: 13,
-          ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                const Color(0xFF8C7FAC).withOpacity(0.15),
-                const Color(0xFF7695CA).withOpacity(0.15),
-              ],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: darkGrey.withOpacity(0.1)),
-          ),
-          child: Column(
-            children: [
-              Text(
-                title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: manRopeSemiBold.copyWith(fontSize: 10),
-                textAlign: TextAlign.center,
+  Widget buildSmallCard(
+      {required String title, required String image, void Function()? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Center(
+        child: Stack(
+          alignment: Alignment.topCenter,
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              width: (Get.width - 32 - 48 - 19) / 3,
+              constraints: BoxConstraints(
+                  maxHeight: 84,
+                  minHeight: 84,
+                  maxWidth: (Get.width - 32 - 48 - 19) / 3),
+              padding: const EdgeInsets.only(
+                left: 18,
+                right: 18,
+                top: 41,
+                bottom: 13,
               ),
-            ],
-          ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF8C7FAC).withOpacity(0.15),
+                    const Color(0xFF7695CA).withOpacity(0.15),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: darkGrey.withOpacity(0.1)),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: manRopeSemiBold.copyWith(fontSize: 10),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+                top: -35, child: Image.asset(image, width: 70, height: 70)),
+          ],
         ),
-        Positioned(top: -35, child: Image.asset(image, width: 70, height: 70)),
-      ],
+      ),
     );
   }
 

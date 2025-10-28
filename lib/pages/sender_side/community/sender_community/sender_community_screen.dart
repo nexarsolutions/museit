@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
-import 'package:musit/pages/charity_side/my_playlist/view_my_playlist/view_my_playlist_screen.dart';
 import 'package:musit/pages/sender_side/community/sender_community/widget/sender_community_card.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_tab_button.dart';

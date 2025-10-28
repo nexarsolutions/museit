@@ -8,6 +8,7 @@ import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 import '../../../../constants/app_enums.dart';
+import '../../../../constants/text_styles.dart';
 import '../../../../globalModels/song_model.dart';
 import '../../../../widgets/audio_picker_widget.dart';
 import '../../../../widgets/custom_tab_button.dart';
@@ -87,82 +88,158 @@ class AddSongsScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 24),
-          Obx(
-            () => controller.songTypeId.value == 0
-                ? Expanded(
-                    child: Center(
-                      child: Text("No Songs Found"),
-                    ),
-                  )
-                : controller.songTypeId.value == 1
-                    ? Expanded(
-                        child: Center(
-                          child: Text("No Songs Found"),
-                        ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Obx(
+                () => controller.songTypeId.value == 0
+                    ? _ConnectAccountPrompt(
+                        serviceName: 'Spotify',
+                        assetPath: 'assets/images/spotify_selected.png',
+                        onPressed: null, // or add logic below
                       )
-                    : controller.songTypeId.value == 2
-                        ? Expanded(
-                            child: Center(
-                              child: Text("No Songs Found"),
-                            ),
+                    : controller.songTypeId.value == 1
+                        ? _ConnectAccountPrompt(
+                            serviceName: 'YouTube',
+                            assetPath: 'assets/images/youtube_selected.png',
+                            onPressed: null,
                           )
-                        : Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Column(
+                        : controller.songTypeId.value == 2
+                            ? _ConnectAccountPrompt(
+                                serviceName: 'Apple Music',
+                                assetPath:
+                                    'assets/images/selected_apple_music.png',
+                                onPressed: null,
+                              )
+                            : Column(
                                 children: [
-                                  AudioPickerWidget(
-                                    onUploadComplete: (uploadedFileNames) {
-                                      for (var name in uploadedFileNames) {
-                                        final song = SongModel(
-                                          typeId: 4,
-                                          name: name[AudioKey.name], //
-                                          // optional
-                                          link: name[AudioKey.path],
-                                        );
-                                        controller.songs.add(song);
-                                      }
-                                    },
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
+                                  // AudioPickerWidget(
+                                  //   onUploadComplete: (uploadedFileNames) {
+                                  //     for (var name in uploadedFileNames) {
+                                  //       final song = SongModel(
+                                  //         typeId: 4,
+                                  //         name: name[AudioKey.name], //
+                                  //         // optional
+                                  //         link: name[AudioKey.path],
+                                  //       );
+                                  //       controller.songs.add(song);
+                                  //     }
+                                  //   },
+                                  // ),
+                                  // SizedBox(
+                                  //   height: 8,
+                                  // ),
                                   Expanded(
-                                      child: Obx(
-                                    () => ListView.builder(
-                                      itemCount: controller.songs.length,
-                                      itemBuilder: (context, index) {
-                                        final song = controller.songs[index];
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Text(
+                                          //   "Uploaded Songs",
+                                          //   style: manRopeSemiBold,
+                                          // ).marginSymmetric(vertical: 8),
+                                          // Obx(
+                                          //   () => ListView.builder(
+                                          //     shrinkWrap: true,
+                                          //     primary: false,
+                                          //     padding: EdgeInsets.zero,
+                                          //     itemCount:
+                                          //         controller.songs.length,
+                                          //     itemBuilder: (context, index) {
+                                          //       final song =
+                                          //           controller.songs[index];
+                                          //
+                                          //       return song.typeId != 4
+                                          //           ? const SizedBox.shrink()
+                                          //           : GestureDetector(
+                                          //               onTap: () {
+                                          //                 Get.to(() =>
+                                          //                     MusicPlayerScreen(
+                                          //                         songTitle:
+                                          //                             song.name ??
+                                          //                                 'N/A',
+                                          //                         songUrl:
+                                          //                             song.link ??
+                                          //                                 '',
+                                          //                         imagePath:
+                                          //                             /* song.image ??*/
+                                          //                             ''));
+                                          //               },
+                                          //               child: AddSongsWidget(
+                                          //                 song: song,
+                                          //                 isSelected: false.obs,
+                                          //                 showSelected: false,
+                                          //               ),
+                                          //             );
+                                          //     },
+                                          //   ),
+                                          // ),
+                                          Text(
+                                            "Library",
+                                            style: manRopeSemiBold,
+                                          ).marginSymmetric(vertical: 8),
+                                          Obx(
+                                            () => ListView.builder(
+                                              shrinkWrap: true,
+                                              primary: false,
+                                              padding: EdgeInsets.zero,
+                                              itemCount:
+                                                  controller.library.length,
+                                              itemBuilder: (context, index) {
+                                                final song =
+                                                    controller.library[index];
 
-                                        return song.typeId != 4
-                                            ? const SizedBox.shrink()
-                                            : GestureDetector(
-                                                onTap: () {
-                                                  Get.to(() =>
-                                                      MusicPlayerScreen(
-                                                          songTitle:
-                                                              song.name ??
-                                                                  'N/A',
-                                                          songUrl:
-                                                              song.link ?? '',
-                                                          imagePath:
-                                                              /* song.image ??*/
-                                                              ''));
-                                                },
-                                                child: AddSongsWidget(
-                                                  song: song,
-                                                  isSelected: false.obs,
-                                                  showSelected: false,
-                                                ),
-                                              );
-                                      },
+                                                return Obx(
+                                                  () {
+                                                    bool isSelected = controller
+                                                        .librarySelected.value
+                                                        .any(
+                                                      (element) =>
+                                                          element.link ==
+                                                          song.link,
+                                                    );
+
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        Get.to(() =>
+                                                            MusicPlayerScreen(
+                                                                songTitle:
+                                                                    song.name ??
+                                                                        'N/A',
+                                                                songUrl:
+                                                                    song.link ??
+                                                                        '',
+                                                                imagePath:
+                                                                    /* song.image ??*/
+                                                                    ''));
+                                                      },
+                                                      child: AddSongsWidget(
+                                                        song: song,
+                                                        isSelected:
+                                                            isSelected.obs,
+                                                        showSelected: true,
+                                                        onTap: () {
+                                                          controller
+                                                              .librarySelected
+                                                              .add(song);
+                                                        },
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  )),
+                                  ),
                                 ],
                               ),
-                            ),
-                          ),
+              ),
+            ),
           ),
           SizedBox(height: 24),
           Row(
@@ -170,7 +247,7 @@ class AddSongsScreen extends StatelessWidget {
             children: [
               CustomButton(
                   onPressed: () {
-                    if (controller.songs.isNotEmpty) {
+                    if (controller.librarySelected.isNotEmpty) {
                       Get.to(() => VoiceNoteScreen());
                     } else {
                       customErrorSnackBar(content: "Select song to continue");
@@ -219,6 +296,49 @@ class AddSongsScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+}
+
+class _ConnectAccountPrompt extends StatelessWidget {
+  final String serviceName;
+  final String assetPath;
+  final void Function()? onPressed;
+
+  const _ConnectAccountPrompt({
+    super.key,
+    required this.serviceName,
+    required this.assetPath,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(
+            radius: 15,
+            backgroundColor: blackColor,
+            child: Center(child: Image.asset(assetPath, height: 20)),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Connect your $serviceName account to browse songs",
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          CustomButton(
+            text: "Connect $serviceName",
+            onPressed: onPressed ??
+                () {
+                  customErrorSnackBar(content: "Coming Soon");
+                },
+          ),
         ],
       ),
     );

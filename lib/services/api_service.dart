@@ -103,8 +103,8 @@ class ApiService {
     try {
       printInfo(info: "$baseUrl$path");
       final headers = await _getHeaders();
-      // printInfo(info:"$headers");
-      // printInfo(info:"Body: $data");
+      printInfo(info:"$headers");
+      printInfo(info:"Body: $data");
       final response = await http.post(
         Uri.parse('$baseUrl$path'),
         headers: headers,

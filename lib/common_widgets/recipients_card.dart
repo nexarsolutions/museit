@@ -10,12 +10,14 @@ class RecipientsCard extends StatelessWidget {
   final UserModel user;
   final bool isSelected;
   final void Function()? onTap;
+  final bool showDonate;
 
   const RecipientsCard({
     super.key,
     required this.user,
     required this.isSelected,
     this.onTap,
+    this.showDonate = false,
   });
 
   @override
@@ -78,7 +80,7 @@ class RecipientsCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         user.username.text != ''
-                            ? user.username.text.split('').first
+                            ? user.username.text
                             : 'Loading...',
                         textAlign: TextAlign.center,
                         style: manRopeSemiBold.copyWith(
@@ -87,6 +89,24 @@ class RecipientsCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      if (showDonate) ...{
+                        const SizedBox(height: 8),
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                              color: blackColor,
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Text(
+                            "Donate",
+                            textAlign: TextAlign.center,
+                            style: manRope.copyWith(
+                                fontSize: 8, color: whiteColor),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      },
                     ],
                   ),
                 ),
@@ -94,13 +114,12 @@ class RecipientsCard extends StatelessWidget {
             ),
           ),
           isSelected
-                ? Image.asset(
-                    'assets/images/tick_purple.png',
-                    width: 22,
-                    height: 22,
-                  )
-                : const SizedBox.shrink(),
-
+              ? Image.asset(
+                  'assets/images/tick_purple.png',
+                  width: 22,
+                  height: 22,
+                )
+              : const SizedBox.shrink(),
         ],
       ),
     );

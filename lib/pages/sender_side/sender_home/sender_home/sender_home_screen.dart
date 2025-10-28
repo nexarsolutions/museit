@@ -6,12 +6,10 @@ import 'package:musit/constants/text_styles.dart';
 import '../../../../widgets/custom_header.dart';
 import '../../community/sender_community/sender_community_screen.dart';
 import '../../sender_send_song/add_songs/add_songs_screen.dart';
-import 'controller/sender_home_controller.dart';
+import '../../sent_playlist/sentSongs/sent_songs_screen.dart';
 
 class SenderHomeScreen extends StatelessWidget {
-  SenderHomeScreen({super.key});
-
-  final controller = Get.put(SenderHomeController());
+  const SenderHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +22,7 @@ class SenderHomeScreen extends StatelessWidget {
 
           // ===== Scroll Body =====
           Expanded(
-            child: SingleChildScrollView(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,46 +33,55 @@ class SenderHomeScreen extends StatelessWidget {
                   _buildQuoteBox(),
 
                   const SizedBox(height: 53),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Row(
-                      spacing: 19,
-                      children: [
-                        // _buildSmallCard(
-                        //   title: 'Create Playlist',
-                        //   image: 'assets/images/create_playlist.png',
-                        //   onTap: () {
-                        //     senderCreatePlaylistBottomSheet();
-                        //   },
-                        // ),
-                        // const SizedBox(width: 19),
-                        // _buildSmallCard(
-                        //   title: 'Sent Playlist',
-                        //   image: 'assets/images/sent_playlist.png',
-                        //   onTap: () {
-                        //     Get.to(() => SenderSentPlaylistScreen());
-                        //   },
-                        // ),
-                        // const SizedBox(width: 19),
-                        _buildSmallCard(
-                          title: 'MUSEiT Moment',
-                          image: 'assets/images/send_paid_songs.png',
-                          onTap: () {
-                            // Get.to(() => SenderSendPlaylistScreen());
 
-                            Get.to(() => AddSongsScreen());
-                          },
-                        ),
-                        _buildSmallCard(
-                          title: "Community",
-                          image: "assets/images/community.png",
-                          onTap: () {
-                            Get.to(() => SenderCommunityScreen());
-                          },
-                        ),
-                      ],
-                    ),
+                  Row(
+                    spacing: 19,
+                    children: [
+                      _buildSmallCard(
+                        title: 'MUSEiT Moment',
+                        image: 'assets/images/send_paid_songs.png',
+                        onTap: () {
+                          Get.to(() => AddSongsScreen());
+                        },
+                      ),
+                      _buildSmallCard(
+                        title: "Community",
+                        image: "assets/images/community.png",
+                        onTap: () {
+                          Get.to(() => SenderCommunityScreen());
+                        },
+                      ),
+                      _buildSmallCard(
+                        title: 'Sent Songs',
+                        image: 'assets/images/sent_playlist.png',
+                        onTap: () {
+                          Get.to(() => SentSongsScreen());
+                        },
+                      ),
+                    ],
                   ),
+                  // Row(
+                  //   spacing: 19,
+                  //   children: [
+                  //     // _buildSmallCard(
+                  //     //   title: 'Create Playlist',
+                  //     //   image: 'assets/images/create_playlist.png',
+                  //     //   onTap: () {
+                  //     //     senderCreatePlaylistBottomSheet();
+                  //     //   },
+                  //     // ),
+                  //     // const SizedBox(width: 19),
+                  //     // _buildSmallCard(
+                  //     //   title: 'Sent Playlist',
+                  //     //   image: 'assets/images/sent_playlist.png',
+                  //     //   onTap: () {
+                  //     //     Get.to(() => SenderSentPlaylistScreen());
+                  //     //   },
+                  //     // ),
+                  //     // const SizedBox(width: 19),
+                  //
+                  //   ],
+                  // ),
 
                   // const SizedBox(height: 53),
                   // Padding(
@@ -100,7 +107,7 @@ class SenderHomeScreen extends StatelessWidget {
                   //   ),
                   // ),
 
-                  const SizedBox(height: 23),
+                  // const SizedBox(height: 23),
                   // Text(
                   //   'Recently Created Playlists',
                   //   style: manRopeSemiBold.copyWith(fontSize: 14),
@@ -227,51 +234,50 @@ class SenderHomeScreen extends StatelessWidget {
   // ===== Reusable Small Card =====
   Widget _buildSmallCard(
       {required String title, required String image, void Function()? onTap}) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Center(
-          child: Stack(
-            alignment: Alignment.topCenter,
-            clipBehavior: Clip.none,
-            children: [
-              Container(width: (Get.width - 67) / 3,
-                constraints: BoxConstraints(
-                    maxHeight: 84,
-                    minHeight: 84,
-                    maxWidth: (Get.width - 67) / 3),
-                padding: const EdgeInsets.only(
-                  left: 18,
-                  right: 18,
-                  top: 41,
-                  bottom: 13,
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF8C7FAC).withOpacity(0.15),
-                      const Color(0xFF7695CA).withOpacity(0.15),
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: darkGrey.withOpacity(0.1)),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      title,
-                      style: manRopeSemiBold.copyWith(fontSize: 10),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Center(
+        child: Stack(
+          alignment: Alignment.topCenter,
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              width: (Get.width - 32 - 19 - 19) / 3,
+              constraints: BoxConstraints(
+                  maxHeight: 84,
+                  minHeight: 84,
+                  maxWidth: (Get.width - 32 - 19 - 19) / 3),
+              padding: const EdgeInsets.only(
+                left: 18,
+                right: 18,
+                top: 41,
+                bottom: 13,
               ),
-              Positioned(
-                  top: -35, child: Image.asset(image, width: 70, height: 70)),
-            ],
-          ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF8C7FAC).withOpacity(0.15),
+                    const Color(0xFF7695CA).withOpacity(0.15),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: darkGrey.withOpacity(0.1)),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    title,
+                    style: manRopeSemiBold.copyWith(fontSize: 10),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+                top: -35, child: Image.asset(image, width: 70, height: 70)),
+          ],
         ),
       ),
     );

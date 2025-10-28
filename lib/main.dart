@@ -84,7 +84,9 @@ class MyApp extends StatelessWidget {
               : userManager.cachedUser!.currentRoleId == 2
                   ? RecipientHomeScreen()
                   : userManager.cachedUser!.currentRoleId == 3
-                      ? CharityHomeScreen()
+                      ? userManager.cachedUser!.charity == null
+                          ? CharityProfileCreationScreen()
+                          : CharityHomeScreen()
                       : LoginScreen()
           : userManager.isFirstOpen
               ? OnBoardingScreen()

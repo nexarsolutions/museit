@@ -16,7 +16,6 @@ import '../../../../utils/dialog_utilities.dart';
 import '../../../sender_side/profile/change_password/change_password_bottomsheet.dart';
 import '../../../sender_side/profile/edit_profile/edit_profile_screen.dart';
 import '../../../sender_side/subscriptions/subscriptions/subscription_screen.dart';
-import '../../saved_playlist/recipient_saved_playlist_screen.dart';
 import '../recipient_history/recipient_history_screen.dart';
 import '../recipient_saved_songs/recipient_saved_songs_screen.dart';
 
@@ -157,13 +156,13 @@ class RecipientProfileScreen extends StatelessWidget {
                       Get.to(() => RecipientSavedSongsScreen());
                     },
                   ),
-                  ProfileWidget(
-                    iconPath: 'assets/images/saved_playlists.png',
-                    title: 'Saved Playlists',
-                    onTap: () {
-                      Get.to(() => RecipientSavedPlaylistScreen());
-                    },
-                  ),
+                  // ProfileWidget(
+                  //   iconPath: 'assets/images/saved_playlists.png',
+                  //   title: 'Saved Playlists',
+                  //   onTap: () {
+                  //     Get.to(() => RecipientSavedPlaylistScreen());
+                  //   },
+                  // ),
                   ProfileWidget(
                     iconPath: 'assets/images/subscriptions.png',
                     title: 'Subscriptions',

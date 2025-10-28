@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/common_widgets/my_compaigns_widget.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/widgets/error_widget_future_stream.dart';
 import '../../../../constants/text_styles.dart';
-import '../../../common_sections/notifications/notifications_screen.dart';
+import '../../../../widgets/custom_header.dart';
 import '../../charity_create_compaign/charity_create_compaign_screen.dart';
-import '../../charity_create_playlist/charity_create_playlist_bottomsheet.dart';
 import '../../charity_profile/charity_profile/charity_profile_screen.dart';
-import '../../my_playlist/charity_my_playlist/charity_my_playlist_screen.dart';
 import '../my_compaigns/my_compaigns_screen.dart';
 import '../view_my_compaigns/view_my_compaigns_screen.dart';
 import 'controller/charity_home_controller.dart';
 
 class CharityHomeScreen extends StatelessWidget {
-   CharityHomeScreen({super.key});
-final controller = Get.put(CharityHomeController());
+  CharityHomeScreen({super.key});
+
+  final controller = Get.put(CharityHomeController());
+
   @override
   Widget build(BuildContext context) {
     // Local function to build a reusable metric card widget
@@ -23,162 +24,166 @@ final controller = Get.put(CharityHomeController());
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          const SizedBox(height: 50),
-
-          // ===== Top Profile Row =====
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Get.to(()=>CharityProfileScreen());
-                  },
-                  child: const CircleAvatar(
-                    radius: 22,
-                    backgroundImage: AssetImage('assets/images/profile_1.png'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text('Hi, Katherine!', style: manRopeSemiBold),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    Get.to(() => NotificationsScreen());
-                  },
-                  child: Container(
-                    height: 44,
-                    width: 44,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: blackColor,
-                    ),
-                    child: Image.asset(
-                      'assets/images/notification.png',
-                      scale: 4,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          CustomHeader(
+            onTap: () {
+              Get.to(() => CharityProfileScreen());
+            },
           ),
-          const SizedBox(height: 24),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  buildMetricCard(
-                    imagePath: 'assets/images/charity.png',
-                    title: 'Total Donations',
-                    value: '\$5651',
-                  ),
-                  const SizedBox(height: 10),
-                  buildMetricCard(
-                    imagePath: 'assets/images/donations.png',
-                    title: 'Active Campaigns',
-                    value: '\$5651',
-                  ),
+                  FutureBuilder(
+                      future: controller.charityOverview(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ErrorWidgetFutureStream();
+                        }
+                        if (snapshot.hasError) {
+                          return ErrorWidgetFutureStream(
+                            error: snapshot.error.toString(),
+                          );
+                        }
+
+                        if (!snapshot.hasData || snapshot.data == null) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              buildMetricCard(
+                                imagePath: 'assets/images/charity.png',
+                                title: 'Total Donations',
+                                value: '\$0',
+                              ),
+                              const SizedBox(height: 10),
+                              buildMetricCard(
+                                imagePath: 'assets/images/donations.png',
+                                title: 'Active Campaigns',
+                                value: '0',
+                              ),
+                            ],
+                          );
+                        }
+
+                        final dashboard = snapshot.requireData!;
+
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            buildMetricCard(
+                              imagePath: 'assets/images/charity.png',
+                              title: 'Total Donations',
+                              value: '\$${dashboard['totalDonations']}',
+                            ),
+                            // const SizedBox(height: 10),
+                            // buildMetricCard(
+                            //   imagePath: 'assets/images/donations.png',
+                            //   title: 'Active Campaigns',
+                            //   value: '${dashboard['activeCampaigns']}',
+                            // ),
+                          ],
+                        );
+                      }),
                   const SizedBox(height: 49),
 
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
                       children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: (){
-                              Get.to(()=>CharityCreateCompaignScreen());
-                            },
-                            child: buildSmallCard(
-                              title: 'Create Charity\nCampaign ',
-                              image: 'assets/images/create_charity_compaign.png',
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: (){
-                              charityCreatePlaylistBottomSheet();
-                            },
-                            child: buildSmallCard(
-                              title: 'Create\nPlaylist',
-                              image: 'assets/images/create_playlist.png',
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: (){
-                              Get.to(()=>CharityMyPlaylistScreen());
-                            },
-                            child: buildSmallCard(
-                              title: 'My\nPlaylists',
-                              image: 'assets/images/my_playlists.png',
-                            ),
-                          ),
-                        ),
+                        // Expanded(
+                        //   child: GestureDetector(
+                        //     onTap: () {
+                        //       Get.to(() => CharityCreateCampaignScreen());
+                        //     },
+                        //     child: buildSmallCard(
+                        //       title: 'Create Charity\nCampaign ',
+                        //       image:
+                        //           'assets/images/create_charity_compaign.png',
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 20),
+                        // Expanded(
+                        //   child: GestureDetector(
+                        //     onTap: () {
+                        //       charityCreatePlaylistBottomSheet();
+                        //     },
+                        //     child: buildSmallCard(
+                        //       title: 'Create\nPlaylist',
+                        //       image: 'assets/images/create_playlist.png',
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 20),
+                        // Expanded(
+                        //   child: GestureDetector(
+                        //     onTap: () {
+                        //       Get.to(() => CharityMyPlaylistScreen());
+                        //     },
+                        //     child: buildSmallCard(
+                        //       title: 'My\nPlaylists',
+                        //       image: 'assets/images/my_playlists.png',
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: 15),
-                  GestureDetector(
-                    onTap: (){
-                      Get.to(()=>MyCompaignsScreen());
-                    },
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'My Compaigns',
-                            style: manRopeSemiBold.copyWith(fontSize: 14),
-                          ),
-                        ),
-                        Text(
-                          'View all',
-                          style: manRopeSemiBold.copyWith(
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                            decorationColor: blackColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  GridView.builder(
-
-                    physics: NeverScrollableScrollPhysics(),
-                    primary: false,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(bottom: 30),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                      mainAxisExtent: 190,
-                    ),
-                    itemCount: controller.myCompaignsList.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Get.to(
-                                () => ViewMyCompaignsScreen(
-                              model: controller.myCompaignsList[index],
-                            ),
-                          );
-                        },
-                        child: MyCompaignsWidget(
-                          model: controller.myCompaignsList[index],
-                        ),
-                      );
-                    },
-                  ),
+                  // const SizedBox(height: 15),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     Get.to(() => MyCompaignsScreen());
+                  //   },
+                  //   child: Row(
+                  //     children: [
+                  //       Expanded(
+                  //         child: Text(
+                  //           'My Compaigns',
+                  //           style: manRopeSemiBold.copyWith(fontSize: 14),
+                  //         ),
+                  //       ),
+                  //       Text(
+                  //         'View all',
+                  //         style: manRopeSemiBold.copyWith(
+                  //           fontSize: 14,
+                  //           decoration: TextDecoration.underline,
+                  //           decorationColor: blackColor,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 12),
+                  // GridView.builder(
+                  //   physics: NeverScrollableScrollPhysics(),
+                  //   primary: false,
+                  //   shrinkWrap: true,
+                  //   padding: EdgeInsets.only(bottom: 30),
+                  //   gridDelegate:
+                  //       const SliverGridDelegateWithFixedCrossAxisCount(
+                  //     crossAxisCount: 2,
+                  //     crossAxisSpacing: 8.0,
+                  //     mainAxisSpacing: 8.0,
+                  //     mainAxisExtent: 190,
+                  //   ),
+                  //   itemCount: controller.myCompaignsList.length,
+                  //   itemBuilder: (context, index) {
+                  //     return GestureDetector(
+                  //       onTap: () {
+                  //         Get.to(
+                  //           () => ViewMyCompaignsScreen(
+                  //             model: controller.myCompaignsList[index],
+                  //           ),
+                  //         );
+                  //       },
+                  //       child: MyCompaignsWidget(
+                  //         model: controller.myCompaignsList[index],
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                   // const SizedBox(height: /),
                 ],
               ),

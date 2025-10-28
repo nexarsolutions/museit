@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:musit/common_widgets/recipients_card.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
-import 'package:musit/pages/sender_side/sender_home/playlist_sent_bottom_sheet/playlist_sent_bottom_sheet.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_view_recipient/controller/sender_view_recipient_controller.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/utils/dialog_utilities.dart';
@@ -11,6 +10,7 @@ import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
 import '../../../../widgets/custom_text_field.dart';
+import 'widget/send_via_phone_sheet.dart';
 
 class SenderViewRecipientScreen extends StatelessWidget {
   SenderViewRecipientScreen({super.key, required this.onPressedSave});
@@ -30,9 +30,19 @@ class SenderViewRecipientScreen extends StatelessWidget {
             text: 'Recipients',
             isBack: true,
             showLastIcon: true,
-            lastWidget: Image.asset(
-              'assets/images/upload_icon_rounded.png',
-              scale: 3.5,
+            lastWidget: IconButton(
+              onPressed: () {
+                showSendViaPhoneSheet(
+                  context: context,
+                  onPhoneSubmitted: (phone) {
+                    phoneString.value = phone;
+                  },
+                );
+              },
+              icon: Icon(
+                Icons.phone,
+                color: blackColor,
+              ),
             ),
           ),
           Expanded(
@@ -63,6 +73,30 @@ class SenderViewRecipientScreen extends StatelessWidget {
                       } else {
                         controller.searchQuery.value = value.trim();
                       }
+                    },
+                  ),
+                  Obx(
+                    () {
+                      String? phone = phoneString.value;
+
+                      if (phone != null && phone != '') {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            tileColor: blueColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            leading: Icon(Icons.phone, color: blackColor),
+                            title: Text(
+                              phone ?? '_',
+                              style: manRopeSemiBold,
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox(
+                        height: 16,
+                      );
                     },
                   ),
                   Expanded(
@@ -98,7 +132,14 @@ class SenderViewRecipientScreen extends StatelessWidget {
                                   height: Get.height / 3,
                                   child: Center(
                                     child: TextButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          showSendViaPhoneSheet(
+                                            context: context,
+                                            onPhoneSubmitted: (phone) {
+                                              phoneString.value = phone;
+                                            },
+                                          );
+                                        },
                                         style: ButtonStyle(
                                           backgroundColor:
                                               WidgetStatePropertyAll(

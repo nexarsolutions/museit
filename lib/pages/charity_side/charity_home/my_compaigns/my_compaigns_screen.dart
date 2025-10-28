@@ -25,7 +25,7 @@ class MyCompaignsScreen extends StatelessWidget {
             showLastIcon: true,
             lastWidget: GestureDetector(
               onTap: () {
-                Get.to(() => CharityCreateCompaignScreen());
+                Get.to(() => CharityCreateCampaignScreen());
               },
               child: Image.asset(
                 'assets/images/add_icon_rounded.png',

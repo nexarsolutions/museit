@@ -18,10 +18,54 @@ class AddSongsController extends GetxController {
   RxString searchQuery = ''.obs;
 
   RxList<SongModel> songs = <SongModel>[].obs;
-  RxList<int> selectedUsers = <int>[].obs;
-  RxnString receiverPhoneNumber = RxnString();
+  RxList<SongModel> librarySelected = <SongModel>[].obs;
+  RxList<SongModel> library = <SongModel>[
+    SongModel(
+      typeId: 4,
+      name: "zamona-net-indila-love-story.mp3",
+      link:
+          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761649879080-zamona-net-indila-love-story.mp3",
+    ),
+    SongModel(
+      typeId: 4,
+      name: "Ajj_Kal_Full_Song_1.mp3",
+      link:
+          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761649918475-Ajj_Kal_Full_Song_1.mp3",
+    ),
+    SongModel(
+      typeId: 4,
+      name: "Jis_Tan_Nu_Lagdi_Aye_3.mp3",
+      link:
+          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761649946413-Jis_Tan_Nu_Lagdi_Aye_3.mp3",
+    ),
+    SongModel(
+      typeId: 4,
+      name: "Dhoor_Pendi_Kaka_128_Kbps.mp3",
+      link:
+          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761649972080-Dhoor_Pendi_Kaka_128_Kbps.mp3",
+    ),
+    SongModel(
+      typeId: 4,
+      name: "128-Baazigar_O_Baazigar_-_Baazigar_128_Kbps.mp3",
+      link:
+          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761650000462-128-Baazigar_O_Baazigar_-_Baazigar_128_Kbps.mp3",
+    ),
+    SongModel(
+      typeId: 4,
+      name: "bollywood_KK_1976_-_Kabhi_Kabhi_Mere_Dil.mp3",
+      link:
+          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761650025866-bollywood_KK_1976_-_Kabhi_Kabhi_Mere_Dil.mp3",
+    ),
+    SongModel(
+      typeId: 4,
+      name: "Nainowale_Ne_(Padmaavat)_320_Kbps.mp3",
+      link:
+          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761650066022-Nainowale_Ne_%28Padmaavat%29_320_Kbps.mp3",
+    ),
+  ].obs;
 
-  Future<void> shareSong(List<SongModel> voiceRecordings) async {
+  Future<void> shareSong(List<SongModel> voiceRecordings,
+      String? receiverPhoneNumber, List<int> selectedUsers) async {
     try {
       loadingDialog();
       List<Map<AudioKey, dynamic>> voices = [];
@@ -40,6 +84,10 @@ class AddSongsController extends GetxController {
         }
       }
 
+      for (var s in librarySelected) {
+        songs.add(s);
+      }
+
       var data = {
         'songs': songs
             .map(
@@ -56,8 +104,8 @@ class AddSongsController extends GetxController {
                 (user) => user,
               )
               .toList(),
-        if (receiverPhoneNumber.value != null)
-          'phoneNumber': receiverPhoneNumber.value,
+        if (receiverPhoneNumber != null && receiverPhoneNumber != '')
+          'phoneNumber': receiverPhoneNumber,
       };
       Get.back(); //close loading dialog
       await ApiService().handleResponse(

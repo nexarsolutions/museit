@@ -7,7 +7,6 @@ import 'package:musit/pages/auth/login/login_screen.dart';
 import 'package:musit/pages/common_sections/about_app/about_app_screen.dart';
 import 'package:musit/pages/common_sections/privacy_policy/privacy_policy_screen.dart';
 import 'package:musit/pages/common_sections/terms_conditions/terms_conditions_screen.dart';
-import 'package:musit/pages/select_role/select_role_screen.dart';
 import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/utils/extensions.dart';
 import 'package:musit/widgets/custom_app_bar.dart';

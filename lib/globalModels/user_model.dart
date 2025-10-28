@@ -48,7 +48,9 @@ class UserModel {
           List<int>.from(json['availableRoles']?.map((e) => e) ?? []),
       charity: json['charity'] != null
           ? UserCharity.fromJson(json['charity'])
-          : null,
+          : json['CharityProfile'] != null
+              ? UserCharity.fromJson(json['CharityProfile'])
+              : null,
     );
   }
 
@@ -89,16 +91,19 @@ class UserModel {
 class UserCharity {
   int? id;
   String? organtization;
+  String? address;
 
   UserCharity({
     this.id,
     this.organtization,
+    this.address,
   });
 
   factory UserCharity.fromJson(Map<String, dynamic> json) {
     return UserCharity(
       id: json['id'],
       organtization: json['organtization'],
+      address: json['address'],
     );
   }
 
@@ -106,6 +111,7 @@ class UserCharity {
     return {
       'id': id,
       'organtization': organtization,
+      'address': address,
     };
   }
 }
