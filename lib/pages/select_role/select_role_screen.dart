@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/pages/auth/signup/signup_screen.dart';
 import 'package:musit/widgets/custom_button.dart';
@@ -47,7 +47,7 @@ class SelectRoleScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 23),
+            // SizedBox(height: 23),
             Text('Select Account Type', style: manRopeSemiBold),
             SizedBox(height: 52),
             Padding(
