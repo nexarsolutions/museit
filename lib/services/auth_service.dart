@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/services/api_service.dart';
+import 'package:musit/services/spotify_auth_service.dart';
 
 class AuthService {
   final _api = ApiService();

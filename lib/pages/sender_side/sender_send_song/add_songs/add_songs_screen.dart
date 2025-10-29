@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
+import 'package:musit/services/auth_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
@@ -10,8 +11,11 @@ import 'package:musit/widgets/custom_text_field.dart';
 import '../../../../constants/app_enums.dart';
 import '../../../../constants/text_styles.dart';
 import '../../../../globalModels/song_model.dart';
+import '../../../../services/spotify_auth_service.dart';
+import '../../../../utils/spotify_preview_url.dart';
 import '../../../../widgets/audio_picker_widget.dart';
 import '../../../../widgets/custom_tab_button.dart';
+import '../../../../widgets/spotify_player.dart';
 import '../voice_note/voice_note_screen.dart';
 import 'controller/add_songs_controller.dart';
 
@@ -34,14 +38,18 @@ class AddSongsScreen extends StatelessWidget {
               controller: controller.searchController,
               hintText: 'Search',
               isSuffixIcon: true,
-              suffixIcon: Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: blackColor,
-                  shape: BoxShape.circle,
+              suffixIcon: GestureDetector(
+                onTap: () => controller
+                    .searchSong(controller.searchController.text.trim()),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: blackColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset('assets/images/search_icon.png', scale: 3),
                 ),
-                child: Image.asset('assets/images/search_icon.png', scale: 3),
               ),
               onChanged: (value) {
                 if (value.trim().isEmpty) {
@@ -93,11 +101,70 @@ class AddSongsScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Obx(
                 () => controller.songTypeId.value == 0
-                    ? _ConnectAccountPrompt(
-                        serviceName: 'Spotify',
-                        assetPath: 'assets/images/spotify_selected.png',
-                        onPressed: null, // or add logic below
-                      )
+                    ? !controller.isSpotifyConnected.value
+                        ? _ConnectAccountPrompt(
+                            serviceName: 'Spotify',
+                            assetPath: 'assets/images/spotify_selected.png',
+                            onPressed:
+                                controller.connectSpotify, // or add logic below
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+
+                                const SizedBox(height: 16),
+                                if (controller.isSpotifyLoading.value)
+                                  const Center(
+                                      child: CircularProgressIndicator())
+                                else if (controller.searchSpotifyResults.isEmpty)
+                                  const Text("No songs found. Try searching.")
+                                else
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount:
+                                          controller.searchSpotifyResults.length,
+                                      itemBuilder: (context, index) {
+                                        final song =
+                                            controller.searchSpotifyResults[index];
+                                        return Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
+                                          child: ListTile(
+                                            leading: Image.network(
+                                                song['image'],
+                                                width: 50,
+                                                fit: BoxFit.cover),
+                                            title: Text(song['name']),
+                                            subtitle: Text(song['artist']),
+                                            trailing: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                IconButton(
+                                                  icon: const Icon(
+                                                      Icons.play_arrow),
+                                                  onPressed: () =>
+                                                  {/*
+                                                    controller.playPreview(
+                                                        song['previewUrl'])
+                                                  */},
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(Icons.send),
+                                                  onPressed: () => controller
+                                                      .selectSong(song),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )
                     : controller.songTypeId.value == 1
                         ? _ConnectAccountPrompt(
                             serviceName: 'YouTube',

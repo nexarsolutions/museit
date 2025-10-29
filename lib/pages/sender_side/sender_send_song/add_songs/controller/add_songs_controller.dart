@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
@@ -10,6 +13,7 @@ import 'package:musit/utils/global_functions.dart';
 
 import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/song_model.dart';
+import '../../../../../services/spotify_auth_service.dart';
 
 class AddSongsController extends GetxController {
   final RxInt songTypeId = 0.obs;
@@ -63,6 +67,79 @@ class AddSongsController extends GetxController {
           "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761650066022-Nainowale_Ne_%28Padmaavat%29_320_Kbps.mp3",
     ),
   ].obs;
+
+
+  final RxBool isSpotifyConnected = false.obs;
+  final RxList<Map<String, dynamic>> searchSpotifyResults = <Map<String, dynamic>>[].obs;
+  final RxBool isSpotifyLoading = false.obs;
+  // final AudioPlayer _audioPlayer = AudioPlayer();
+  final RxnString _accessToken=RxnString();
+
+  @override
+  void onInit() async {
+    super.onInit();
+    await checkSpotifyConnection();
+  }
+
+  Future<void> checkSpotifyConnection() async {
+    final token = await SpotifyAuthService().getAccessToken();
+    if (token != null) {
+      _accessToken.value = token;
+      isSpotifyConnected.value = true;
+    } else {
+      isSpotifyConnected.value = false;
+    }
+  }
+
+  Future<void> connectSpotify() async {
+    await SpotifyAuthService().ensureAuthenticated();
+    await checkSpotifyConnection();
+  }
+
+  Future<void> searchSong(String query) async {
+    if (query.isEmpty) return;
+    isSpotifyLoading.value = true;
+    final token = await SpotifyAuthService().getAccessToken();
+    if (token == null) {
+      isSpotifyConnected.value = false;
+      isSpotifyLoading.value = false;
+      return;
+    }
+
+    final url = Uri.parse('https://api.spotify.com/v1/search?q=$query&type=track&limit=10');
+    final res = await http.get(url, headers: {'Authorization': 'Bearer $token'});
+
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body);
+      final List items = data['tracks']['items'];
+      searchSpotifyResults.assignAll(items.map((track) => {
+        'name': track['name'],
+        'artist': track['artists'][0]['name'],
+        'previewUrl': track['preview_url'],
+        'uri': track['uri'],
+        'image': track['album']['images'][0]['url'],
+      }));
+    } else {
+      searchSpotifyResults.clear();
+    }
+
+    isSpotifyLoading.value = false;
+  }
+
+  // Future<void> playPreview(String? url) async {
+  //   if (url == null) return;
+  //   await _audioPlayer.stop();
+  //   await _audioPlayer.play(UrlSource(url));
+  // }
+  //
+  // void stopPreview() async {
+  //   await _audioPlayer.stop();
+  // }
+
+  void selectSong(Map<String, dynamic> song) {
+    Get.back(result: song);
+  }
+
 
   Future<void> shareSong(List<SongModel> voiceRecordings,
       String? receiverPhoneNumber, List<int> selectedUsers) async {

@@ -11,6 +11,7 @@ import 'package:musit/pages/charity_side/charity_profile_creation/charity_profil
 import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 import 'package:musit/pages/sender_side/on_boarding/on_boarding_screen.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
+import 'package:musit/services/deep_link_service.dart';
 import 'package:musit/services/user_manager.dart';
 
 Future<void> main() async {
@@ -34,6 +35,11 @@ Future<void> main() async {
       };
 
       await userManager.init();
+      await Get.putAsync<DeepLinkService>(() async {
+        final service = DeepLinkService();
+        return service;
+      });
+
       await Future.delayed(const Duration(seconds: 1));
 
       // Start the app
