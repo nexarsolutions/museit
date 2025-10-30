@@ -263,6 +263,11 @@ class _CustomVoiceRecordingScreenState
         // --- Save Button ---
         GestureDetector(
           onTap: () async {
+            if (isRecording.value) {
+              customErrorSnackBar(content: 'Stop recording');
+
+              return;
+            }
             await saveRecording();
           },
           child: Container(

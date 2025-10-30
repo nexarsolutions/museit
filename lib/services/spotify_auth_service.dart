@@ -6,97 +6,63 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SpotifyAuthService {
-  // ---------- Singleton ----------
+class SpotifyAuthService extends GetxService {
+  // Singleton
+  static final SpotifyAuthService _instance = SpotifyAuthService._internal();
+  factory SpotifyAuthService() => _instance;
   SpotifyAuthService._internal();
 
-  static final SpotifyAuthService _instance = SpotifyAuthService._internal();
-
-  factory SpotifyAuthService() {
-    // _instance._connectSpotify();
-    return _instance;
-  }
-
-
-
-  RxnString? userEmail;
-  RxnString? trackName;
-
-  // ---------- Config ----------
-  static const clientId =
-      '846dc9e59ed6404cb240b0ff0d0162c1'; // Replace with your Spotify App Client ID
-  static const redirectUri = 'com.museit://spotify-callback';
-  static const scopes =
-      'user-read-email user-read-private user-read-playback-state user-modify-playback-state';
-  static const tokenUrl = 'https://accounts.spotify.com/api/token';
-
-  // ---------- Memory cache ----------
+  final isConnected = false.obs;
   String? _accessToken;
   String? _refreshToken;
   DateTime? _expiry;
   String? _codeVerifier;
 
-  Future<void> connectSpotify() async {
-    await ensureAuthenticated();
-    final token = await SpotifyAuthService().getAccessToken();
-    print("Access token: $token");
+  static const clientId = '846dc9e59ed6404cb240b0ff0d0162c1';
+  static const redirectUri = 'com.museit://spotify-callback';
+  static const scopes =
+      'user-read-email user-read-private user-read-playback-state user-modify-playback-state';
+  static const tokenUrl = 'https://accounts.spotify.com/api/token';
 
-    // Get user info
-    final res = await http.get(
-      Uri.parse('https://api.spotify.com/v1/me'),
-      headers: {'Authorization': 'Bearer $token'},
-    );
-    if (res.statusCode == 200) {
-      final data = jsonDecode(res.body);
-       userEmail = data['email'];
+  Future<void> checkConnection() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('spotify_access_token');
+    final expiryString = prefs.getString('spotify_token_expiry');
+
+    if (token != null && expiryString != null) {
+      final expiry = DateTime.tryParse(expiryString);
+      if (expiry != null && DateTime.now().isBefore(expiry)) {
+        _accessToken = token;
+        _refreshToken = prefs.getString('spotify_refresh_token');
+        _expiry = expiry;
+        isConnected.value = true;
+        return;
+      }
     }
-
-    // Example: search a song
-    final songRes = await http.get(
-      Uri.parse(
-          'https://api.spotify.com/v1/search?q=Believer&type=track&limit=1'),
-      headers: {'Authorization': 'Bearer $token'},
-    );
-    if (songRes.statusCode == 200) {
-      final data = jsonDecode(songRes.body);
-      final track = data['tracks']['items'][0];
-      trackName = track['name'];
-    }
+    isConnected.value = false;
   }
 
-  // ---------- Utils ----------
-  String _generateCodeVerifier() {
-    final random = Random.secure();
-    final values = List<int>.generate(64, (_) => random.nextInt(256));
-    return base64UrlEncode(values).replaceAll('=', '');
-  }
+  Future<void> connectSpotify() async => await ensureAuthenticated();
 
-  String _generateCodeChallenge(String verifier) {
-    final bytes = utf8.encode(verifier);
-    final digest = sha256.convert(bytes);
-    return base64UrlEncode(digest.bytes).replaceAll('=', '');
-  }
-
-  // ---------- Public API ----------
   Future<void> ensureAuthenticated() async {
     final prefs = await SharedPreferences.getInstance();
-    _accessToken ??= prefs.getString('spotify_access_token');
-    _refreshToken ??= prefs.getString('spotify_refresh_token');
+    _accessToken = prefs.getString('spotify_access_token');
+    _refreshToken = prefs.getString('spotify_refresh_token');
     final expiryString = prefs.getString('spotify_token_expiry');
     if (expiryString != null) _expiry = DateTime.tryParse(expiryString);
 
+    // ✅ Valid cached token
     if (_accessToken != null &&
         _expiry != null &&
         DateTime.now().isBefore(_expiry!)) {
-      print('✅ Using cached Spotify token');
+      isConnected.value = true;
       return;
     }
 
-    if (_refreshToken != null) {
-      final refreshed = await _refreshAccessToken();
-      if (refreshed) return;
-    }
+    // 🔁 Refresh if possible
+    if (_refreshToken != null && await _refreshAccessToken()) return;
 
+    // 🚀 Full auth flow
     await authenticate();
   }
 
@@ -115,17 +81,15 @@ class SpotifyAuthService {
       'code_challenge': codeChallenge,
     });
 
-    if (await canLaunchUrl(authUrl)) {
-      await launchUrl(authUrl, mode: LaunchMode.externalApplication);
-    } else {
+    if (!await launchUrl(authUrl, mode: LaunchMode.externalApplication)) {
       throw 'Could not open Spotify auth page';
     }
   }
 
   Future<void> handleRedirect(Uri uri) async {
+    final code = uri.queryParameters['code'];
     final prefs = await SharedPreferences.getInstance();
     _codeVerifier ??= prefs.getString('spotify_code_verifier');
-    final code = uri.queryParameters['code'];
 
     if (code == null || _codeVerifier == null) return;
 
@@ -143,31 +107,11 @@ class SpotifyAuthService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      await _saveTokens(
-          data['access_token'], data['refresh_token'], data['expires_in']);
-      print('✅ Spotify tokens stored');
+      await _saveTokens(data);
+      print('✅ Spotify connected');
     } else {
-      print('❌ Token exchange failed: ${response.body}');
+      print('❌ Auth failed: ${response.body}');
     }
-  }
-
-  Future<String?> getAccessToken() async {
-    await ensureAuthenticated();
-    return _accessToken;
-  }
-
-  Future<void> _saveTokens(String? access, String? refresh,
-      int? expiresIn) async {
-    if (access == null) return;
-    final prefs = await SharedPreferences.getInstance();
-    _accessToken = access;
-    _refreshToken = refresh ?? _refreshToken;
-    _expiry = DateTime.now().add(Duration(seconds: expiresIn ?? 3600));
-
-    await prefs.setString('spotify_access_token', _accessToken!);
-    if (_refreshToken != null)
-      await prefs.setString('spotify_refresh_token', _refreshToken!);
-    await prefs.setString('spotify_token_expiry', _expiry!.toIso8601String());
   }
 
   Future<bool> _refreshAccessToken() async {
@@ -181,14 +125,46 @@ class SpotifyAuthService {
         'refresh_token': _refreshToken!,
       },
     );
+
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
-      await _saveTokens(data['access_token'],
-          data['refresh_token'] ?? _refreshToken, data['expires_in']);
-      print('🔁 Spotify token refreshed');
+      await _saveTokens(data);
+      print('🔁 Token refreshed');
       return true;
     }
-    print('❌ Failed to refresh token: ${res.body}');
+    print('❌ Refresh failed: ${res.body}');
     return false;
+  }
+
+  Future<void> _saveTokens(Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    _accessToken = data['access_token'];
+    _refreshToken = data['refresh_token'] ?? _refreshToken;
+    _expiry = DateTime.now().add(Duration(seconds: data['expires_in'] ?? 3600));
+
+    await prefs.setString('spotify_access_token', _accessToken!);
+    if (_refreshToken != null) {
+      await prefs.setString('spotify_refresh_token', _refreshToken!);
+    }
+    await prefs.setString('spotify_token_expiry', _expiry!.toIso8601String());
+
+    isConnected.value = true;
+  }
+
+  Future<String?> getAccessToken() async {
+    await ensureAuthenticated();
+    return _accessToken;
+  }
+
+  String _generateCodeVerifier() {
+    final random = Random.secure();
+    final values = List<int>.generate(64, (_) => random.nextInt(256));
+    return base64UrlEncode(values).replaceAll('=', '');
+  }
+
+  String _generateCodeChallenge(String verifier) {
+    final bytes = utf8.encode(verifier);
+    final digest = sha256.convert(bytes);
+    return base64UrlEncode(digest.bytes).replaceAll('=', '');
   }
 }

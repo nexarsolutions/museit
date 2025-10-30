@@ -125,6 +125,9 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     final request = await client.getUrl(Uri.parse(url));
     final response = await request.close();
 
+    print("🔗 Spotify Response Code: ${response.statusCode}");
+    print("🔗 Headers: ${response.headers}");
+
     if (response.statusCode != 200) {
       throw Exception('Failed to download file: ${response.statusCode}');
     }

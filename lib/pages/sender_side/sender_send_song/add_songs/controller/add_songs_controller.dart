@@ -13,11 +13,16 @@ import 'package:musit/utils/global_functions.dart';
 
 import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/song_model.dart';
+import '../../../../../globalModels/youtube_music_response_model.dart';
 import '../../../../../services/spotify_auth_service.dart';
+import '../../../../../services/youtube_music_service.dart';
 
 class AddSongsController extends GetxController {
-  final RxInt songTypeId = 0.obs;
+  final spotifyService = Get.find<SpotifyAuthService>(); // ✅ use global service
+  final YouTubeMusicAuthService ytMusicService =
+      Get.find<YouTubeMusicAuthService>();
 
+  final RxInt songTypeId = 0.obs;
   final searchController = TextEditingController();
   RxString searchQuery = ''.obs;
 
@@ -68,78 +73,129 @@ class AddSongsController extends GetxController {
     ),
   ].obs;
 
-
-  final RxBool isSpotifyConnected = false.obs;
-  final RxList<Map<String, dynamic>> searchSpotifyResults = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> searchSpotifyResults =
+      <Map<String, dynamic>>[].obs;
+  final RxList<YoutubeSongModel> searchYoutubeResults =
+      <YoutubeSongModel>[].obs;
   final RxBool isSpotifyLoading = false.obs;
-  // final AudioPlayer _audioPlayer = AudioPlayer();
-  final RxnString _accessToken=RxnString();
+  final RxBool isYoutubeLoading = false.obs;
+
+  // Default fallback songs
+  final defaultSongs = [
+    "Shape of You",
+    "Blinding Lights",
+    "Stay",
+    "Believer",
+    "Dance Monkey",
+    "Perfect",
+    "Peaches"
+  ];
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
-    await checkSpotifyConnection();
+    debounce(searchQuery, (query) {
+      if (songTypeId.value == 0) {
+        query.toString().isEmpty
+            ? loadDefaultSongs()
+            : searchSong(query.toString());
+      } else if (songTypeId.value == 1) {
+        loadYoutubeSongs(search: query);
+      }
+    }, time: const Duration(milliseconds: 600));
+
+    ever(spotifyService.isConnected, (connected) {
+      if (connected == true) loadDefaultSongs();
+    });
+
+    ever(ytMusicService.isConnected, (connected) {
+      if (connected == true) loadYoutubeSongs();
+    });
+
+    ever(
+      songTypeId,
+      (typeid) {
+        if (typeid == 0) {
+          loadDefaultSongs();
+        } else if (typeid == 1) {
+          loadYoutubeSongs();
+        }
+      },
+    );
   }
 
-  Future<void> checkSpotifyConnection() async {
-    final token = await SpotifyAuthService().getAccessToken();
-    if (token != null) {
-      _accessToken.value = token;
-      isSpotifyConnected.value = true;
-    } else {
-      isSpotifyConnected.value = false;
+  Future<void> loadYoutubeSongs({String search = ''}) async {
+    try {
+      isYoutubeLoading.value = true;
+      var url = 'youtube-music/songs?limit=10';
+      if (search != '') {
+        url += '&query=$search';
+      }
+
+      await ytMusicService.connectYouTubeMusic();
+      await ApiService().handleGetResponse(
+        apiMethod: () async => await ApiService().get(url),
+        onSuccess: (success) {
+          final services = YoutubeMusicResponseModel.fromJson(success);
+          final songs = services.response?.songs ?? [];
+          searchYoutubeResults.assignAll(songs);
+        },
+        onError: (error) {
+          songs.clear();
+          isYoutubeLoading.value = false;
+        },
+      );
+    } catch (e) {
+      isYoutubeLoading.value = false;
+    } finally {
+      isYoutubeLoading.value = false;
     }
   }
 
-  Future<void> connectSpotify() async {
-    await SpotifyAuthService().ensureAuthenticated();
-    await checkSpotifyConnection();
-  }
-
   Future<void> searchSong(String query) async {
-    if (query.isEmpty) return;
+    // print("************* 0");
+    if (query.isEmpty) return loadDefaultSongs();
+
     isSpotifyLoading.value = true;
-    final token = await SpotifyAuthService().getAccessToken();
+    final token = await spotifyService.getAccessToken();
+    print("************* 1\n$token");
     if (token == null) {
-      isSpotifyConnected.value = false;
       isSpotifyLoading.value = false;
       return;
     }
 
-    final url = Uri.parse('https://api.spotify.com/v1/search?q=$query&type=track&limit=10');
-    final res = await http.get(url, headers: {'Authorization': 'Bearer $token'});
+    final url = Uri.parse(
+        'https://api.spotify.com/v1/search?q=$query&type=track&limit=10');
+    final res =
+        await http.get(url, headers: {'Authorization': 'Bearer $token'});
+    // print("************* 2\n${res.body}");
 
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
       final List items = data['tracks']['items'];
-      searchSpotifyResults.assignAll(items.map((track) => {
-        'name': track['name'],
-        'artist': track['artists'][0]['name'],
-        'previewUrl': track['preview_url'],
-        'uri': track['uri'],
-        'image': track['album']['images'][0]['url'],
-      }));
+      searchSpotifyResults.assignAll(items.map((track) {
+        printInfo(info: track['name'].toString());
+        printInfo(info: track['uri'].toString());
+        printInfo(info: track['album']['images'][0]['url'].toString());
+        printInfo(info: track['preview_url'].toString());
+        return {
+          'name': track['name'],
+          'artist': track['artists'][0]['name'],
+          'uri': track['uri'],
+          'image': track['album']['images'][0]['url'],
+          'preview': track['preview_url']
+        };
+      }).toList());
     } else {
       searchSpotifyResults.clear();
     }
-
     isSpotifyLoading.value = false;
   }
 
-  // Future<void> playPreview(String? url) async {
-  //   if (url == null) return;
-  //   await _audioPlayer.stop();
-  //   await _audioPlayer.play(UrlSource(url));
-  // }
-  //
-  // void stopPreview() async {
-  //   await _audioPlayer.stop();
-  // }
-
-  void selectSong(Map<String, dynamic> song) {
-    Get.back(result: song);
+  Future<void> loadDefaultSongs() async {
+    if (!spotifyService.isConnected.value) return;
+    await searchSong(defaultSongs.first);
   }
-
 
   Future<void> shareSong(List<SongModel> voiceRecordings,
       String? receiverPhoneNumber, List<int> selectedUsers) async {

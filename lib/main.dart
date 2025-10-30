@@ -12,7 +12,9 @@ import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_sc
 import 'package:musit/pages/sender_side/on_boarding/on_boarding_screen.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/deep_link_service.dart';
+import 'package:musit/services/spotify_auth_service.dart';
 import 'package:musit/services/user_manager.dart';
+import 'package:musit/services/youtube_music_service.dart';
 
 Future<void> main() async {
   // Catch all uncaught async errors in the app
@@ -40,7 +42,19 @@ Future<void> main() async {
         return service;
       });
 
-      await Future.delayed(const Duration(seconds: 1));
+      await Get.putAsync(() async {
+        final s = SpotifyAuthService();
+        await s.checkConnection();
+        return s;
+      });
+
+      await Get.putAsync(() async {
+        final s = YouTubeMusicAuthService();
+        await s.checkConnection();
+        return s;
+      });
+
+
 
       // Start the app
       runApp(MyApp());

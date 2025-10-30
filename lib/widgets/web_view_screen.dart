@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:musit/constants/colors.dart';
+import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewScreen extends StatefulWidget {
@@ -41,12 +43,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: controller),
-          if (isLoading)
-            const Center(child: CircularProgressIndicator()),
-        ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            children: [
+              WebViewWidget(controller: controller),
+              if (isLoading)
+                const Center(child: CircularProgressIndicator()),
+            ],
+          ),
+        ),
       ),
     );
   }

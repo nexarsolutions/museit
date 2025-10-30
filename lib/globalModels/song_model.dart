@@ -67,7 +67,7 @@ class SongModel {
   String? link;
 
   // double? price;
-  // String? image;
+  String? image;
   // DateTime? createdAt;
   // DateTime? updatedAt;
   // RxBool isBuy;
@@ -81,7 +81,7 @@ class SongModel {
     this.name,
     this.link,
     // this.price,
-    // this.image,
+    this.image,
     // this.createdAt,
     // this.updatedAt,
     this.typeId,
@@ -96,7 +96,7 @@ class SongModel {
         link = other.link,
 
   // price = other.price,
-  // image = other.image,
+  image = other.image,
   // createdAt = other.createdAt,
   // updatedAt = other.updatedAt,
   // isBuy = RxBool(other.isBuy.value),
@@ -113,7 +113,7 @@ class SongModel {
     name: json["name"],
     link: json["link"],
     // price: json["price"],
-    // image: json["image"],
+    image: json["image"],
     typeId: json["typeId"],
     // createdAt: json["createdAt"] == null
     //     ? null
@@ -140,7 +140,7 @@ class SongModel {
     name = null;
     link = null;
     // price = null;
-    // image = null;
+    image = null;
     // createdAt = null;
     // updatedAt = null;
     typeId = null;

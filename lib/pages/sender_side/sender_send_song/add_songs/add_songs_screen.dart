@@ -3,19 +3,16 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
-import 'package:musit/services/auth_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
-import '../../../../constants/app_enums.dart';
+import 'package:musit/widgets/web_view_screen.dart';
 import '../../../../constants/text_styles.dart';
 import '../../../../globalModels/song_model.dart';
 import '../../../../services/spotify_auth_service.dart';
-import '../../../../utils/spotify_preview_url.dart';
-import '../../../../widgets/audio_picker_widget.dart';
+import '../../../../services/youtube_music_service.dart';
 import '../../../../widgets/custom_tab_button.dart';
-import '../../../../widgets/spotify_player.dart';
 import '../voice_note/voice_note_screen.dart';
 import 'controller/add_songs_controller.dart';
 
@@ -23,6 +20,9 @@ class AddSongsScreen extends StatelessWidget {
   AddSongsScreen({super.key});
 
   final controller = Get.put(AddSongsController());
+  final SpotifyAuthService spotifyService = Get.find<SpotifyAuthService>();
+  final YouTubeMusicAuthService ytMusicService =
+      Get.find<YouTubeMusicAuthService>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,8 @@ class AddSongsScreen extends StatelessWidget {
             child: CustomTextField(
               borderRadius: 50,
               controller: controller.searchController,
-              hintText: 'Search',
+              hintText: 'Search Spotify songs',
+              onChanged: (value) => controller.searchQuery.value = value.trim(),
               isSuffixIcon: true,
               suffixIcon: GestureDetector(
                 onTap: () => controller
@@ -44,20 +45,13 @@ class AddSongsScreen extends StatelessWidget {
                 child: Container(
                   width: 36,
                   height: 36,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: blackColor,
                     shape: BoxShape.circle,
                   ),
                   child: Image.asset('assets/images/search_icon.png', scale: 3),
                 ),
               ),
-              onChanged: (value) {
-                if (value.trim().isEmpty) {
-                  controller.searchQuery.value = '';
-                } else {
-                  controller.searchQuery.value = value.trim();
-                }
-              },
             ),
           ),
           SizedBox(height: 24),
@@ -101,75 +95,26 @@ class AddSongsScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Obx(
                 () => controller.songTypeId.value == 0
-                    ? !controller.isSpotifyConnected.value
-                        ? _ConnectAccountPrompt(
-                            serviceName: 'Spotify',
-                            assetPath: 'assets/images/spotify_selected.png',
-                            onPressed:
-                                controller.connectSpotify, // or add logic below
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              children: [
-
-                                const SizedBox(height: 16),
-                                if (controller.isSpotifyLoading.value)
-                                  const Center(
-                                      child: CircularProgressIndicator())
-                                else if (controller.searchSpotifyResults.isEmpty)
-                                  const Text("No songs found. Try searching.")
-                                else
-                                  Expanded(
-                                    child: ListView.builder(
-                                      itemCount:
-                                          controller.searchSpotifyResults.length,
-                                      itemBuilder: (context, index) {
-                                        final song =
-                                            controller.searchSpotifyResults[index];
-                                        return Card(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12)),
-                                          child: ListTile(
-                                            leading: Image.network(
-                                                song['image'],
-                                                width: 50,
-                                                fit: BoxFit.cover),
-                                            title: Text(song['name']),
-                                            subtitle: Text(song['artist']),
-                                            trailing: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton(
-                                                  icon: const Icon(
-                                                      Icons.play_arrow),
-                                                  onPressed: () =>
-                                                  {/*
-                                                    controller.playPreview(
-                                                        song['previewUrl'])
-                                                  */},
-                                                ),
-                                                IconButton(
-                                                  icon: const Icon(Icons.send),
-                                                  onPressed: () => controller
-                                                      .selectSong(song),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          )
+                    ? Obx(() {
+                        return controller.spotifyService.isConnected.value
+                            ? _buildspotifyWidget()
+                            : _ConnectAccountPrompt(
+                                serviceName: 'Spotify',
+                                assetPath: 'assets/images/spotify_selected.png',
+                                onPressed: spotifyService.connectSpotify,
+                              );
+                      })
                     : controller.songTypeId.value == 1
-                        ? _ConnectAccountPrompt(
-                            serviceName: 'YouTube',
-                            assetPath: 'assets/images/youtube_selected.png',
-                            onPressed: null,
+                        ? Obx(
+                            () => ytMusicService.isConnected.value
+                                ? _buildYoutubeWidget() // Create this widget next
+                                : _ConnectAccountPrompt(
+                                    serviceName: 'YouTube Music',
+                                    assetPath:
+                                        'assets/images/youtube_selected.png',
+                                    onPressed: ytMusicService
+                                        .connectYouTubeMusic, // Call the new connect function
+                                  ),
                           )
                         : controller.songTypeId.value == 2
                             ? _ConnectAccountPrompt(
@@ -288,9 +233,29 @@ class AddSongsScreen extends StatelessWidget {
                                                             isSelected.obs,
                                                         showSelected: true,
                                                         onTap: () {
-                                                          controller
-                                                              .librarySelected
-                                                              .add(song);
+                                                          bool?
+                                                              isAlreadySelected =
+                                                              controller
+                                                                  .librarySelected
+                                                                  .any(
+                                                            (element) =>
+                                                                element.link ==
+                                                                song.link,
+                                                          );
+                                                          if (isAlreadySelected) {
+                                                            controller
+                                                                .librarySelected
+                                                                .removeWhere(
+                                                                    (element) =>
+                                                                        element
+                                                                            .link ==
+                                                                        song.link);
+                                                          } else {
+                                                            controller
+                                                                .librarySelected
+                                                                .add(song
+                                                                  ..typeId = 1);
+                                                          }
                                                         },
                                                       ),
                                                     );
@@ -314,7 +279,8 @@ class AddSongsScreen extends StatelessWidget {
             children: [
               CustomButton(
                   onPressed: () {
-                    if (controller.librarySelected.isNotEmpty) {
+                    if (controller.librarySelected.isNotEmpty ||
+                        controller.songs.isNotEmpty) {
                       Get.to(() => VoiceNoteScreen());
                     } else {
                       customErrorSnackBar(content: "Select song to continue");
@@ -365,6 +331,158 @@ class AddSongsScreen extends StatelessWidget {
           SizedBox(height: 24),
         ],
       ),
+    );
+  }
+
+  Column _buildspotifyWidget() {
+    return Column(
+      children: [
+        // const SizedBox(height: 16),
+        if (controller.isSpotifyLoading.value)
+          const Center(child: CircularProgressIndicator())
+        else if (controller.searchSpotifyResults.isEmpty)
+          const Text("No songs found. Try searching.")
+        else
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: controller.searchSpotifyResults.length,
+              itemBuilder: (context, index) {
+                final spotifySong = controller.searchSpotifyResults[index];
+
+                final song = SongModel(
+                  typeId: 1,
+                  name: spotifySong['name'],
+                  link: spotifySong['uri'],
+                  // artist: spotifySong['artists'][0]['name'],
+                  image: spotifySong['image'],
+                );
+
+                return Obx(
+                  () {
+                    bool isSelected = controller.songs.value.any(
+                      (element) => element.link == song.link,
+                    );
+
+                    return GestureDetector(
+                      onTap: () {
+                        String trackId =
+                            spotifySong['uri'].toString().split(':').last;
+                        String trackName = spotifySong['name'];
+
+                        Get.to(() => WebViewScreen(
+                            title: trackName,
+                            url: 'https://open'
+                                '.spotify'
+                                '.com/embed/track/$trackId'));
+                        // Get.to(() =>
+                        //     MusicPlayerScreen(
+                        //         songTitle:
+                        //             song.name ??
+                        //                 'N/A',
+                        //         songUrl:
+                        //             song.link ?? '',
+                        //         imagePath:
+                        //             /* song.image ??*/
+                        //             ''));
+                      },
+                      child: AddSongsWidget(
+                        song: song,
+                        isSelected: isSelected.obs,
+                        showSelected: true,
+                        onTap: () {
+                          bool? isAlreadySelected = controller.songs.any(
+                            (element) => element.link == song.link,
+                          );
+                          if (isAlreadySelected) {
+                            controller.songs.removeWhere(
+                                (element) => element.link == song.link);
+                          } else {
+                            controller.songs.add(song..typeId = 1);
+                          }
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+      ],
+    );
+  }
+
+  Column _buildYoutubeWidget() {
+    return Column(
+      children: [
+        // const SizedBox(height: 16),
+        if (controller.isYoutubeLoading.value)
+          const Center(child: CircularProgressIndicator())
+        else if (controller.searchYoutubeResults.isEmpty)
+          const Text("No songs found. Try searching.")
+        else
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: controller.searchYoutubeResults.length,
+              itemBuilder: (context, index) {
+                final youtubeSong = controller.searchYoutubeResults[index];
+
+                final song = SongModel(
+                  typeId: 1,
+                  name: youtubeSong.title,
+                  image: youtubeSong.thumbnail,
+                  // artist: spotifySong['artists'][0]['name'],
+                  link: youtubeSong.url,
+                );
+
+                return Obx(
+                  () {
+                    bool isSelected = controller.songs.value.any(
+                      (element) => element.link == song.link,
+                    );
+
+                    return GestureDetector(
+                      onTap: () {
+                        ;
+
+                        Get.to(() => WebViewScreen(
+                            title: youtubeSong.title ?? '',
+                            url: youtubeSong.url ?? ''));
+                        // Get.to(() =>
+                        //     MusicPlayerScreen(
+                        //         songTitle:
+                        //             song.name ??
+                        //                 'N/A',
+                        //         songUrl:
+                        //             song.link ?? '',
+                        //         imagePath:
+                        //             /* song.image ??*/
+                        //             ''));
+                      },
+                      child: AddSongsWidget(
+                        song: song,
+                        isSelected: isSelected.obs,
+                        showSelected: true,
+                        onTap: () {
+                          bool? isAlreadySelected = controller.songs.any(
+                            (element) => element.link == song.link,
+                          );
+                          if (isAlreadySelected) {
+                            controller.songs.removeWhere(
+                                (element) => element.link == song.link);
+                          } else {
+                            controller.songs.add(song..typeId = 1);
+                          }
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 }
