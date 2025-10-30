@@ -9,7 +9,9 @@ import 'package:url_launcher/url_launcher.dart';
 class SpotifyAuthService extends GetxService {
   // Singleton
   static final SpotifyAuthService _instance = SpotifyAuthService._internal();
+
   factory SpotifyAuthService() => _instance;
+
   SpotifyAuthService._internal();
 
   final isConnected = false.obs;
@@ -50,14 +52,19 @@ class SpotifyAuthService extends GetxService {
     _refreshToken = prefs.getString('spotify_refresh_token');
     final expiryString = prefs.getString('spotify_token_expiry');
     if (expiryString != null) _expiry = DateTime.tryParse(expiryString);
+    print(
+        'Checking Spotify connection... $_accessToken $_refreshToken $_expiry');
+    print("************* 0");
 
     // ✅ Valid cached token
     if (_accessToken != null &&
         _expiry != null &&
         DateTime.now().isBefore(_expiry!)) {
+      print("************* 1");
       isConnected.value = true;
       return;
     }
+    print("************* 2");
 
     // 🔁 Refresh if possible
     if (_refreshToken != null && await _refreshAccessToken()) return;
@@ -80,14 +87,17 @@ class SpotifyAuthService extends GetxService {
       'code_challenge_method': 'S256',
       'code_challenge': codeChallenge,
     });
+    print("*********** 4");
 
     if (!await launchUrl(authUrl, mode: LaunchMode.externalApplication)) {
       throw 'Could not open Spotify auth page';
     }
+    print("*********** 5");
   }
 
   Future<void> handleRedirect(Uri uri) async {
     final code = uri.queryParameters['code'];
+    print("*********** 6");
     final prefs = await SharedPreferences.getInstance();
     _codeVerifier ??= prefs.getString('spotify_code_verifier');
 
@@ -116,6 +126,7 @@ class SpotifyAuthService extends GetxService {
 
   Future<bool> _refreshAccessToken() async {
     if (_refreshToken == null) return false;
+    print("************* 3");
     final res = await http.post(
       Uri.parse(tokenUrl),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},

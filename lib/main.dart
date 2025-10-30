@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dart_ytmusic_api/yt_music.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:musit/pages/auth/login/login_screen.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_home/charity_home_screen.dart';
 import 'package:musit/pages/charity_side/charity_profile_creation/charity_profile_creation_screen.dart';
 import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
+import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
 import 'package:musit/pages/sender_side/on_boarding/on_boarding_screen.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/deep_link_service.dart';
@@ -48,12 +50,16 @@ Future<void> main() async {
         return s;
       });
 
-      await Get.putAsync(() async {
-        final s = YouTubeMusicAuthService();
-        await s.checkConnection();
-        return s;
-      });
+      // await Get.putAsync(() async {
+      //   final s = YouTubeMusicAuthService();
+      //   await s.checkConnection();
+      //   return s;
+      // });
 
+
+
+      // Initialize the API
+      await ytmusic.initialize();
 
 
       // Start the app
@@ -69,6 +75,10 @@ Future<void> main() async {
     },
   );
 }
+
+
+// Create an instance of the YouTube Music API
+final ytmusic = YTMusic();
 
 final Logger logger = Logger(
   printer: PrettyPrinter(
@@ -100,7 +110,7 @@ class MyApp extends StatelessWidget {
       ),
       home: userManager.cachedUser != null
           ? userManager.cachedUser!.currentRoleId == 1
-              ? SenderHomeScreen()
+              ? SenderBottomBar()
               : userManager.cachedUser!.currentRoleId == 2
                   ? RecipientHomeScreen()
                   : userManager.cachedUser!.currentRoleId == 3
@@ -108,7 +118,7 @@ class MyApp extends StatelessWidget {
                           ? CharityProfileCreationScreen()
                           : CharityHomeScreen()
                       : LoginScreen()
-          : userManager.isFirstOpen
+          : !userManager.isFirstOpen
               ? OnBoardingScreen()
               : LoginScreen(),
     );

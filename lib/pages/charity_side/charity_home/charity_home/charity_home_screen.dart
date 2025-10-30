@@ -50,7 +50,7 @@ class CharityHomeScreen extends StatelessWidget {
                               buildMetricCard(
                                 imagePath: 'assets/images/charity.png',
                                 title: 'Total Donations',
-                                value: '\$0',
+                                value: '£0',
                               ),
                               const SizedBox(height: 10),
                               buildMetricCard(
@@ -70,7 +70,7 @@ class CharityHomeScreen extends StatelessWidget {
                             buildMetricCard(
                               imagePath: 'assets/images/charity.png',
                               title: 'Total Donations',
-                              value: '\$${dashboard['totalDonations']}',
+                              value: '£${dashboard['totalDonations']}',
                             ),
                             // const SizedBox(height: 10),
                             // buildMetricCard(

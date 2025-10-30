@@ -10,6 +10,7 @@ import 'package:musit/utils/global_functions.dart';
 import '../../../../services/auth_service.dart';
 import '../../../charity_side/charity_home/charity_home/charity_home_screen.dart';
 import '../../../recipient_side/home/recipient_home/recipient_home_screen.dart';
+import '../../../sendBottombar/sender_bottom_bar.dart';
 import '../../../sender_side/sender_home/sender_home/sender_home_screen.dart';
 
 class LoginController extends GetxController {
@@ -31,7 +32,7 @@ class LoginController extends GetxController {
         // await Future.delayed(const Duration(seconds: 2));
 
         currentUser.currentRoleId == 1
-            ? Get.offAll(() => SenderHomeScreen())
+            ? Get.offAll(() => SenderBottomBar())
             : currentUser.currentRoleId == 2
                 ? Get.offAll(() => RecipientHomeScreen())
                 : currentUser.currentRoleId == 3

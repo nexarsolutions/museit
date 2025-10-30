@@ -62,13 +62,24 @@ class OnBoardingScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Text(
+                    controller.textTitles[index],
+                    style: manRopeSemiBold.copyWith(fontWeight: FontWeight
+                        .bold,fontSize: 18 ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+                // ==== Text Section ====
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Text(
                     controller.texts[index],
                     style: manRope,
                     textAlign: TextAlign.center,
                   ),
                 ),
 
-                const SizedBox(height: 45),
+                const SizedBox(height: 25),
 
                 // ==== Dots Section ====
                 Obx(() => Row(

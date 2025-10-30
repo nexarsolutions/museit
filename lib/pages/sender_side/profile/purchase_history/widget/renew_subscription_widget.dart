@@ -68,7 +68,7 @@ class RenewSubscriptionWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '\$${price.toString()}/Month',
+                  '£${price.toString()}/Month',
                   style: manRopeSemiBold.copyWith(
                     fontSize: 14,
                     color: whiteColor,

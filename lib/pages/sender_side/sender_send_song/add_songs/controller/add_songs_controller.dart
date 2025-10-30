@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:dart_ytmusic_api/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:musit/globalModels/admin_songs_model.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
@@ -14,71 +16,31 @@ import 'package:musit/utils/global_functions.dart';
 import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/song_model.dart';
 import '../../../../../globalModels/youtube_music_response_model.dart';
+import '../../../../../main.dart';
 import '../../../../../services/spotify_auth_service.dart';
 import '../../../../../services/youtube_music_service.dart';
+import '../../../../sendBottombar/sender_bottom_bar.dart';
 
 class AddSongsController extends GetxController {
   final spotifyService = Get.find<SpotifyAuthService>(); // ✅ use global service
-  final YouTubeMusicAuthService ytMusicService =
-      Get.find<YouTubeMusicAuthService>();
+  // final YouTubeMusicAuthService ytMusicService =
+  //     Get.find<YouTubeMusicAuthService>();
 
   final RxInt songTypeId = 0.obs;
   final searchController = TextEditingController();
   RxString searchQuery = ''.obs;
 
   RxList<SongModel> songs = <SongModel>[].obs;
-  RxList<SongModel> librarySelected = <SongModel>[].obs;
-  RxList<SongModel> library = <SongModel>[
-    SongModel(
-      typeId: 4,
-      name: "zamona-net-indila-love-story.mp3",
-      link:
-          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761649879080-zamona-net-indila-love-story.mp3",
-    ),
-    SongModel(
-      typeId: 4,
-      name: "Ajj_Kal_Full_Song_1.mp3",
-      link:
-          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761649918475-Ajj_Kal_Full_Song_1.mp3",
-    ),
-    SongModel(
-      typeId: 4,
-      name: "Jis_Tan_Nu_Lagdi_Aye_3.mp3",
-      link:
-          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761649946413-Jis_Tan_Nu_Lagdi_Aye_3.mp3",
-    ),
-    SongModel(
-      typeId: 4,
-      name: "Dhoor_Pendi_Kaka_128_Kbps.mp3",
-      link:
-          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761649972080-Dhoor_Pendi_Kaka_128_Kbps.mp3",
-    ),
-    SongModel(
-      typeId: 4,
-      name: "128-Baazigar_O_Baazigar_-_Baazigar_128_Kbps.mp3",
-      link:
-          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761650000462-128-Baazigar_O_Baazigar_-_Baazigar_128_Kbps.mp3",
-    ),
-    SongModel(
-      typeId: 4,
-      name: "bollywood_KK_1976_-_Kabhi_Kabhi_Mere_Dil.mp3",
-      link:
-          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761650025866-bollywood_KK_1976_-_Kabhi_Kabhi_Mere_Dil.mp3",
-    ),
-    SongModel(
-      typeId: 4,
-      name: "Nainowale_Ne_(Padmaavat)_320_Kbps.mp3",
-      link:
-          "https://museit-s3bucket.s3.eu-west-2.amazonaws.com/1761650066022-Nainowale_Ne_%28Padmaavat%29_320_Kbps.mp3",
-    ),
-  ].obs;
+
+  // RxList<SongModel> librarySelected = <SongModel>[].obs;
+  RxList<SongModel> adminSongs = <SongModel>[].obs;
 
   final RxList<Map<String, dynamic>> searchSpotifyResults =
       <Map<String, dynamic>>[].obs;
-  final RxList<YoutubeSongModel> searchYoutubeResults =
-      <YoutubeSongModel>[].obs;
+  final RxList<SongDetailed> searchYoutubeResults = <SongDetailed>[].obs;
   final RxBool isSpotifyLoading = false.obs;
   final RxBool isYoutubeLoading = false.obs;
+  final RxBool isAdminSongsLoading = false.obs;
 
   // Default fallback songs
   final defaultSongs = [
@@ -100,7 +62,8 @@ class AddSongsController extends GetxController {
             ? loadDefaultSongs()
             : searchSong(query.toString());
       } else if (songTypeId.value == 1) {
-        loadYoutubeSongs(search: query);
+        // loadYoutubeSongs(search: query);
+        searchYoutubeSongs(query: query);
       }
     }, time: const Duration(milliseconds: 600));
 
@@ -108,9 +71,9 @@ class AddSongsController extends GetxController {
       if (connected == true) loadDefaultSongs();
     });
 
-    ever(ytMusicService.isConnected, (connected) {
-      if (connected == true) loadYoutubeSongs();
-    });
+    // ever(ytMusicService.isConnected, (connected) {
+    //   if (connected == true) loadYoutubeSongs();
+    // });
 
     ever(
       songTypeId,
@@ -118,42 +81,49 @@ class AddSongsController extends GetxController {
         if (typeid == 0) {
           loadDefaultSongs();
         } else if (typeid == 1) {
-          loadYoutubeSongs();
+          searchYoutubeSongs();
         }
       },
     );
   }
 
-  Future<void> loadYoutubeSongs({String search = ''}) async {
+  Future<List<AdminSongsModel>> loadAdminSongs({String search = ''}) async {
     try {
-      isYoutubeLoading.value = true;
-      var url = 'youtube-music/songs?limit=10';
-      if (search != '') {
-        url += '&query=$search';
-      }
-
-      await ytMusicService.connectYouTubeMusic();
+      List<AdminSongsModel> adSongs = [];
       await ApiService().handleGetResponse(
-        apiMethod: () async => await ApiService().get(url),
-        onSuccess: (success) {
-          final services = YoutubeMusicResponseModel.fromJson(success);
-          final songs = services.response?.songs ?? [];
-          searchYoutubeResults.assignAll(songs);
+        apiMethod: () => SongService().loadAdminSongs(search: search),
+        onSuccess: (Map<String, dynamic> response) {
+          final success = AdminSongsResponseModel.fromJson(response);
+          final newList = success.response?.rows ?? [];
+          adSongs.assignAll(newList);
         },
         onError: (error) {
-          songs.clear();
-          isYoutubeLoading.value = false;
+          throw Exception(error);
         },
       );
+      return adSongs;
     } catch (e) {
-      isYoutubeLoading.value = false;
+      rethrow;
+    }
+  }
+
+  /// Searches for songs by the given query and prints the results.
+  Future<void> searchYoutubeSongs({String query = ''}) async {
+    try {
+      isYoutubeLoading.value = true;
+      searchYoutubeResults.clear();
+      final results = await ytmusic.searchSongs(query == '' ? 'Top' : query);
+      for (final result in results) {
+        searchYoutubeResults.add(result);
+      }
+    } catch (e) {
+      print("youtube search error: $e");
     } finally {
       isYoutubeLoading.value = false;
     }
   }
 
   Future<void> searchSong(String query) async {
-    // print("************* 0");
     if (query.isEmpty) return loadDefaultSongs();
 
     isSpotifyLoading.value = true;
@@ -217,9 +187,9 @@ class AddSongsController extends GetxController {
         }
       }
 
-      for (var s in librarySelected) {
-        songs.add(s);
-      }
+      // for (var s in librarySelected) {
+      //   songs.add(s);
+      // }
 
       var data = {
         'songs': songs
@@ -245,7 +215,7 @@ class AddSongsController extends GetxController {
         apiMethod: () => SongService().shareSongs(data),
         onSuccess: (Map<String, dynamic> response) {
           customPrint("add_songs_controller line 64: $response");
-          Get.offAll(() => SenderHomeScreen());
+          Get.offAll(() => SenderBottomBar());
           customErrorSnackBar(content: response['message']);
         },
       );

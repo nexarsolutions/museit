@@ -84,10 +84,10 @@ class SongCard extends StatelessWidget {
                         model.typeId == 1
                             ? "Spotify"
                             : model.typeId == 2
-                                ? "Apple "
+                                ? "Youtube "
                                     "Music"
                                 : model.typeId == 3
-                                    ? "Youtube"
+                                    ? "Apple Music"
                                     : "Custom Song",
                         style: manRope.copyWith(
                           fontSize: 12,

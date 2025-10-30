@@ -16,6 +16,8 @@ import 'package:musit/services/auth_service.dart';
 import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/utils/global_functions.dart';
 
+import '../../../sendBottombar/sender_bottom_bar.dart';
+
 class SignupController extends GetxController {
   final userModel = UserModel();
   final passwordController = TextEditingController();
@@ -110,7 +112,7 @@ class SignupController extends GetxController {
           // await Future.delayed(const Duration(milliseconds: 2));
           //customErrorSnackBar(content: response['message']);
           currentUser.roleId == 1
-              ? Get.offAll(() => SenderHomeScreen())
+              ? Get.offAll(() => SenderBottomBar())
               : currentUser.roleId == 2
                   ? Get.offAll(() => RecipientHomeScreen())
                   : currentUser.roleId == 3
