@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:musit/common_widgets/my_compaigns_widget.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/widgets/error_widget_future_stream.dart';
 import '../../../../constants/text_styles.dart';
 import '../../../../widgets/custom_header.dart';
-import '../../charity_create_compaign/charity_create_compaign_screen.dart';
 import '../../charity_profile/charity_profile/charity_profile_screen.dart';
-import '../my_compaigns/my_compaigns_screen.dart';
-import '../view_my_compaigns/view_my_compaigns_screen.dart';
 import 'controller/charity_home_controller.dart';
 
 class CharityHomeScreen extends StatelessWidget {
@@ -54,7 +50,7 @@ class CharityHomeScreen extends StatelessWidget {
                               buildMetricCard(
                                 imagePath: 'assets/images/charity.png',
                                 title: 'Total Donations',
-                                value: '\$0',
+                                value: '£0',
                               ),
                               const SizedBox(height: 10),
                               buildMetricCard(
@@ -74,7 +70,7 @@ class CharityHomeScreen extends StatelessWidget {
                             buildMetricCard(
                               imagePath: 'assets/images/charity.png',
                               title: 'Total Donations',
-                              value: '\$${dashboard['totalDonations']}',
+                              value: '£${dashboard['totalDonations']}',
                             ),
                             // const SizedBox(height: 10),
                             // buildMetricCard(

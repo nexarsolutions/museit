@@ -13,6 +13,7 @@ import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../common_widgets/profile_widget.dart';
 import '../../../../main.dart';
+import '../../../sendBottombar/sender_bottom_bar.dart';
 import '../../sender_home/sender_home/sender_home_screen.dart';
 import '../../subscriptions/subscriptions/subscription_screen.dart';
 import '../change_password/change_password_bottomsheet.dart';
@@ -150,23 +151,23 @@ class ProfileScreen extends StatelessWidget {
                       changePasswordBottomSheet();
                     },
                   ),
-                  ProfileWidget(
-                    iconPath: 'assets/images/subscriptions.png',
-                    title: 'Subscriptions',
-                    onTap: () {
-                      Get.to(
-                        () => SubscriptionScreen(
-                          isSkip: false,
-                          skipOnTap: () {},
-                          iSender: true,
-                          isBack: true,
-                          paymentConfirmOnTap: () {
-                            Get.offAll(() => SenderHomeScreen());
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                  // ProfileWidget(
+                  //   iconPath: 'assets/images/subscriptions.png',
+                  //   title: 'Subscriptions',
+                  //   onTap: () {
+                  //     Get.to(
+                  //       () => SubscriptionScreen(
+                  //         isSkip: false,
+                  //         skipOnTap: () {},
+                  //         iSender: true,
+                  //         isBack: true,
+                  //         paymentConfirmOnTap: () {
+                  //           Get.offAll(() => SenderBottomBar());
+                  //         },
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                   ProfileWidget(
                     iconPath: 'assets/images/purchase_history.png',
                     title: 'Purchase History',
@@ -174,13 +175,13 @@ class ProfileScreen extends StatelessWidget {
                       Get.to(() => PurchaseHistoryScreen());
                     },
                   ),
-                  ProfileWidget(
-                    iconPath: 'assets/images/saved_playlists.png',
-                    title: 'Saved Playlists',
-                    onTap: () {
-                      Get.to(() => SavedPlaylistScreen());
-                    },
-                  ),
+                  // ProfileWidget(
+                  //   iconPath: 'assets/images/saved_playlists.png',
+                  //   title: 'Saved Playlists',
+                  //   onTap: () {
+                  //     Get.to(() => SavedPlaylistScreen());
+                  //   },
+                  // ),
                   ProfileWidget(
                     iconPath: 'assets/images/privacy_policy.png',
                     title: 'Privacy Policy',

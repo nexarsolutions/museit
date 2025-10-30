@@ -57,9 +57,11 @@ class SongCard extends StatelessWidget {
                 // 🖼 Image with shimmer placeholder
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: _buildImageWithShimmer(''/*model.paidSong != null
+                  child: _buildImageWithShimmer(
+                      '' /*model.paidSong != null
                       ? model.paidSong!.image.showImage
-                      : model.image.showImage*/),
+                      : model.image.showImage*/
+                      ),
                 ),
 
                 const SizedBox(width: 12),
@@ -70,17 +72,23 @@ class SongCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                       /* model.paidSong != null
+                        /* model.paidSong != null
                             ? model.paidSong?.name ?? "Unknown Song"
-                            :*/ model.name ?? "Unknown Song",
+                            :*/
+                        model.name ?? "Unknown Song",
                         style: manRopeSemiBold.copyWith(fontSize: 14),
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        /*model.paidSong != null
-                            ? "Paid • \$${model.paidSong!.price?.toStringAsFixed(2) ?? '0.00'}"
-                            :*/ "Free Song",
+                        model.typeId == 1
+                            ? "Spotify"
+                            : model.typeId == 2
+                                ? "Youtube "
+                                    "Music"
+                                : model.typeId == 3
+                                    ? "Apple Music"
+                                    : "Custom Song",
                         style: manRope.copyWith(
                           fontSize: 12,
                           color: lightBlack,
@@ -93,7 +101,7 @@ class SongCard extends StatelessWidget {
 
                 if (showPlaylistIcon)
                   ReorderableDragStartListener(
-                    index: index??0,
+                    index: index ?? 0,
                     child: Image.asset('assets/images/playlist_icon.png',
                         scale: 3.5),
                   ),

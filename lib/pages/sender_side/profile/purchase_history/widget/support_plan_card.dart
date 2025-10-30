@@ -95,7 +95,7 @@ final SupportPlanModel model;
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '\$${model.price.toString()}',
+                      '£${model.price.toString()}',
                       style: manRopeSemiBold.copyWith(fontSize: 10),
                     ),
                     const SizedBox(height: 6),

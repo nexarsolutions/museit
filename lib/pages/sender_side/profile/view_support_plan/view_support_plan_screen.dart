@@ -87,7 +87,7 @@ class ViewSupportPlanScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 16),
                       Text(
-                        '\$${model.monthlyAidGoal.toString()}',
+                        '£${model.monthlyAidGoal.toString()}',
                         style: manRope.copyWith(
                           fontSize: 12,
                           fontWeight: FontWeight.w200,

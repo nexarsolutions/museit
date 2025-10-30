@@ -4,6 +4,7 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 
 import '../../../../widgets/custom_header.dart';
+import '../../../../widgets/fade_text_carousel.dart';
 import '../../recieved_songs/recieved_songs_screen.dart';
 import '../../recipient_community/recipient_community/recipient_community_screen.dart';
 import '../../recipient_profile/recipient_profile/recipient_profile_screen.dart';
@@ -178,6 +179,7 @@ class RecipientHomeScreen extends StatelessWidget {
   Container _buildQuoteBox() {
     return Container(
       width: Get.width,
+      height: 110,
       padding: const EdgeInsets.only(
         left: 16,
         top: 10,
@@ -189,35 +191,9 @@ class RecipientHomeScreen extends StatelessWidget {
         border: Border.all(color: darkGrey.withOpacity(0.05)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(
-                  'assets/images/left_comma.png',
-                  height: 14,
-                  width: 14,
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  "Because everyone needs a soundtrack to rise, to heal, to fight, to feel alive again",
-                  style: manRope.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Image.asset(
-                    'assets/images/right_comma.png',
-                    height: 14,
-                    width: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          FadeTextCarousel(),
           const SizedBox(width: 20),
           Expanded(
             child: Image.asset(

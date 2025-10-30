@@ -163,30 +163,30 @@ class RecipientProfileScreen extends StatelessWidget {
                   //     Get.to(() => RecipientSavedPlaylistScreen());
                   //   },
                   // ),
-                  ProfileWidget(
-                    iconPath: 'assets/images/subscriptions.png',
-                    title: 'Subscriptions',
-                    onTap: () {
-                      Get.to(
-                        () => SubscriptionScreen(
-                          isSkip: false,
-                          skipOnTap: () {},
-                          iSender: true,
-                          isBack: true,
-                          paymentConfirmOnTap: () {
-                            Get.offAll(() => RecipientHomeScreen());
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  ProfileWidget(
-                    iconPath: 'assets/images/purchase_history.png',
-                    title: 'History',
-                    onTap: () {
-                      Get.to(() => RecipientHistoryScreen());
-                    },
-                  ),
+                  // ProfileWidget(
+                  //   iconPath: 'assets/images/subscriptions.png',
+                  //   title: 'Subscriptions',
+                  //   onTap: () {
+                  //     Get.to(
+                  //       () => SubscriptionScreen(
+                  //         isSkip: false,
+                  //         skipOnTap: () {},
+                  //         iSender: true,
+                  //         isBack: true,
+                  //         paymentConfirmOnTap: () {
+                  //           Get.offAll(() => RecipientHomeScreen());
+                  //         },
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  // ProfileWidget(
+                  //   iconPath: 'assets/images/purchase_history.png',
+                  //   title: 'History',
+                  //   onTap: () {
+                  //     Get.to(() => RecipientHistoryScreen());
+                  //   },
+                  // ),
                   ProfileWidget(
                     iconPath: 'assets/images/privacy_policy.png',
                     title: 'Privacy Policy',
