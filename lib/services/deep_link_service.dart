@@ -1,5 +1,6 @@
 import 'package:app_links/app_links.dart';
 import 'package:get/get.dart';
+
 import 'spotify_auth_service.dart';
 
 class DeepLinkService extends GetxService {
@@ -18,6 +19,7 @@ class DeepLinkService extends GetxService {
   }
 
   void _handleIncomingLink(Uri uri) {
+    print("=================000000");
     if (uri.scheme == 'com.museit' && uri.host == 'spotify-callback') {
       print('🎯 DeepLink received: $uri');
       SpotifyAuthService().handleRedirect(uri);

@@ -51,15 +51,20 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-	<key>CFBundleURLTypes</key>
+<key>FlutterDeepLinkingEnabled</key>
+<false/>
+
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleURLSchemes</key>
     <array>
-      <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>com.museit</string>
-        </array>
-      </dict>
+      <string>com.museit</string>
     </array>
+    <key>CFBundleURLName</key>
+    <string>com.museit</string>
+  </dict>
+</array>
 
 </dict>
 </plist>
