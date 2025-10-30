@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>MUSEiT needs the microphone access to allow you to upload voice messages</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>MUSEiT needs the microphone access to allow you to upload voice messages</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>MUSEiT needs the photos access to allow user to upload their profile image</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
