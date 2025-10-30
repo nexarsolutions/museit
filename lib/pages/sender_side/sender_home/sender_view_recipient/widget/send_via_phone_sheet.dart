@@ -5,12 +5,13 @@ import 'package:musit/widgets/custom_text_field.dart';
 
 import '../../../../../utils/custom_error_snack_bar.dart';
 
-void showSendViaPhoneSheet({
-  required BuildContext context,
-  required Function(String phoneNumber) onPhoneSubmitted,
-}) {
+void showSendViaPhoneSheet(
+    {required BuildContext context,
+    required Function(String phoneNumber) onPhoneSubmitted,
+    bool isEmail = false}) {
   final phoneController = TextEditingController();
   final isPhoneEntered = false.obs;
+
   final formKey = GlobalKey<FormState>();
 
   customBottomSheet(
@@ -34,27 +35,45 @@ void showSendViaPhoneSheet({
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "Send via Phone Number",
+            Text(
+              "Send via ${isEmail ? "Email" : "Phone Number"}",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
-            CustomTextField(
-              controller: phoneController,
-              keyboardType: TextInputType.phone,
-              hintText: "Enter phone number",
-              borderRadius: 12,
-              isPrefixIcon: true,
-              prefixIcon: const Icon(Icons.phone),
-              validator: (value) => value!.trim().isEmpty
-                  ? "Required"
-                  : !GetUtils.isPhoneNumber(value)
-                      ? "Enter valid number"
-                      : null,
-              onChanged: (value) {
-                isPhoneEntered.value = value.trim().isNotEmpty;
-              },
-            ),
+            if (!isEmail)
+              CustomTextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                hintText: "Enter phone number",
+                borderRadius: 12,
+                isPrefixIcon: true,
+                prefixIcon: const Icon(Icons.phone),
+                validator: (value) => value!.trim().isEmpty
+                    ? "Required"
+                    : !GetUtils.isPhoneNumber(value)
+                        ? "Enter valid number"
+                        : null,
+                onChanged: (value) {
+                  isPhoneEntered.value = value.trim().isNotEmpty;
+                },
+              )
+            else
+              CustomTextField(
+                controller: phoneController,
+                keyboardType: TextInputType.emailAddress,
+                hintText: "Enter email",
+                borderRadius: 12,
+                isPrefixIcon: true,
+                prefixIcon: const Icon(Icons.email),
+                validator: (value) => value!.trim().isEmpty
+                    ? "Required"
+                    : !GetUtils.isEmail(value)
+                        ? "Enter valid email"
+                        : null,
+                onChanged: (value) {
+                  isPhoneEntered.value = value.trim().isNotEmpty;
+                },
+              ),
             const SizedBox(height: 20),
 
             /// Reactive submit button
@@ -77,7 +96,11 @@ void showSendViaPhoneSheet({
                     }
                   },
                   child: Text(
-                    isPhoneEntered.value ? "Continue" : "Enter Number",
+                    isPhoneEntered.value
+                        ? "Continue"
+                        : isEmail
+                            ? "Enter Email"
+                            : "Enter Number",
                     style: const TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),

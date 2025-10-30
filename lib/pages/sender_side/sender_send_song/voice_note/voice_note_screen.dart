@@ -13,6 +13,7 @@ import '../../../../widgets/custom_button.dart';
 import '../../../../widgets/custom_voice_recording_screen.dart';
 import '../../sender_home/sender_home/sender_home_screen.dart';
 import '../../sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
+import '../../sender_home/sender_view_recipient/widget/send_via_phone_sheet.dart';
 import '../add_songs/controller/add_songs_controller.dart';
 import 'controller/voice_note_controller.dart';
 
@@ -37,6 +38,64 @@ class VoiceNoteScreen extends StatelessWidget {
                   Get.to(() => ViewCharityOrganization(
                         onPressedSave: () {
                           Get.to(() => SenderViewRecipientScreen(
+                                rowWidget: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        // Show bottom sheet before sharing
+                                        showSendViaPhoneSheet(
+                                          context: Get.context!,
+                                          onPhoneSubmitted: (phone) {
+                                            songController
+                                                .shareMomentExternally(
+                                                    songController.songs, 'SMS',
+                                                    receiver: phone);
+                                          },
+                                        );
+                                      },
+                                      icon: Icon(Icons.sms, color: Colors.blue),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        showSendViaPhoneSheet(
+                                          context: Get.context!,
+                                          onPhoneSubmitted: (phone) {
+                                            songController
+                                                .shareMomentExternally(
+                                                    songController.songs,
+                                                    'WhatsApp',
+                                                    receiver: phone);
+                                          },
+                                        );
+                                      },
+                                      icon: Image.asset(
+
+                                              "assets/images/whatsapp.png",
+                                          width: 24,height: 24,
+                                          // color: Colors.green
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        showSendViaPhoneSheet(
+                                          context: Get.context!,
+                                          isEmail: true,
+                                          onPhoneSubmitted: (phone) {
+                                            songController
+                                                .shareMomentExternally(
+                                                    songController.songs,
+                                                    'Email',
+                                                    receiver: phone);
+                                          },
+                                        );
+                                      },
+                                      icon:
+                                          Icon(Icons.email, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
                                 onPressedSave:
                                     (List<int> selectedUser, String? phone) {
                                   if (selectedUser.isEmpty && phone == null) {

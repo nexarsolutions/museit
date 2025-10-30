@@ -13,12 +13,13 @@ import '../../../../widgets/custom_text_field.dart';
 import 'widget/send_via_phone_sheet.dart';
 
 class SenderViewRecipientScreen extends StatelessWidget {
-  SenderViewRecipientScreen({super.key, required this.onPressedSave});
+  SenderViewRecipientScreen({super.key, required this.onPressedSave,this.rowWidget});
 
   final controller = Get.put(SenderViewRecipientController());
   final RxBool isSelected = true.obs;
   final RxnString phoneString = RxnString();
   final Function(List<int> selectedUsersId, String? phone) onPressedSave;
+  final Widget? rowWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -274,6 +275,7 @@ class SenderViewRecipientScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 24),
+                  rowWidget??const SizedBox.shrink(),
                 ],
               ),
             ),

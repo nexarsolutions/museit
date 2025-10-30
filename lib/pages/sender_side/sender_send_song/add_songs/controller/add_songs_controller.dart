@@ -12,6 +12,7 @@ import 'package:musit/services/upload_file_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/utils/global_functions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/song_model.dart';
@@ -109,18 +110,18 @@ class AddSongsController extends GetxController {
 
   /// Searches for songs by the given query and prints the results.
   Future<void> searchYoutubeSongs({String query = ''}) async {
-    try {
-      isYoutubeLoading.value = true;
-      searchYoutubeResults.clear();
-      final results = await ytmusic.searchSongs(query == '' ? 'Top' : query);
-      for (final result in results) {
-        searchYoutubeResults.add(result);
-      }
-    } catch (e) {
-      print("youtube search error: $e");
-    } finally {
-      isYoutubeLoading.value = false;
+    // try {
+    //   isYoutubeLoading.value = true;
+    searchYoutubeResults.clear();
+    final results = await ytmusic.searchSongs(query == '' ? 'Top' : query);
+    for (final result in results) {
+      searchYoutubeResults.add(result);
     }
+    // } catch (e) {
+    //   print("youtube search error: $e");
+    // } finally {
+    //   isYoutubeLoading.value = false;
+    // }
   }
 
   Future<void> searchSong(String query) async {
@@ -222,6 +223,58 @@ class AddSongsController extends GetxController {
     } catch (e) {
       Get.back(); //close loading dialog
       errorDialog(content: e.toString());
+    }
+  }
+
+  Future<void> shareMomentExternally(List<SongModel> songs, String platform,
+      {String? receiver}) async {
+    // Generate a message text
+    String message = "Hey! Check out these songs I shared on MUSEiT 🎵\n\n";
+    for (var song in songs) {
+      message += "${song.name}\n";
+      if (song.link != null) {
+        if (song.typeId == 1) {
+          String trackId = song.link.toString().split(':').last;
+          message += 'https://open'
+              '.spotify'
+              '.com/embed/track/$trackId';
+        } else if (song.typeId == 2) {
+          message += 'https://www.youtube'
+              '.com/watch?v=${song.link ?? ''}';
+        }
+
+        message += "${song.link}\n";
+      }
+    }
+    // Optionally, add your app deep link
+    message += "\nListen on MUSEiT: https://museit.app/moment";
+
+    Uri uri;
+    switch (platform) {
+      case 'SMS':
+        uri = Uri.parse(
+            "sms:${receiver ?? ''}?body=${Uri.encodeComponent(message)}");
+        break;
+      case 'WhatsApp':
+        uri = Uri.parse(
+            "https://wa.me/${receiver ?? ''}?text=${Uri.encodeComponent(message)}");
+        break;
+      case 'Email':
+        uri = Uri(
+          scheme: 'mailto',
+          path: receiver ?? '',
+          query:
+              'subject=${Uri.encodeComponent("MUSEiT Moment")}&body=${Uri.encodeComponent(message)}',
+        );
+        break;
+      default:
+        throw "Unsupported platform";
+    }
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $uri';
     }
   }
 }
