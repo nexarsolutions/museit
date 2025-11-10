@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-import 'package:dart_ytmusic_api/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:musit/globalModels/admin_songs_model.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
 import 'package:musit/services/upload_file_service.dart';
@@ -16,16 +14,22 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/song_model.dart';
-import '../../../../../globalModels/youtube_music_response_model.dart';
 import '../../../../../main.dart';
 import '../../../../../services/spotify_auth_service.dart';
-import '../../../../../services/youtube_music_service.dart';
 import '../../../../sendBottombar/sender_bottom_bar.dart';
 
 class AddSongsController extends GetxController {
   final spotifyService = Get.find<SpotifyAuthService>(); // ✅ use global service
   // final YouTubeMusicAuthService ytMusicService =
   //     Get.find<YouTubeMusicAuthService>();
+
+  final List<String> songUrls = [
+    'https://www.youtube.com/watch?v=pO40TcKa_5U',
+    'https://www.youtube.com/watch?v=OygsHbM1UCw',
+    'https://www.youtube.com/watch?v=G5QPirQITZI',
+    'https://www.youtube.com/watch?v=e5iqtQLm-BM',
+    'https://www.youtube.com/watch?v=Wmc8bQoL-J0',
+  ];
 
   final RxInt songTypeId = 0.obs;
   final searchController = TextEditingController();
@@ -38,9 +42,111 @@ class AddSongsController extends GetxController {
 
   final RxList<Map<String, dynamic>> searchSpotifyResults =
       <Map<String, dynamic>>[].obs;
-  final RxList<SongDetailed> searchYoutubeResults = <SongDetailed>[].obs;
+  final RxList<Map<String, String>> searchYoutubeResults = [
+    {
+      "name": "You Gotta Be — Des'ree",
+      "videoId": "pO40TcKa_5U",
+      "thumbnail": "https://img.youtube.com/vi/pO40TcKa_5U/maxresdefault.jpg"
+    },
+    {
+      "name": "Proud — Heather Small",
+      "videoId": "OygsHbM1UCw",
+      "thumbnail": "https://img.youtube.com/vi/OygsHbM1UCw/maxresdefault.jpg"
+    },
+    {
+      "name": "Shine Ya Light — Rita Ora",
+      "videoId": "DH182aLsVig",
+      "thumbnail": "https://img.youtube.com/vi/DH182aLsVig/maxresdefault.jpg"
+    },
+    {
+      "name": "Dreams — Gabrielle",
+      "videoId": "G5QPirQITZI",
+      "thumbnail": "https://img.youtube.com/vi/G5QPirQITZI/maxresdefault.jpg"
+    },
+    {
+      "name": "Hold On — Skepta",
+      "videoId": "e5iqtQLm-BM",
+      "thumbnail": "https://img.youtube.com/vi/e5iqtQLm-BM/maxresdefault.jpg"
+    },
+    {
+      "name": "Mr Brightside — The Killers",
+      "videoId": "gGdGFtwCNBE",
+      "thumbnail": "https://img.youtube.com/vi/gGdGFtwCNBE/maxresdefault.jpg"
+    },
+    {
+      "name": "Don’t You Want Me — The Human League",
+      "videoId": "uPudE8nDog0",
+      "thumbnail": "https://img.youtube.com/vi/uPudE8nDog0/maxresdefault.jpg"
+    },
+    {
+      "name": "Don’t Stop Movin’ — S Club 7",
+      "videoId": "vm262cXxRrU",
+      "thumbnail": "https://img.youtube.com/vi/vm262cXxRrU/maxresdefault.jpg"
+    },
+    {
+      "name": "Starlight — Muse",
+      "videoId": "Pgum6OT_VH8",
+      "thumbnail": "https://img.youtube.com/vi/Pgum6OT_VH8/maxresdefault.jpg"
+    },
+    {
+      "name": "We R Who We R — Kesha",
+      "videoId": "Q97c5szTgIA",
+      "thumbnail": "https://img.youtube.com/vi/Q97c5szTgIA/maxresdefault.jpg"
+    },
+    {
+      "name": "Survivor — Destiny’s Child",
+      "videoId": "Wmc8bQoL-J0",
+      "thumbnail": "https://img.youtube.com/vi/Wmc8bQoL-J0/maxresdefault.jpg"
+    },
+    {
+      "name": "Girl on Fire — Alicia Keys",
+      "videoId": "J91ti_MpdHA",
+      "thumbnail": "https://img.youtube.com/vi/J91ti_MpdHA/maxresdefault.jpg"
+    },
+    {
+      "name": "Let It Be — The Beatles",
+      "videoId": "QDYfEBY9NM4",
+      "thumbnail": "https://img.youtube.com/vi/QDYfEBY9NM4/maxresdefault.jpg"
+    },
+    {
+      "name": "Don’t Give Up — Peter Gabriel & Kate Bush",
+      "videoId": "VjEq-r2agqc",
+      "thumbnail": "https://img.youtube.com/vi/VjEq-r2agqc/maxresdefault.jpg"
+    },
+    {
+      "name": "Express Yourself — Madonna",
+      "videoId": "GsVcUzP_O_8",
+      "thumbnail": "https://img.youtube.com/vi/GsVcUzP_O_8/maxresdefault.jpg"
+    },
+    {
+      "name": "What a Wonderful World — Louis Armstrong",
+      "videoId": "CWzrABouyeE",
+      "thumbnail": "https://img.youtube.com/vi/CWzrABouyeE/maxresdefault.jpg"
+    },
+    {
+      "name": "It’s a Beautiful Day — U2",
+      "videoId": "co6WMzDOh1o",
+      "thumbnail": "https://img.youtube.com/vi/co6WMzDOh1o/maxresdefault.jpg"
+    },
+    {
+      "name": "Break My Stride — Matthew Wilder",
+      "videoId": "48YclhI1mRo",
+      "thumbnail": "https://img.youtube.com/vi/48YclhI1mRo/maxresdefault.jpg"
+    },
+    {
+      "name": "Dream Big — Jazmine Sullivan",
+      "videoId": "dOTREiW8Vck",
+      "thumbnail": "https://img.youtube.com/vi/dOTREiW8Vck/maxresdefault.jpg"
+    },
+    {
+      "name": "Shine — Take That",
+      "videoId": "NJWlK2ONAlE",
+      "thumbnail": "https://img.youtube.com/vi/NJWlK2ONAlE/maxresdefault.jpg"
+    }
+  ].obs;
+  // final RxList<SongDetailed> searchYoutubeResults = <SongDetailed>[].obs;
   final RxBool isSpotifyLoading = false.obs;
-  final RxBool isYoutubeLoading = false.obs;
+  // final RxBool isYoutubeLoading = false.obs;
   final RxBool isAdminSongsLoading = false.obs;
 
   // Default fallback songs
@@ -112,10 +218,10 @@ class AddSongsController extends GetxController {
   Future<void> searchYoutubeSongs({String query = ''}) async {
     // try {
     //   isYoutubeLoading.value = true;
-    searchYoutubeResults.clear();
+    // searchYoutubeResults.clear();
     final results = await ytmusic.searchSongs(query == '' ? 'Top' : query);
     for (final result in results) {
-      searchYoutubeResults.add(result);
+      // searchYoutubeResults.add(result);
     }
     // } catch (e) {
     //   print("youtube search error: $e");

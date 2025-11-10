@@ -15,14 +15,16 @@ class DeepLinkService extends GetxService {
 
     // Listen for incoming links
     _appLinks.uriLinkStream.listen(_handleIncomingLink);
+    print("user redirected");
     return this;
   }
 
   void _handleIncomingLink(Uri uri) {
     print("=================000000");
-    if (uri.scheme == 'com.museit' && uri.host == 'spotify-callback') {
+    // myapp: //auth-callback
+    if (uri.scheme == 'myapp' && uri.host == 'auth-callback') {
       print('🎯 DeepLink received: $uri');
-      SpotifyAuthService().handleRedirect(uri);
+      SpotifyAuthService().handleRedirectMusicAPi(uri);
     }
   }
 }

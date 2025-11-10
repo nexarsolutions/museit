@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:dart_ytmusic_api/yt_music.dart';
 
+import 'package:dart_ytmusic_api/yt_music.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,11 +12,9 @@ import 'package:musit/pages/charity_side/charity_profile_creation/charity_profil
 import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
 import 'package:musit/pages/sender_side/on_boarding/on_boarding_screen.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/deep_link_service.dart';
 import 'package:musit/services/spotify_auth_service.dart';
 import 'package:musit/services/user_manager.dart';
-import 'package:musit/services/youtube_music_service.dart';
 
 Future<void> main() async {
   // Catch all uncaught async errors in the app
@@ -41,7 +39,7 @@ Future<void> main() async {
       await userManager.init();
       await Get.putAsync<DeepLinkService>(() async {
         final service = DeepLinkService();
-        return service;
+        return service.init();
       });
 
       await Get.putAsync(() async {
@@ -56,11 +54,13 @@ Future<void> main() async {
       //   return s;
       // });
 
-
-
       // Initialize the API
-      await ytmusic.initialize();
 
+      ytmusic.initialize(
+        gl: "GB", // Force Pakistan region (works)
+        hl: "en", // English
+        cookies: "VISITOR_INFO1_LIVE=xyz; YSC=abc; PREF=hl=en;",
+      );
 
       // Start the app
       runApp(MyApp());
@@ -76,9 +76,8 @@ Future<void> main() async {
   );
 }
 
-
 // Create an instance of the YouTube Music API
-final ytmusic = YTMusic();
+YTMusic ytmusic = YTMusic();
 
 final Logger logger = Logger(
   printer: PrettyPrinter(

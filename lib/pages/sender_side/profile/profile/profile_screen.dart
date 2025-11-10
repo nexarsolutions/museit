@@ -4,22 +4,16 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/auth/login/login_screen.dart';
-import 'package:musit/pages/common_sections/about_app/about_app_screen.dart';
-import 'package:musit/pages/common_sections/privacy_policy/privacy_policy_screen.dart';
-import 'package:musit/pages/common_sections/terms_conditions/terms_conditions_screen.dart';
 import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/utils/extensions.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
+import 'package:musit/widgets/custom_button.dart';
 
 import '../../../../common_widgets/profile_widget.dart';
 import '../../../../main.dart';
-import '../../../sendBottombar/sender_bottom_bar.dart';
-import '../../sender_home/sender_home/sender_home_screen.dart';
-import '../../subscriptions/subscriptions/subscription_screen.dart';
+import '../../../../widgets/web_view_screen.dart';
 import '../change_password/change_password_bottomsheet.dart';
 import '../edit_profile/edit_profile_screen.dart';
-import '../purchase_history/purchase_history_screen.dart';
-import '../saved_playlist/saved_playlist_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -168,13 +162,13 @@ class ProfileScreen extends StatelessWidget {
                   //     );
                   //   },
                   // ),
-                  ProfileWidget(
-                    iconPath: 'assets/images/purchase_history.png',
-                    title: 'Purchase History',
-                    onTap: () {
-                      Get.to(() => PurchaseHistoryScreen());
-                    },
-                  ),
+                  // ProfileWidget(
+                  //   iconPath: 'assets/images/purchase_history.png',
+                  //   title: 'Purchase History',
+                  //   onTap: () {
+                  //     Get.to(() => PurchaseHistoryScreen());
+                  //   },
+                  // ),
                   // ProfileWidget(
                   //   iconPath: 'assets/images/saved_playlists.png',
                   //   title: 'Saved Playlists',
@@ -186,23 +180,158 @@ class ProfileScreen extends StatelessWidget {
                     iconPath: 'assets/images/privacy_policy.png',
                     title: 'Privacy Policy',
                     onTap: () {
-                      Get.to(() => PrivacyPolicyScreen());
+                      Get.to(
+                        () => WebViewScreen(
+                          url:
+                              "https://museit.life/wp-content/uploads/2025/10/MUSEiT-Privacy-Policy.docx.pdf",
+                          title: "Privacy Policy",
+                        ),
+                      );
                     },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/terms_conditions.png',
                     title: 'Terms & Conditions',
                     onTap: () {
-                      Get.to(() => TermsConditionsScreen());
+                      Get.to(
+                        () => WebViewScreen(
+                          url:
+                              "https://museit.life/wp-content/uploads/2025/10/MUSEiT-Privacy-Policy.docx.pdf",
+                          title: "Privacy Policy",
+                        ),
+                      );
                     },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/about.png',
                     title: 'About',
                     onTap: () {
-                      Get.to(() => AboutAppScreen());
+                      Get.to(
+                        () => WebViewScreen(
+                          url:
+                              "https://museit.life/wp-content/uploads/2025/10/MUSEiT-Privacy-Policy.docx.pdf",
+                          title: "Privacy Policy",
+                        ),
+                      );
                     },
                   ),
+
+                  CustomButton(
+                    onPressed: () {
+                      Get.dialog(
+                        Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.warning_amber_rounded,
+                                  color: Colors.redAccent,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  "Delete Account?",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  "Are you sure you want to delete your account? This action cannot be undone.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: CustomButton(
+                                        text: "Cancel",
+                                        onPressed: () => Get.back(),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: CustomButton(
+                                        text: "Delete",
+                                        onPressed: () {
+                                          Get.dialog(
+                                            Dialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(20.0),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons
+                                                          .info_outline_rounded,
+                                                      color:
+                                                          Colors.orangeAccent,
+                                                      size: 48,
+                                                    ),
+                                                    const SizedBox(height: 16),
+                                                    Text(
+                                                      "Data Deletion Scheduled",
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      "Your account has been marked for deletion. All your data will be permanently deleted within the next 20 days.",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey[700],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 24),
+                                                    CustomButton(
+                                                        text: "Okay",
+                                                        onPressed: () {
+                                                          Get.back();
+                                                          Get.back();
+                                                        }),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        // Optional: add color for destructive action
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    text: "Delete Account",
+                  ),
+
                   SizedBox(height: 24),
                 ],
               ),

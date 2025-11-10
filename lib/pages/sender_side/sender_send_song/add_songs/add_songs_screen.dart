@@ -9,7 +9,7 @@ import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 import 'package:musit/widgets/error_widget_future_stream.dart';
 import 'package:musit/widgets/web_view_screen.dart';
-import '../../../../constants/text_styles.dart';
+
 import '../../../../globalModels/song_model.dart';
 import '../../../../services/spotify_auth_service.dart';
 import '../../../../widgets/custom_tab_button.dart';
@@ -103,7 +103,7 @@ class AddSongsScreen extends StatelessWidget {
                             : _ConnectAccountPrompt(
                                 serviceName: 'Spotify',
                                 assetPath: 'assets/images/spotify_selected.png',
-                                onPressed: spotifyService.connectSpotify,
+                                onPressed: spotifyService.openSpotifyAuth,
                               );
                       })
                     : controller.songTypeId.value == 1
@@ -241,7 +241,7 @@ class AddSongsScreen extends StatelessWidget {
         if (controller.isSpotifyLoading.value)
           const Center(child: CircularProgressIndicator())
         else if (controller.searchSpotifyResults.isEmpty)
-          const Text("No songs found. Try searching.")
+          const Center(child: CircularProgressIndicator())
         else
           ListView.builder(
             padding: EdgeInsets.zero,
@@ -316,10 +316,11 @@ class AddSongsScreen extends StatelessWidget {
     return Column(
       children: [
         // const SizedBox(height: 16),
-        if (controller.isYoutubeLoading.value)
-          const Center(child: CircularProgressIndicator())
-        else if (controller.searchYoutubeResults.isEmpty)
-          const Text("No songs found. Try searching.")
+        // if (controller.isYoutubeLoading.value)
+        //   const Center(child: CircularProgressIndicator())
+        if (controller.searchYoutubeResults.length == 0)
+          // const Center(child: CircularProgressIndicator())
+          Text("${controller.searchYoutubeResults.length}")
         else
           ListView.builder(
             shrinkWrap: true,
@@ -331,10 +332,10 @@ class AddSongsScreen extends StatelessWidget {
 
               final song = SongModel(
                 typeId: 2,
-                name: youtubeSong.name,
+                name: youtubeSong["name"],
                 image: '',
                 // artist: spotifySong['artists'][0]['name'],
-                link: youtubeSong.videoId,
+                link: youtubeSong["videoId"],
               );
 
               return Obx(
@@ -346,7 +347,7 @@ class AddSongsScreen extends StatelessWidget {
                   return GestureDetector(
                     onTap: () {
                       String playUrl = 'https://www.youtube'
-                          '.com/watch?v=${youtubeSong.videoId ?? ''}';
+                          '.com/watch?v=${youtubeSong["videoId"] ?? ''}';
                       print("*** youtube url: $playUrl");
 
                       Get.to(() => YouTubeAudioPlayer(

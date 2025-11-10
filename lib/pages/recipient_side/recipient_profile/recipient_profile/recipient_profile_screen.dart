@@ -4,19 +4,15 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/auth/login/login_screen.dart';
-import 'package:musit/pages/common_sections/about_app/about_app_screen.dart';
-import 'package:musit/pages/common_sections/privacy_policy/privacy_policy_screen.dart';
-import 'package:musit/pages/common_sections/terms_conditions/terms_conditions_screen.dart';
-import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 import 'package:musit/utils/extensions.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
+
 import '../../../../common_widgets/profile_widget.dart';
 import '../../../../main.dart';
 import '../../../../utils/dialog_utilities.dart';
+import '../../../../widgets/web_view_screen.dart';
 import '../../../sender_side/profile/change_password/change_password_bottomsheet.dart';
 import '../../../sender_side/profile/edit_profile/edit_profile_screen.dart';
-import '../../../sender_side/subscriptions/subscriptions/subscription_screen.dart';
-import '../recipient_history/recipient_history_screen.dart';
 import '../recipient_saved_songs/recipient_saved_songs_screen.dart';
 
 class RecipientProfileScreen extends StatelessWidget {
@@ -191,21 +187,39 @@ class RecipientProfileScreen extends StatelessWidget {
                     iconPath: 'assets/images/privacy_policy.png',
                     title: 'Privacy Policy',
                     onTap: () {
-                      Get.to(() => PrivacyPolicyScreen());
+                      Get.to(
+                        () => WebViewScreen(
+                          url:
+                              "https://museit.life/wp-content/uploads/2025/10/MUSEiT-Privacy-Policy.docx.pdf",
+                          title: "Privacy Policy",
+                        ),
+                      );
                     },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/terms_conditions.png',
                     title: 'Terms & Conditions',
                     onTap: () {
-                      Get.to(() => TermsConditionsScreen());
+                      Get.to(
+                        () => WebViewScreen(
+                          url:
+                              "https://museit.life/wp-content/uploads/2025/10/MUSEiT-Privacy-Policy.docx.pdf",
+                          title: "Terms & Conditions",
+                        ),
+                      );
                     },
                   ),
                   ProfileWidget(
                     iconPath: 'assets/images/about.png',
                     title: 'About',
                     onTap: () {
-                      Get.to(() => AboutAppScreen());
+                      Get.to(
+                        () => WebViewScreen(
+                          url:
+                              "https://museit.life/wp-content/uploads/2025/10/MUSEiT-Privacy-Policy.docx.pdf",
+                          title: "About",
+                        ),
+                      );
                     },
                   ),
                   SizedBox(height: 24),

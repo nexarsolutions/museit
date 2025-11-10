@@ -10,15 +10,16 @@ class SenderBottomBar extends StatelessWidget {
 
   final controller = Get.put(SenderBottomBarController());
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Scaffold(
         backgroundColor: whiteColor,
         body: Obx(
-              () =>
-                  SenderBottomBarController.widgets
-                  .elementAt(controller.selectedTab.value),
+          () => SenderBottomBarController.widgets
+              .elementAt(controller.selectedTab.value),
         ),
         bottomNavigationBar: Container(
           height: 62,
@@ -27,7 +28,7 @@ class SenderBottomBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
           ),
           padding:
-          const EdgeInsets.only(top: 1, left: 25, right: 25, bottom: 9),
+              const EdgeInsets.only(top: 1, left: 25, right: 25, bottom: 9),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -49,6 +50,7 @@ class SenderBottomBar extends StatelessWidget {
             ],
           ),
         ),
+      ),
     );
   }
 
@@ -60,7 +62,7 @@ class SenderBottomBar extends StatelessWidget {
   }) {
     return InkWell(
       borderRadius: BorderRadius.circular(50),
-      onTap: () => controller.selectedTab.value=index,
+      onTap: () => controller.selectedTab.value = index,
       child: Obx(() {
         bool isSelected = controller.selectedTab.value == index;
         return SizedBox(
@@ -78,6 +80,7 @@ class SenderBottomBar extends StatelessWidget {
               Image.asset(
                 isSelected ? activeIcon : inActiveIcon,
                 height: 24,
+                color: !isSelected ? Colors.black54 : Colors.black,
                 width: 24,
                 // color: isSelected ? blackColor : null,
               ),
@@ -96,5 +99,4 @@ class SenderBottomBar extends StatelessWidget {
       }),
     );
   }
-
 }

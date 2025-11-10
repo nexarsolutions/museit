@@ -21,7 +21,7 @@ class SelectRoleScreen extends StatelessWidget {
               children: [
                 Image.asset(
                   'assets/images/select_role_background.png',
-                  height: Get.height * 0.5,
+                  height: Get.height * 0.4,
                   width: Get.width,
                   fit: BoxFit.cover,
                 ),
@@ -49,7 +49,7 @@ class SelectRoleScreen extends StatelessWidget {
             ),
             // SizedBox(height: 23),
             Text('Select Account Type', style: manRopeSemiBold),
-            SizedBox(height: 52),
+            SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50.0),
               child: Text(
@@ -58,7 +58,7 @@ class SelectRoleScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: 24),
+            // SizedBox(height: 24),
             Spacer(),
             CustomButton(
               onPressed: () {

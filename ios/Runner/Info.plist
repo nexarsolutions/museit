@@ -52,14 +52,14 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 <key>FlutterDeepLinkingEnabled</key>
-<false/>
+<true/>
 
 <key>CFBundleURLTypes</key>
 <array>
   <dict>
     <key>CFBundleURLSchemes</key>
     <array>
-      <string>com.museit</string>
+      <string>myapp</string>
     </array>
     <key>CFBundleURLName</key>
     <string>com.museit</string>

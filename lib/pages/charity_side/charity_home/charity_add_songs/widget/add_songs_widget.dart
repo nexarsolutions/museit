@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:musit/utils/extensions.dart';
+
+// import 'package:shimmer/shimmer.dart';
 
 import '../../../../../constants/colors.dart';
 import '../../../../../constants/text_styles.dart';
@@ -67,32 +69,43 @@ class AddSongsWidget extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: CachedNetworkImage(
-                    imageUrl: '' /*song.image.showImage*/,
+                    imageUrl: song.image.showImage,
                     // Your backend image URL
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
                     placeholder: (context, url) {
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey.shade300,
-                        highlightColor: Colors.grey.shade100,
-                        child: Container(
-                          height: 60,
-                          width: 60,
-                          color: Colors.grey.shade300,
-                        ),
+                      return Icon(
+                        Icons.music_note,
+                        color: Colors.black,
+                        size: 30,
                       );
+                      // return Shimmer.fromColors(
+                      //   baseColor: Colors.grey.shade300,
+                      //   highlightColor: Colors.grey.shade100,
+                      //   child: Container(
+                      //     height: 60,
+                      //     width: 60,
+                      //     color: Colors.grey.shade300,
+                      //   ),
+                      // );
                     },
                     errorWidget: (context, url, error) {
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey.shade300,
-                        highlightColor: Colors.grey.shade100,
-                        child: Container(
-                          height: 60,
-                          width: 60,
-                          color: Colors.grey.shade300,
-                        ),
+                      return Icon(
+                        Icons.music_note,
+                        color: Colors.black,
+                        size: 30,
                       );
+
+                      // return Shimmer.fromColors(
+                      //   baseColor: Colors.grey.shade300,
+                      //   highlightColor: Colors.grey.shade100,
+                      //   child: Container(
+                      //     height: 60,
+                      //     width: 60,
+                      //     color: Colors.grey.shade300,
+                      //   ),
+                      // );
                     },
                   ),
                 ),

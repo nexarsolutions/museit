@@ -5,7 +5,6 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_view_recipient/controller/sender_view_recipient_controller.dart';
 import 'package:musit/services/auth_service.dart';
-import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
@@ -13,13 +12,18 @@ import '../../../../widgets/custom_text_field.dart';
 import 'widget/send_via_phone_sheet.dart';
 
 class SenderViewRecipientScreen extends StatelessWidget {
-  SenderViewRecipientScreen({super.key, required this.onPressedSave,this.rowWidget});
+  SenderViewRecipientScreen(
+      {super.key,
+      required this.onPressedSave,
+      this.rowWidget,
+      this.showbutton = true});
 
   final controller = Get.put(SenderViewRecipientController());
   final RxBool isSelected = true.obs;
   final RxnString phoneString = RxnString();
   final Function(List<int> selectedUsersId, String? phone) onPressedSave;
   final Widget? rowWidget;
+  final bool showbutton;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +33,8 @@ class SenderViewRecipientScreen extends StatelessWidget {
         children: [
           CustomAppBar(
             text: 'Recipients',
-            isBack: true,
-            showLastIcon: true,
+            isBack: showbutton,
+            showLastIcon: showbutton,
             lastWidget: IconButton(
               onPressed: () {
                 showSendViaPhoneSheet(
@@ -210,72 +214,74 @@ class SenderViewRecipientScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 42),
-                  CustomButton(
-                      onPressed: () {
-                        // if (controller.selectedUsersId.value.isEmpty) {
-                        //   errorDialog(
-                        //       content: "Select User/Receipt to continue.");
-                        //   return;
-                        // }
-                        onPressedSave(
-                            controller.selectedUsersId, phoneString.value);
-                      },
-                      text: 'Send'),
-                  SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Obx(() {
-                        return isSelected.value
-                            ? GestureDetector(
-                                onTap: () {
-                                  isSelected.value = false;
-                                },
-                                child: Image.asset(
-                                  'assets/images/tick_purple.png',
-                                  width: 22,
-                                  height: 22,
-                                ),
-                              )
-                            : GestureDetector(
-                                onTap: () {
-                                  isSelected.value = true;
-                                },
-                                child: Container(
-                                  width: 22,
-                                  height: 22,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Color(
-                                          0xFF8C7FAC,
-                                        ).withValues(alpha: 0.15),
-                                        Color(
-                                          0xFF7695CA,
-                                        ).withValues(alpha: 0.15),
-                                      ],
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
+                  if (showbutton) ...{
+                    CustomButton(
+                        onPressed: () {
+                          // if (controller.selectedUsersId.value.isEmpty) {
+                          //   errorDialog(
+                          //       content: "Select User/Receipt to continue.");
+                          //   return;
+                          // }
+                          onPressedSave(
+                              controller.selectedUsersId, phoneString.value);
+                        },
+                        text: 'Send'),
+                    SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Obx(() {
+                          return isSelected.value
+                              ? GestureDetector(
+                                  onTap: () {
+                                    isSelected.value = false;
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/tick_purple.png',
+                                    width: 22,
+                                    height: 22,
+                                  ),
+                                )
+                              : GestureDetector(
+                                  onTap: () {
+                                    isSelected.value = true;
+                                  },
+                                  child: Container(
+                                    width: 22,
+                                    height: 22,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(
+                                            0xFF8C7FAC,
+                                          ).withValues(alpha: 0.15),
+                                          Color(
+                                            0xFF7695CA,
+                                          ).withValues(alpha: 0.15),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                      }),
-                      SizedBox(width: 12),
-                      Text(
-                        'Allow to share in community',
-                        style: manRope.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w200,
-                          decoration: TextDecoration.underline,
-                          decorationColor: blackColor,
+                                );
+                        }),
+                        SizedBox(width: 12),
+                        Text(
+                          'Allow to share in community',
+                          style: manRope.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w200,
+                            decoration: TextDecoration.underline,
+                            decorationColor: blackColor,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24),
-                  rowWidget??const SizedBox.shrink(),
+                      ],
+                    ),
+                    SizedBox(height: 24),
+                    rowWidget ?? const SizedBox.shrink(),
+                  }
                 ],
               ),
             ),

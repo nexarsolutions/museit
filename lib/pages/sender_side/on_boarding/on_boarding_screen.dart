@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
-import 'package:musit/pages/auth/signup/signup_screen.dart';
 import 'package:musit/pages/select_role/select_role_screen.dart';
 import 'package:musit/widgets/custom_button.dart';
+
 import 'controller/on_boarding_controller.dart';
 
 class OnBoardingScreen extends StatelessWidget {
@@ -56,15 +56,15 @@ class OnBoardingScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 75),
+                const SizedBox(height: 10),
 
                 // ==== Text Section ====
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Text(
                     controller.textTitles[index],
-                    style: manRopeSemiBold.copyWith(fontWeight: FontWeight
-                        .bold,fontSize: 18 ),
+                    style: manRopeSemiBold.copyWith(
+                        fontWeight: FontWeight.bold, fontSize: 18),
                     textAlign: TextAlign.center,
                   ),
                 ),
