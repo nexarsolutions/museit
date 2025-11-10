@@ -113,7 +113,7 @@ class CustomTabButtonWithIcon extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: isSelected ? blackColor : Colors.transparent,
+                  color: isSelected ? tab.selectedColor??blackColor : Colors.transparent
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -151,10 +151,12 @@ class TabItem {
   final String title;
   final String selectedIcon;
   final String unselectedIcon;
+  final Color? selectedColor;
 
   TabItem({
     required this.title,
     required this.selectedIcon,
     required this.unselectedIcon,
+    this.selectedColor,
   });
 }

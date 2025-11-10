@@ -22,19 +22,24 @@ class OnBoardingController extends GetxController {
     When?
     '''
   ];
+  ///
+  // MUSEiT was created by people who understand what it feels like to face life’s toughest
+  // moments. We’ve been through grief, illness, and the challenges of finding strength when it
+  // feels out of reach. Our founder, Amy Barrett, and the team built MUSEiT to connect people
+  // through music, voice, and emotion—because no one should ever feel alone in their journey
+
+  ///
+  // MUSEiT is a platform that blends music, motivation, and heartfelt connection. It lets you send
+  // or receive personalised playlists with spoken messages of encouragement, support, or
+  // celebration. Whether it’s cheering someone through a marathon, lifting a loved one’s spirits, or
+  // supporting a charity cause, MUSEiT helps you share care that truly speaks volumes.
 
   final List<String> texts = [
-    '''
-    MUSEiT was created by people who understand what it feels like to face life’s toughest
-moments. We’ve been through grief, illness, and the challenges of finding strength when it
-feels out of reach. Our founder, Amy Barrett, and the team built MUSEiT to connect people
-through music, voice, and emotion—because no one should ever feel alone in their journey
+    '''MUSEiT was created by people who understand what it feels like to face life’s toughest moments. 
+It helps people connect and express themselves through voice messages and music - bringing joy, power, motivation and human connection back into their lives. 
     ''',
-    '''
-    MUSEiT is a platform that blends music, motivation, and heartfelt connection. It lets you send
-or receive personalised playlists with spoken messages of encouragement, support, or
-celebration. Whether it’s cheering someone through a marathon, lifting a loved one’s spirits, or
-supporting a charity cause, MUSEiT helps you share care that truly speaks volumes.
+    '''MUSEiT is the first ever audio platform to blend vocal messages and music together. 
+Creating Heartfelt connection, messages of celebration, encouragement or support. Sent via our app, using your chosen music provider. Not only raising spirits but all raising funds for vital causes.
     ''',
     '''
     MUSEiT is for every moment that matters. When someone’s struggling, when you can’t be

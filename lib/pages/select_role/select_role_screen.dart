@@ -71,7 +71,7 @@ class SelectRoleScreen extends StatelessWidget {
               onPressed: () {
                 Get.to(() => SignupScreen(roleId: 2));
               },
-              text: 'Charity.',
+              text: 'Recipient',
               backgroundColor: whiteColor,
               borderColor: blackColor,
               isBorder: true,

@@ -16,6 +16,12 @@ class VoiceNoteController extends GetxController {
   String? currentRecordingPath;
   Rx<PlayerState> playerState = PlayerState.stopped.obs;
 
+  final List<String> images = [
+    'assets/images/on_boarding_1.png',
+    'assets/images/on_boarding_2.png',
+    'assets/images/on_boarding_3.png',
+  ];
+
   @override
   void onInit() {
     super.onInit();

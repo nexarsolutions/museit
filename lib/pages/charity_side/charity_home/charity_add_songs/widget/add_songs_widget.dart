@@ -122,14 +122,14 @@ class AddSongsWidget extends StatelessWidget {
                         style: manRopeSemiBold.copyWith(fontSize: 14),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        /*song.price?.toString() ??*/
+                      /*Text(
+                        *//*song.price?.toString() ??*//*
                         'N/A',
                         style: manRope.copyWith(
                           fontSize: 12,
                           color: lightBlack,
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 ),

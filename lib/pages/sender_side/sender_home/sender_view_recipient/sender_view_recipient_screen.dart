@@ -34,21 +34,21 @@ class SenderViewRecipientScreen extends StatelessWidget {
           CustomAppBar(
             text: 'Recipients',
             isBack: showbutton,
-            showLastIcon: showbutton,
-            lastWidget: IconButton(
-              onPressed: () {
-                showSendViaPhoneSheet(
-                  context: context,
-                  onPhoneSubmitted: (phone) {
-                    phoneString.value = phone;
-                  },
-                );
-              },
-              icon: Icon(
-                Icons.phone,
-                color: blackColor,
-              ),
-            ),
+            // showLastIcon: showbutton,
+            // lastWidget: IconButton(
+            //   onPressed: () {
+            //     showSendViaPhoneSheet(
+            //       context: context,
+            //       onPhoneSubmitted: (phone) {
+            //         phoneString.value = phone;
+            //       },
+            //     );
+            //   },
+            //   icon: Icon(
+            //     Icons.phone,
+            //     color: blackColor,
+            //   ),
+            // ),
           ),
           Expanded(
             child: Padding(

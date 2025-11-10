@@ -178,7 +178,12 @@ class ViewCharityOrganization extends StatelessWidget {
                         onPressedSave();
                       },
                       text: 'Next'),
-                  SizedBox(height: 24),
+                  SizedBox(height: 16),
+                  Center(
+                      child: Text('Please select your chosen charity to receive 50p of your MUSEiT Moment',
+                          textAlign: TextAlign.center,
+                          style: manRope.copyWith(fontSize: 13))),
+                  SizedBox(height: 6),
                 ],
               ),
             ),

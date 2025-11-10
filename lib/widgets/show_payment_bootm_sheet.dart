@@ -45,7 +45,7 @@ void showPaymentBottomSheet({
               hintText: "Enter amount",
               borderRadius: 12,
               isPrefixIcon: true,
-              prefixIcon: const Icon(Icons.attach_money),
+              prefixIcon: const Icon(Icons.currency_pound),
               validator: (value) {
                 final text = value?.trim() ?? '';
                 if (text.isEmpty) {

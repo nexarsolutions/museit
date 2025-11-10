@@ -131,35 +131,68 @@ class SignupController extends GetxController {
   }
 
   //email template
+//   Message _emailTemplate(String username, String verificationCode) {
+//     return Message()
+//       ..from = Address(username, "Musit")
+//       ..recipients.add(userModel.email.text.trim())
+//       ..subject = 'Verify your email'
+//       ..text = 'This is the plain text.\nThis is line 2 of the text part.'
+//       ..html = '''
+// <div style="font-family: 'Helvetica Neue', Arial, sans-serif; min-width: 1000px; overflow:auto; line-height: 1.6;">
+// <div style="margin: 40px auto; width: 80%; padding: 20px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+//   <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; text-align: center;">
+//     <a href="#" style="font-size: 1.5em; color: #00466a; text-decoration: none; font-weight: 600;">Musit</a>
+//   </div>
+//   <div style="padding: 20px;">
+//     <p style="font-size: 1.2em; color: #333;">Hi,</p>
+//     <p style="font-size: 1.1em; color: #555;">Thank you for choosing Musit! Please use the OTP below to complete your sign-up process.</p>
+//     <div style="text-align: center; margin: 20px 0;">
+//       <h2 style="background-color: #3089CE; color: #fff; display: inline-block; padding: 10px 20px; border-radius: 5px; font-size: 1.8em;">$verificationCode</h2>
+//     </div>
+//     <p style="font-size: 1em; color: #555;">If you did not request this, please ignore this email.</p>
+//     <p style="font-size: 1em; color: #333;">Best regards,</p>
+//     <p style="font-size: 1em; font-weight: bold; color: #333;">The Musit Team</p>
+//   </div>
+//   <hr style="border:none; border-top:1px solid #eee; margin: 20px 0;">
+//   <div style="text-align: center; color: #aaa; font-size: 0.9em;">
+//     <p style="margin: 0;">Musit, 123 Business Avenue, City, Country</p>
+//     <p style="margin: 0;">© 2025 Musit. All rights reserved.</p>
+//   </div>
+// </div>
+// </div>
+// ''';
+//   }
   Message _emailTemplate(String username, String verificationCode) {
     return Message()
-      ..from = Address(username, "Musit")
+      ..from = Address(username, "MUSEiT")
       ..recipients.add(userModel.email.text.trim())
       ..subject = 'Verify your email'
-      ..text = 'This is the plain text.\nThis is line 2 of the text part.'
       ..html = '''
 <div style="font-family: 'Helvetica Neue', Arial, sans-serif; min-width: 1000px; overflow:auto; line-height: 1.6;">
-<div style="margin: 40px auto; width: 80%; padding: 20px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-  <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; text-align: center;">
-    <a href="#" style="font-size: 1.5em; color: #00466a; text-decoration: none; font-weight: 600;">Musit</a>
-  </div>
-  <div style="padding: 20px;">
-    <p style="font-size: 1.2em; color: #333;">Hi,</p>
-    <p style="font-size: 1.1em; color: #555;">Thank you for choosing Musit! Please use the OTP below to complete your sign-up process.</p>
-    <div style="text-align: center; margin: 20px 0;">
-      <h2 style="background-color: #3089CE; color: #fff; display: inline-block; padding: 10px 20px; border-radius: 5px; font-size: 1.8em;">$verificationCode</h2>
+  <div style="margin: 40px auto; width: 80%; padding: 20px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; text-align: center;">
+      <img src="https://museit.life/wp-content/uploads/2025/11/MUSEiT-Logo-.png" alt="MUSEiT Logo" style="height: 60px; object-fit: contain;">
     </div>
-    <p style="font-size: 1em; color: #555;">If you did not request this, please ignore this email.</p>
-    <p style="font-size: 1em; color: #333;">Best regards,</p>
-    <p style="font-size: 1em; font-weight: bold; color: #333;">The Musit Team</p>
+    <div style="padding: 20px;">
+      <p style="font-size: 1.2em; color: #333;">Hi,</p>
+      <p style="font-size: 1.1em; color: #555;">
+        Thank you for signing up to <strong>MUSEiT!</strong> Please use the OTP below to complete your sign-up process.
+      </p>
+      <div style="text-align: center; margin: 20px 0;">
+        <h2 style="background-color: #3089CE; color: #fff; display: inline-block; padding: 10px 20px; border-radius: 5px; font-size: 1.8em;">$verificationCode</h2>
+      </div>
+      <p style="font-size: 1em; color: #555;">If you did not request this, please ignore this email.</p>
+      <p style="font-size: 1em; color: #333;">Best regards,</p>
+      <p style="font-size: 1em; font-weight: bold; color: #333;">The MUSEiT Team</p>
+    </div>
+    <hr style="border:none; border-top:1px solid #eee; margin: 20px 0;">
+    <div style="text-align: center; color: #aaa; font-size: 0.9em;">
+      <p style="margin: 0;">MUSEiT, 123 Business Avenue, City, Country</p>
+      <p style="margin: 0;">© 2025 MUSEiT. All rights reserved.</p>
+    </div>
   </div>
-  <hr style="border:none; border-top:1px solid #eee; margin: 20px 0;">
-  <div style="text-align: center; color: #aaa; font-size: 0.9em;">
-    <p style="margin: 0;">Musit, 123 Business Avenue, City, Country</p>
-    <p style="margin: 0;">© 2025 Musit. All rights reserved.</p>
-  </div>
-</div>
 </div>
 ''';
   }
+
 }

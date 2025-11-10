@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/main.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
+import 'package:musit/pages/sendBottombar/controller/sender_bottom_bar_controller.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
@@ -38,7 +40,7 @@ class AddSongsScreen extends StatelessWidget {
             child: CustomTextField(
               borderRadius: 50,
               controller: controller.searchController,
-              hintText: 'Search Spotify songs',
+              hintText: 'Search songs',
               onChanged: (value) => controller.searchQuery.value = value.trim(),
               isSuffixIcon: true,
               suffixIcon: GestureDetector(
@@ -71,16 +73,19 @@ class AddSongsScreen extends StatelessWidget {
                     title: "Spotify",
                     selectedIcon: 'assets/images/spotify_selected.png',
                     unselectedIcon: 'assets/images/spotify.png',
+                    selectedColor: Color(0xFF1db954)
                   ),
                   TabItem(
                     title: "Youtube",
                     selectedIcon: 'assets/images/youtube_selected.png',
                     unselectedIcon: 'assets/images/youtube.png',
+                    selectedColor: Color(0xFFFF0000)
                   ),
                   TabItem(
                     title: "Apple",
                     selectedIcon: 'assets/images/selected_apple_music.png',
                     unselectedIcon: 'assets/images/unselected_apple_music.png',
+                    selectedColor: Color(0xFFFF4E6B)
                   ),
                   TabItem(
                     title: "Upload",
@@ -198,6 +203,7 @@ class AddSongsScreen extends StatelessWidget {
                                                                       .link ==
                                                                   song.link);
                                                     } else {
+                                                      controller.songs.clear();
                                                       controller.songs.add(
                                                           song..typeId = 4);
                                                     }
@@ -299,6 +305,7 @@ class AddSongsScreen extends StatelessWidget {
                           controller.songs.removeWhere(
                               (element) => element.link == song.link);
                         } else {
+                          controller.songs.clear();
                           controller.songs.add(song..typeId = 1);
                         }
                       },
@@ -318,7 +325,7 @@ class AddSongsScreen extends StatelessWidget {
         // const SizedBox(height: 16),
         // if (controller.isYoutubeLoading.value)
         //   const Center(child: CircularProgressIndicator())
-        if (controller.searchYoutubeResults.length == 0)
+        if (controller.searchYoutubeResults.isEmpty)
           // const Center(child: CircularProgressIndicator())
           Text("${controller.searchYoutubeResults.length}")
         else
@@ -374,6 +381,7 @@ class AddSongsScreen extends StatelessWidget {
                           controller.songs.removeWhere(
                               (element) => element.link == song.link);
                         } else {
+                          controller.songs.clear();
                           controller.songs.add(song..typeId = 2);
                         }
                       },

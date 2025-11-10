@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/main.dart';
 import 'package:musit/pages/sendBottombar/controller/sender_bottom_bar_controller.dart';
+import 'package:musit/pages/sender_side/sender_send_song/voice_note/voice_note_screen.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
@@ -38,14 +40,31 @@ class SenderHomeScreen extends StatelessWidget {
                 _buildQuoteBox(),
                 Spacer(),
 
-                _buildSmallCard(
-                  title: 'MUSEiT Moment',
-                  image: 'assets/images/send_paid_songs.png',
-                  primary: true,
-                  onTap: () {
-                    Get.find<SenderBottomBarController>().selectedTab.value = 1;
-                    // Get.to(() => AddSongsScreen());
-                  },
+                Row(
+                  spacing: 12,
+                  children: [
+                    Expanded(
+                      child: _buildSmallCard(
+                        title: 'MUSEiT Moment',
+                        image: 'assets/images/send_paid_songs.png',
+                        primary: true,
+                        onTap: () {
+                          Get.find<SenderBottomBarController>().selectedTab.value = 1;
+                          // Get.to(() => AddSongsScreen());
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildSmallCard(
+                        title: 'MUSEiT\nBundle',
+                        image: 'assets/images/send_paid_songs.png',
+                        primary: true,
+                        onTap: () {
+                          customErrorSnackBar(content: "“Coming Soon");
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 Spacer(),
                 Center(
@@ -201,6 +220,8 @@ class SenderHomeScreen extends StatelessWidget {
       ],
     );
   }
+
+
 
   Container _buildQuoteBox() {
     return Container(
