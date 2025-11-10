@@ -20,6 +20,7 @@ import '../voice_note/voice_note_screen.dart';
 import 'controller/add_songs_controller.dart';
 
 class AddSongsScreen extends StatelessWidget {
+
   AddSongsScreen({super.key});
 
   final controller = Get.put(AddSongsController());
@@ -41,11 +42,22 @@ class AddSongsScreen extends StatelessWidget {
               borderRadius: 50,
               controller: controller.searchController,
               hintText: 'Search songs',
-              onChanged: (value) => controller.searchQuery.value = value.trim(),
+              onChanged: (value){
+                controller.searchQuery.value = value.trim();
+                if(controller.songTypeId.value==1 && value.trim().isNotEmpty){
+                  controller.searchInYoutubeList.value=RxList<Map<String, String>>.from(controller.youtubeSongsList.where((value) => value['name']!.toLowerCase().contains(controller.searchQuery.value.toLowerCase())));
+                }
+              },
               isSuffixIcon: true,
               suffixIcon: GestureDetector(
-                onTap: () => controller
-                    .searchSong(controller.searchController.text.trim()),
+                onTap: () {
+                  if(controller.songTypeId.value==1 && controller.searchQuery.value.trim().isNotEmpty){
+                    controller.searchInYoutubeList.value=RxList<Map<String, String>>.from(controller.youtubeSongsList.where((value) => value['name']!.toLowerCase().contains(controller.searchQuery.value.toLowerCase())));
+                  }else{
+                    controller
+                        .searchSong(controller.searchController.text.trim());
+                  }
+                },
                 child: Container(
                   width: 36,
                   height: 36,
@@ -112,7 +124,11 @@ class AddSongsScreen extends StatelessWidget {
                               );
                       })
                     : controller.songTypeId.value == 1
-                        ? _buildYoutubeWidget() // Create this widget next
+                        ? _buildYoutubeWidget(
+                  youtubeSongs:
+                    controller.searchQuery.value.trim().isEmpty
+                        ?controller.youtubeSongsList.value
+                        :controller.searchInYoutubeList.value) // Create this widget next
 
                         : controller.songTypeId.value == 2
                             ? _ConnectAccountPrompt(
@@ -319,23 +335,23 @@ class AddSongsScreen extends StatelessWidget {
     );
   }
 
-  Column _buildYoutubeWidget() {
+  Column _buildYoutubeWidget({required List<Map<String, String>> youtubeSongs}) {
     return Column(
       children: [
         // const SizedBox(height: 16),
         // if (controller.isYoutubeLoading.value)
         //   const Center(child: CircularProgressIndicator())
-        if (controller.searchYoutubeResults.isEmpty)
+        if (youtubeSongs.isEmpty)
           // const Center(child: CircularProgressIndicator())
-          Text("${controller.searchYoutubeResults.length}")
+          Text("${youtubeSongs.length}")
         else
           ListView.builder(
             shrinkWrap: true,
             primary: false,
             padding: EdgeInsets.zero,
-            itemCount: controller.searchYoutubeResults.length,
+            itemCount: youtubeSongs.length,
             itemBuilder: (context, index) {
-              final youtubeSong = controller.searchYoutubeResults[index];
+              final youtubeSong = youtubeSongs[index];
 
               final song = SongModel(
                 typeId: 2,

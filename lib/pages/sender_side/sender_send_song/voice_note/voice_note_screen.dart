@@ -15,7 +15,8 @@ import '../add_songs/controller/add_songs_controller.dart';
 import 'controller/voice_note_controller.dart';
 
 class VoiceNoteScreen extends StatelessWidget {
-  VoiceNoteScreen({super.key});
+  final bool isFromMuseitMoment;
+  VoiceNoteScreen({super.key, this.isFromMuseitMoment=false});
 
   final controller = Get.put(VoiceNoteController());
   final songController = Get.put(AddSongsController());
@@ -62,78 +63,78 @@ class VoiceNoteScreen extends StatelessWidget {
               child: CustomVoiceRecordingScreen(
                 onNext: (song) {
                   Get.to(() => ViewCharityOrganization(
-                        onPressedSave: () {
-                          Get.to(() => SenderViewRecipientScreen(
-                                rowWidget: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    // IconButton(
-                                    //   onPressed: () {
-                                    //     // Show bottom sheet before sharing
-                                    //     showSendViaPhoneSheet(
-                                    //       context: Get.context!,
-                                    //       onPhoneSubmitted: (phone) {
-                                    //         songController
-                                    //             .shareMomentExternally(
-                                    //                 songController.songs, 'SMS',
-                                    //                 receiver: phone);
-                                    //       },
-                                    //     );
-                                    //   },
-                                    //   icon: Icon(Icons.sms, color: Colors.blue),
-                                    // ),
-                                    IconButton(
-                                      onPressed: () {
-                                        showSendViaPhoneSheet(
-                                          context: Get.context!,
-                                          onPhoneSubmitted: (phone) {
-                                            songController
-                                                .shareMomentExternally(
-                                                    songController.songs,
-                                                    'WhatsApp',
-                                                    receiver: phone);
-                                          },
-                                        );
-                                      },
-                                      icon: Image.asset(
-                                        "assets/images/whatsapp.png",
-                                        width: 35, height: 35,
-                                        // color: Colors.green
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        showSendViaPhoneSheet(
-                                          context: Get.context!,
-                                          isEmail: true,
-                                          onPhoneSubmitted: (phone) {
-                                            songController
-                                                .shareMomentExternally(
-                                                    songController.songs,
-                                                    'Email',
-                                                    receiver: phone);
-                                          },
-                                        );
-                                      },
-                                      icon:
-                                          Icon(Icons.email, color: Colors.red,size: 40,),
-                                    ),
-                                  ],
-                                ),
-                                onPressedSave:
-                                    (List<int> selectedUser, String? phone) {
-                                  if (selectedUser.isEmpty && phone == null) {
-                                    customErrorSnackBar(
-                                        content:
-                                            "Select Users or enter phone number to continue");
-                                    return;
-                                  }
-                                  songController.shareSong(song, phone, selectedUser);
-                                },
-                              ));
+                    onPressedSave: () {
+                      Get.to(() => SenderViewRecipientScreen(
+                        rowWidget: Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // IconButton(
+                            //   onPressed: () {
+                            //     // Show bottom sheet before sharing
+                            //     showSendViaPhoneSheet(
+                            //       context: Get.context!,
+                            //       onPhoneSubmitted: (phone) {
+                            //         songController
+                            //             .shareMomentExternally(
+                            //                 songController.songs, 'SMS',
+                            //                 receiver: phone);
+                            //       },
+                            //     );
+                            //   },
+                            //   icon: Icon(Icons.sms, color: Colors.blue),
+                            // ),
+                            IconButton(
+                              onPressed: () {
+                                showSendViaPhoneSheet(
+                                  context: Get.context!,
+                                  onPhoneSubmitted: (phone) {
+                                    songController
+                                        .shareMomentExternally(
+                                        songController.songs,
+                                        'WhatsApp',
+                                        receiver: phone);
+                                  },
+                                );
+                              },
+                              icon: Image.asset(
+                                "assets/images/whatsapp.png",
+                                width: 35, height: 35,
+                                // color: Colors.green
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                showSendViaPhoneSheet(
+                                  context: Get.context!,
+                                  isEmail: true,
+                                  onPhoneSubmitted: (phone) {
+                                    songController
+                                        .shareMomentExternally(
+                                        songController.songs,
+                                        'Email',
+                                        receiver: phone);
+                                  },
+                                );
+                              },
+                              icon:
+                              Icon(Icons.email, color: Colors.red,size: 40,),
+                            ),
+                          ],
+                        ),
+                        onPressedSave:
+                            (List<int> selectedUser, String? phone) {
+                          if (selectedUser.isEmpty && phone == null) {
+                            customErrorSnackBar(
+                                content:
+                                "Select Users or enter phone number to continue");
+                            return;
+                          }
+                          songController.shareSong(song, phone, selectedUser);
                         },
                       ));
+                    },
+                  ));
                 },
               ),
             ),

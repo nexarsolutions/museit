@@ -49,8 +49,9 @@ class SenderHomeScreen extends StatelessWidget {
                         image: 'assets/images/send_paid_songs.png',
                         primary: true,
                         onTap: () {
+                          // Get.to(()=>VoiceNoteScreen(isFromMuseitMoment: true));
                           Get.find<SenderBottomBarController>().selectedTab.value = 1;
-                          // Get.to(() => AddSongsScreen());
+                          // // Get.to(() => AddSongsScreen());
                         },
                       ),
                     ),

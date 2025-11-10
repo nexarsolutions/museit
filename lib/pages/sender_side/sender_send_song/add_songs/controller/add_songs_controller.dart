@@ -42,7 +42,9 @@ class AddSongsController extends GetxController {
 
   final RxList<Map<String, dynamic>> searchSpotifyResults =
       <Map<String, dynamic>>[].obs;
-  final RxList<Map<String, String>> searchYoutubeResults = [
+
+final RxList<Map<String, String>> searchInYoutubeList=<Map<String, String>>[].obs;
+  final RxList<Map<String, String>> youtubeSongsList = [
     {
       "name": "You Gotta Be — Des'ree",
       "videoId": "pO40TcKa_5U",
