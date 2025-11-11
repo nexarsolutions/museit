@@ -28,6 +28,7 @@ class AddSongsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: Get.width,
+      margin: EdgeInsets.only(bottom: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: whiteColor,

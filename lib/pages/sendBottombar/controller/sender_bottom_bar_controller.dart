@@ -15,7 +15,5 @@ class SenderBottomBarController extends GetxController {
       onPressedSave: (song, p) {},
       showbutton: false,
     )
-    // const SizedBox.shrink(),
-    // const SizedBox.shrink(),
   ];
 }

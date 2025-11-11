@@ -237,7 +237,6 @@ final RxList<Map<String, String>> searchInYoutubeList=<Map<String, String>>[].ob
 
     isSpotifyLoading.value = true;
     final token = await spotifyService.getAccessToken();
-    print("************* 1\n$token");
     if (token == null) {
       isSpotifyLoading.value = false;
       return;

@@ -50,7 +50,9 @@ class SenderHomeScreen extends StatelessWidget {
                         primary: true,
                         onTap: () {
                           // Get.to(()=>VoiceNoteScreen(isFromMuseitMoment: true));
-                          Get.find<SenderBottomBarController>().selectedTab.value = 1;
+                          Get.find<SenderBottomBarController>()
+                              .selectedTab
+                              .value = 1;
                           // // Get.to(() => AddSongsScreen());
                         },
                       ),
@@ -221,8 +223,6 @@ class SenderHomeScreen extends StatelessWidget {
       ],
     );
   }
-
-
 
   Container _buildQuoteBox() {
     return Container(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/constants/text_styles.dart';
 import 'package:musit/main.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
@@ -20,14 +21,10 @@ import '../voice_note/voice_note_screen.dart';
 import 'controller/add_songs_controller.dart';
 
 class AddSongsScreen extends StatelessWidget {
-
   AddSongsScreen({super.key});
 
   final controller = Get.put(AddSongsController());
   final SpotifyAuthService spotifyService = Get.find<SpotifyAuthService>();
-
-  // final YouTubeMusicAuthService ytMusicService =
-  //     Get.find<YouTubeMusicAuthService>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,18 +39,30 @@ class AddSongsScreen extends StatelessWidget {
               borderRadius: 50,
               controller: controller.searchController,
               hintText: 'Search songs',
-              onChanged: (value){
+              onChanged: (value) {
                 controller.searchQuery.value = value.trim();
-                if(controller.songTypeId.value==1 && value.trim().isNotEmpty){
-                  controller.searchInYoutubeList.value=RxList<Map<String, String>>.from(controller.youtubeSongsList.where((value) => value['name']!.toLowerCase().contains(controller.searchQuery.value.toLowerCase())));
+                if (controller.songTypeId.value == 1 &&
+                    value.trim().isNotEmpty) {
+                  controller.searchInYoutubeList.value =
+                      RxList<Map<String, String>>.from(
+                          controller.youtubeSongsList.where((value) =>
+                              value['name']!.toLowerCase().contains(
+                                  controller.searchQuery.value.toLowerCase())));
                 }
               },
               isSuffixIcon: true,
               suffixIcon: GestureDetector(
                 onTap: () {
-                  if(controller.songTypeId.value==1 && controller.searchQuery.value.trim().isNotEmpty){
-                    controller.searchInYoutubeList.value=RxList<Map<String, String>>.from(controller.youtubeSongsList.where((value) => value['name']!.toLowerCase().contains(controller.searchQuery.value.toLowerCase())));
-                  }else{
+                  if (controller.songTypeId.value == 1 &&
+                      controller.searchQuery.value.trim().isNotEmpty) {
+                    controller.searchInYoutubeList.value =
+                        RxList<Map<String, String>>.from(controller
+                            .youtubeSongsList
+                            .where((value) => value['name']!
+                                .toLowerCase()
+                                .contains(controller.searchQuery.value
+                                    .toLowerCase())));
+                  } else {
                     controller
                         .searchSong(controller.searchController.text.trim());
                   }
@@ -82,23 +91,21 @@ class AddSongsScreen extends StatelessWidget {
                 },
                 tabs: [
                   TabItem(
-                    title: "Spotify",
-                    selectedIcon: 'assets/images/spotify_selected.png',
-                    unselectedIcon: 'assets/images/spotify.png',
-                    selectedColor: Color(0xFF1db954)
-                  ),
+                      title: "Spotify",
+                      selectedIcon: 'assets/images/spotify_selected.png',
+                      unselectedIcon: 'assets/images/spotify.png',
+                      selectedColor: Color(0xFF1db954)),
                   TabItem(
-                    title: "Youtube",
-                    selectedIcon: 'assets/images/youtube_selected.png',
-                    unselectedIcon: 'assets/images/youtube.png',
-                    selectedColor: Color(0xFFFF0000)
-                  ),
+                      title: "Youtube",
+                      selectedIcon: 'assets/images/youtube_selected.png',
+                      unselectedIcon: 'assets/images/youtube.png',
+                      selectedColor: Color(0xFFFF0000)),
                   TabItem(
-                    title: "Apple",
-                    selectedIcon: 'assets/images/selected_apple_music.png',
-                    unselectedIcon: 'assets/images/unselected_apple_music.png',
-                    selectedColor: Color(0xFFFF4E6B)
-                  ),
+                      title: "Apple",
+                      selectedIcon: 'assets/images/selected_apple_music.png',
+                      unselectedIcon:
+                          'assets/images/unselected_apple_music.png',
+                      selectedColor: Color(0xFFFF4E6B)),
                   TabItem(
                     title: "Upload",
                     selectedIcon: 'assets/images/upload_selected.png',
@@ -125,11 +132,10 @@ class AddSongsScreen extends StatelessWidget {
                       })
                     : controller.songTypeId.value == 1
                         ? _buildYoutubeWidget(
-                  youtubeSongs:
-                    controller.searchQuery.value.trim().isEmpty
-                        ?controller.youtubeSongsList.value
-                        :controller.searchInYoutubeList.value) // Create this widget next
-
+                            youtubeSongs:
+                                controller.searchQuery.value.trim().isEmpty
+                                    ? controller.youtubeSongsList.value
+                                    : controller.searchInYoutubeList.value)
                         : controller.songTypeId.value == 2
                             ? _ConnectAccountPrompt(
                                 serviceName: 'Apple Music',
@@ -335,7 +341,8 @@ class AddSongsScreen extends StatelessWidget {
     );
   }
 
-  Column _buildYoutubeWidget({required List<Map<String, String>> youtubeSongs}) {
+  Column _buildYoutubeWidget(
+      {required List<Map<String, String>> youtubeSongs}) {
     return Column(
       children: [
         // const SizedBox(height: 16),
@@ -343,7 +350,7 @@ class AddSongsScreen extends StatelessWidget {
         //   const Center(child: CircularProgressIndicator())
         if (youtubeSongs.isEmpty)
           // const Center(child: CircularProgressIndicator())
-          Text("${youtubeSongs.length}")
+          Center(child: Text("Empty",style: manRope,))
         else
           ListView.builder(
             shrinkWrap: true,
@@ -371,7 +378,6 @@ class AddSongsScreen extends StatelessWidget {
                     onTap: () {
                       String playUrl = 'https://www.youtube'
                           '.com/watch?v=${youtubeSong["videoId"] ?? ''}';
-                      print("*** youtube url: $playUrl");
 
                       Get.to(() => YouTubeAudioPlayer(
                             videoUrl: playUrl,
