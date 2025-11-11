@@ -10,6 +10,7 @@ import 'package:musit/pages/sender_side/sender_send_song/voice_note/voice_note_s
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
+import '../../../../utils/dialog_utilities.dart';
 import '../../../../widgets/custom_header.dart';
 import '../../../../widgets/fade_text_carousel.dart';
 import '../../community/sender_community/sender_community_screen.dart';
@@ -48,12 +49,18 @@ class SenderHomeScreen extends StatelessWidget {
                         title: 'MUSEiT Moment',
                         image: 'assets/images/send_paid_songs.png',
                         primary: true,
-                        onTap: () {
+                        onTap: () async {
                           // Get.to(()=>VoiceNoteScreen(isFromMuseitMoment: true));
                           Get.find<SenderBottomBarController>()
                               .selectedTab
                               .value = 1;
                           // // Get.to(() => AddSongsScreen());
+                          if (userManager.isFirstTimeAddSongScreen) {
+                            successDialog(
+                                content:
+                                """A MUSEiT Moment is 1 message + 1 song sent to your favourite people.\nEvery MUSEiT Moment sent, 50p will go towards your selected charity.""");
+                            await userManager.saveFirstTimeAddSongScreen();
+                          }
                         },
                       ),
                     ),

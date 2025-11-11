@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:musit/globalModels/charity_response_model.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/spotify_auth_service.dart';
@@ -72,6 +73,26 @@ class AuthService {
     return await _api.get(url);
   }
 
+  Future<Map<String, dynamic>> getAllCharityApi({String search = ''}) async {
+    // Build query parameters
+    final Map<String, String> queryParams = {};
+
+    if (search != '') {
+      queryParams['search'] = search;
+    }
+
+    // Construct URL with query parameters
+    String url = "user/charity/profiles";
+    if (queryParams.isNotEmpty) {
+      final queryString = queryParams.entries
+          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+          .join('&');
+      url += '?$queryString';
+    }
+
+    return await _api.get(url);
+  }
+
   ///getUserInfoById
   ///
   Future<Map<String, dynamic>> getUserInfoById({required int userId}) async {
@@ -107,6 +128,27 @@ class AuthService {
         onSuccess: (response) {
           final receiptResponseModel = ReceiptResponseModel.fromJson(response);
           final newUserList = receiptResponseModel.response?.users ?? [];
+          userList.assignAll(newUserList);
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+      return userList;
+    } catch (e) {
+      rethrow;
+    }
+  }
+  Future<List<CharityUserModel>> getAllCharity(
+      {String search = ''}) async {
+    try {
+      List<CharityUserModel> userList = [];
+      await _api.handleGetResponse(
+        apiMethod: () => getAllCharityApi(
+            search: search),
+        onSuccess: (response) {
+          final receiptResponseModel = CharityResponseModel.fromJson(response);
+          final newUserList = receiptResponseModel.response?.rows ?? [];
           userList.assignAll(newUserList);
         },
         onError: (error) {

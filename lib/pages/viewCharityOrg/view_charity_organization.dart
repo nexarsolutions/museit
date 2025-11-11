@@ -4,6 +4,7 @@ import 'package:musit/common_widgets/recipients_card.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/globalModels/payment_model.dart';
+import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/services/payment_service.dart';
@@ -69,9 +70,9 @@ class ViewCharityOrganization extends StatelessWidget {
                       child: Obx(
                         () => FutureBuilder(
                             key: ValueKey(controller.searchQuery.value),
-                            future: AuthService().getAllUsers(
-                                search: controller.searchQuery.value,
-                                roleId: 3),
+                            future: AuthService().getAllCharity(
+                              search: controller.searchQuery.value,
+                            ),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -122,8 +123,15 @@ class ViewCharityOrganization extends StatelessWidget {
                                 ),
                                 itemCount: userList.length,
                                 itemBuilder: (context, index) {
+                                  final charityUser = userList[index];
                                   return RecipientsCard(
-                                    user: userList[index],
+                                    user: UserModel(
+                                      profile: RxString(
+                                          charityUser.user?.profile ?? ''),
+                                      username: TextEditingController(
+                                          text:
+                                              charityUser.organtization ?? ''),
+                                    ),
                                     isSelected: false,
                                     showDonate: true,
                                     onTap: () async {
@@ -180,7 +188,8 @@ class ViewCharityOrganization extends StatelessWidget {
                       text: 'Next'),
                   SizedBox(height: 16),
                   Center(
-                      child: Text('Please select your chosen charity to receive 50p of your MUSEiT Moment',
+                      child: Text(
+                          'Please select your chosen charity to receive 50p of your MUSEiT Moment',
                           textAlign: TextAlign.center,
                           style: manRope.copyWith(fontSize: 13))),
                   SizedBox(height: 6),

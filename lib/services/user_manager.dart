@@ -28,6 +28,7 @@ class UserManager {
   final RxBool _isFirstTimeAddSongScreen = false.obs;
 
   bool get isFirstOpen => _isFirstOpen.value;
+
   bool get isFirstTimeAddSongScreen => _isFirstTimeAddSongScreen.value;
 
   // In-memory cache of the company model
@@ -94,16 +95,21 @@ class UserManager {
     await _preferences?.remove(_userKey);
   }
 
-  Future<void> updateFirstTimeAddSongScreen() async{
-    _isFirstTimeAddSongScreen.value=false;
+  Future<void> updateFirstTimeAddSongScreen() async {
+    _isFirstTimeAddSongScreen.value = false;
     await _preferences?.setBool(_firstTimeAddSongScreen, false);
   }
 
   Future<void> checkFirstOpen() async {
     _isFirstOpen.value = _preferences?.getBool(_firstOpen) ?? false;
-    _isFirstTimeAddSongScreen.value = _preferences?.getBool(_firstTimeAddSongScreen) ?? true;
-    print("((((((((((((( ${_isFirstOpen.value}");
+    _isFirstTimeAddSongScreen.value =
+        _preferences?.getBool(_firstTimeAddSongScreen) ?? true;
+
     ///update shared preference
     await _preferences?.setBool(_firstOpen, false);
+  }
+
+  Future<void> saveFirstTimeAddSongScreen() async {
+    await _preferences?.setBool(_firstTimeAddSongScreen, false);
   }
 }

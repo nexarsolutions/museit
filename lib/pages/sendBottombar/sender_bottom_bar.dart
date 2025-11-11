@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/main.dart';
+import 'package:musit/utils/dialog_utilities.dart';
 
 import 'controller/sender_bottom_bar_controller.dart';
 
@@ -62,7 +64,15 @@ class SenderBottomBar extends StatelessWidget {
   }) {
     return InkWell(
       borderRadius: BorderRadius.circular(50),
-      onTap: () => controller.selectedTab.value = index,
+      onTap: () async {
+        controller.selectedTab.value = index;
+        if (index == 1 && userManager.isFirstTimeAddSongScreen) {
+          successDialog(
+              content:
+                  """A MUSEiT Moment is 1 message + 1 song sent to your favourite people.\nEvery MUSEiT Moment sent, 50p will go towards your selected charity.""");
+          await userManager.saveFirstTimeAddSongScreen();
+        }
+      },
       child: Obx(() {
         bool isSelected = controller.selectedTab.value == index;
         return SizedBox(
