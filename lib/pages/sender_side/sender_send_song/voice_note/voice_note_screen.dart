@@ -40,7 +40,7 @@ class VoiceNoteScreen extends StatelessWidget {
                     right: 0,
                     child: CustomAppBar(
                         text: 'Add Voice Note',
-                        isBack: true,
+                        isBack: false,
                         textColor: whiteColor)),
                 Positioned(
                   bottom: 0,

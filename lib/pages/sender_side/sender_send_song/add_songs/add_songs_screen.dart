@@ -35,7 +35,7 @@ class AddSongsScreen extends StatelessWidget {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Column(
           children: [
-            CustomAppBar(text: 'MUSEiT Moment', isBack: false),
+            CustomAppBar(text: 'MUSEiT Moment', isBack: true),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: CustomTextField(
