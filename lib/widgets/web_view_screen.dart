@@ -10,12 +10,10 @@ import 'package:webview_flutter/webview_flutter.dart';
 class WebViewScreen extends StatefulWidget {
   final String url;
   final String title;
+  final void Function()? onTap;
 
-  const WebViewScreen({
-    super.key,
-    required this.url,
-    this.title = 'Web View',
-  });
+  const WebViewScreen(
+      {super.key, required this.url, this.title = 'Web View', this.onTap});
 
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
@@ -47,9 +45,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
         flexibleSpace: CustomAppBar(
           text: widget.title,
           isBack: true,
-          onTap: () {
-            Get.offAll(() => SenderBottomBar());
-          },
+          onTap: widget.onTap ??
+              () {
+                Get.back();
+              },
         ),
       ),
       body: PopScope(
@@ -57,7 +56,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
 
-          Get.offAll(() => SenderBottomBar());
+          if(widget.onTap!=null) {
+            Get.offAll(() => SenderBottomBar());
+          }else{
+            Get.back();
+          }
         },
         child: SafeArea(
           child: Padding(

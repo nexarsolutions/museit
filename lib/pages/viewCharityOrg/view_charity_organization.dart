@@ -135,9 +135,13 @@ class ViewCharityOrganization extends StatelessWidget {
                                     isSelected: false,
                                     showDonate: true,
                                     onTap: () async {
+                                      /// phone bottom sheet
                                       showPaymentBottomSheet(
                                         context: context,
                                         onAmountSubmitted: (amount) async {
+                                          Get.back(); //close bottom sheet
+
+                                          ///initial payment
                                           await ApiService().handleResponse(
                                             loadingMsg: "Initiating Payment",
                                             apiMethod: () => PaymentService()
@@ -148,6 +152,7 @@ class ViewCharityOrganization extends StatelessWidget {
                                                             ?.id ??
                                                         (-1)),
                                             onSuccess: (success) {
+                                              //
                                               final paymentResponse =
                                                   PaymentResponseModel.fromJson(
                                                       success);

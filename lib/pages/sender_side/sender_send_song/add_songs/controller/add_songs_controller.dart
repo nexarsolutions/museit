@@ -1345,8 +1345,24 @@ class AddSongsController extends GetxController {
           Get.to(() => WebViewScreen(
                 url: approvalLink,
                 title: "Payment",
+                onTap: () {
+                  Get.offAll(() => SenderBottomBar());
+                },
               ));
         }
+
+        songTypeId.value = 0;
+        searchController.clear();
+        searchQuery.value = '';
+
+        songs.clear();
+
+        // RxList<SongModel> librarySelected = <SongModel>[].obs;
+        adminSongs.clear();
+
+        searchSpotifyResults.clear();
+
+        searchInYoutubeList.clear();
       },
     );
   }

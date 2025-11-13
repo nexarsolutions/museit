@@ -90,7 +90,6 @@ void showPaymentBottomSheet({
                     if (formKey.currentState!.validate()) {
                       onAmountSubmitted(
                           double.tryParse(amountController.text.trim()) ?? 0.0);
-                      Get.back();
                     }
                   },
                   child: Text(

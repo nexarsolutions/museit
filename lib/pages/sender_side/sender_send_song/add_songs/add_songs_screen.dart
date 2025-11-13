@@ -260,26 +260,12 @@ class AddSongsScreen extends StatelessWidget {
                         // Get.to(() => VoiceNoteScreen());
                         Get.to(() => ViewCharityOrganization(
                               onPressedSave: () {
+                                /// navigat to send view screen
                                 Get.to(() => SenderViewRecipientScreen(
                                       rowWidget: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          // IconButton(
-                                          //   onPressed: () {
-                                          //     // Show bottom sheet before sharing
-                                          //     showSendViaPhoneSheet(
-                                          //       context: Get.context!,
-                                          //       onPhoneSubmitted: (phone) {
-                                          //         songController
-                                          //             .shareMomentExternally(
-                                          //                 songController.songs, 'SMS',
-                                          //                 receiver: phone);
-                                          //       },
-                                          //     );
-                                          //   },
-                                          //   icon: Icon(Icons.sms, color: Colors.blue),
-                                          // ),
                                           IconButton(
                                             onPressed: () {
                                               showSendViaPhoneSheet(
