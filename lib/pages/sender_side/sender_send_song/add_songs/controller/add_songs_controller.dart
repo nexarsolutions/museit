@@ -16,6 +16,7 @@ import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/song_model.dart';
 import '../../../../../main.dart';
 import '../../../../../services/spotify_auth_service.dart';
+import '../../../../../widgets/web_view_screen.dart';
 import '../../../../sendBottombar/sender_bottom_bar.dart';
 
 class AddSongsController extends GetxController {
@@ -1147,8 +1148,10 @@ class AddSongsController extends GetxController {
       "thumbnail": "https://img.youtube.com/vi/oepmH8S6ivA/maxresdefault.jpg",
     }
   ].obs;
+
   // final RxList<SongDetailed> searchYoutubeResults = <SongDetailed>[].obs;
   final RxBool isSpotifyLoading = false.obs;
+
   // final RxBool isYoutubeLoading = false.obs;
   final RxBool isAdminSongsLoading = false.obs;
 
@@ -1278,60 +1281,74 @@ class AddSongsController extends GetxController {
 
   Future<void> shareSong(List<SongModel> voiceRecordings,
       String? receiverPhoneNumber, List<int> selectedUsers) async {
-    try {
-      loadingDialog();
-      List<Map<AudioKey, dynamic>> voices = [];
-      if (voiceRecordings.isNotEmpty) {
-        for (var voice in voiceRecordings) {
-          final voicePath = await UploadFileService()
-              .fileUploadResult(uploadData: voice.link ?? '');
+    // Step 1: Upload voice recordings (if any)
+    List<Map<AudioKey, dynamic>> voices = [];
 
-          if (voicePath != null) {
-            voices.add(
-                {AudioKey.path: voicePath, AudioKey.name: voice.name ?? ''});
-          } else {
-            Get.back();
-            return;
-          }
+    if (voiceRecordings.isNotEmpty) {
+      for (var voice in voiceRecordings) {
+        final voicePath = await UploadFileService()
+            .fileUploadResult(uploadData: voice.link ?? '');
+
+        if (voicePath != null) {
+          voices
+              .add({AudioKey.path: voicePath, AudioKey.name: voice.name ?? ''});
+        } else {
+          return;
         }
       }
+    }
 
-      // for (var s in librarySelected) {
-      //   songs.add(s);
-      // }
-
-      var data = {
-        'songs': songs
+    // Step 2: Prepare payload for API request
+    var data = {
+      'songs': songs
+          .map(
+            (song) => song.toJson(),
+          )
+          .toList(),
+      if (voices.isNotEmpty)
+        'voiceNotes': voices
+            .map((e) => {'name': e[AudioKey.name], 'link': e[AudioKey.path]})
+            .toList(),
+      if (selectedUsers.isNotEmpty)
+        'toUserIds': selectedUsers
             .map(
-              (song) => song.toJson(),
+              (user) => user,
             )
             .toList(),
-        if (voices.isNotEmpty)
-          'voiceNotes': voices
-              .map((e) => {'name': e[AudioKey.name], 'link': e[AudioKey.path]})
-              .toList(),
-        if (selectedUsers.isNotEmpty)
-          'toUserIds': selectedUsers
-              .map(
-                (user) => user,
-              )
-              .toList(),
-        if (receiverPhoneNumber != null && receiverPhoneNumber != '')
-          'phoneNumber': receiverPhoneNumber,
-      };
-      Get.back(); //close loading dialog
-      await ApiService().handleResponse(
-        apiMethod: () => SongService().shareSongs(data),
-        onSuccess: (Map<String, dynamic> response) {
-          customPrint("add_songs_controller line 64: $response");
+      if (receiverPhoneNumber != null && receiverPhoneNumber != '')
+        'phoneNumber': receiverPhoneNumber,
+    };
+
+    // Step 3: Call API to share songs
+    await ApiService().handleResponse(
+      apiMethod: () => SongService().shareSongs(data),
+      onSuccess: (Map<String, dynamic> response) {
+        // customPrint("add_songs_controller line 64: $response");
+
+        Map<String, dynamic>? responseData = response['data'];
+
+        // Step 4: Handle API response
+        if (responseData == null) {
           Get.offAll(() => SenderBottomBar());
           customErrorSnackBar(content: response['message']);
-        },
-      );
-    } catch (e) {
-      Get.back(); //close loading dialog
-      errorDialog(content: e.toString());
-    }
+          return;
+        }
+
+        bool paymentRequired = responseData['paymentRequired'] ?? false;
+        String staus = responseData['status'] ?? '';
+        String approvalLink = responseData['approvalLink'] ?? '';
+
+        if (!paymentRequired) {
+          Get.offAll(() => SenderBottomBar());
+          customErrorSnackBar(content: response['message']);
+        } else {
+          Get.to(() => WebViewScreen(
+                url: approvalLink,
+                title: "Payment",
+              ));
+        }
+      },
+    );
   }
 
   Future<void> shareMomentExternally(List<SongModel> songs, String platform,

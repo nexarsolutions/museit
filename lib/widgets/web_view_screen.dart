@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -40,18 +44,30 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        centerTitle: true,
+        flexibleSpace: CustomAppBar(
+          text: widget.title,
+          isBack: true,
+          onTap: () {
+            Get.offAll(() => SenderBottomBar());
+          },
+        ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Stack(
-            children: [
-              WebViewWidget(controller: controller),
-              if (isLoading)
-                const Center(child: CircularProgressIndicator()),
-            ],
+      body: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+
+          Get.offAll(() => SenderBottomBar());
+        },
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Stack(
+              children: [
+                WebViewWidget(controller: controller),
+                if (isLoading) const Center(child: CircularProgressIndicator()),
+              ],
+            ),
           ),
         ),
       ),

@@ -143,9 +143,10 @@ class ViewCharityOrganization extends StatelessWidget {
                                             apiMethod: () => PaymentService()
                                                 .initPaymentApi(
                                                     amount: amount,
-                                                    charityId:
-                                                        userList[index].id ??
-                                                            (-1)),
+                                                    charityId: userList[index]
+                                                            .user
+                                                            ?.id ??
+                                                        (-1)),
                                             onSuccess: (success) {
                                               final paymentResponse =
                                                   PaymentResponseModel.fromJson(

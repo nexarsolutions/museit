@@ -5,6 +5,7 @@ class PaymentService {
 
   Future<Map<String, dynamic>> initPaymentApi(
       {required double amount, required int charityId}) async {
-    return await _api.post("paypal/create", {"amount": 2, "charityId": 3});
+    return await _api
+        .post("paypal/create", {"amount": amount, "charityId": charityId});
   }
 }
