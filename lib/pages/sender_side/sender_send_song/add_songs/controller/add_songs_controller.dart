@@ -8,44 +8,354 @@ import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
 import 'package:musit/services/upload_file_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
-import 'package:musit/utils/dialog_utilities.dart';
-import 'package:musit/utils/global_functions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/song_model.dart';
-import '../../../../../main.dart';
 import '../../../../../services/spotify_auth_service.dart';
 import '../../../../../widgets/web_view_screen.dart';
 import '../../../../sendBottombar/sender_bottom_bar.dart';
 
 class AddSongsController extends GetxController {
-  final spotifyService = Get.find<SpotifyAuthService>(); // ✅ use global service
-  // final YouTubeMusicAuthService ytMusicService =
-  //     Get.find<YouTubeMusicAuthService>();
-
-  final List<String> songUrls = [
-    'https://www.youtube.com/watch?v=pO40TcKa_5U',
-    'https://www.youtube.com/watch?v=OygsHbM1UCw',
-    'https://www.youtube.com/watch?v=G5QPirQITZI',
-    'https://www.youtube.com/watch?v=e5iqtQLm-BM',
-    'https://www.youtube.com/watch?v=Wmc8bQoL-J0',
-  ];
+  final spotifyService = Get.find<SpotifyAuthService>();
 
   final RxInt songTypeId = 0.obs;
   final searchController = TextEditingController();
   RxString searchQuery = ''.obs;
 
+  ///songs list to handle selection for backend storage
   RxList<SongModel> songs = <SongModel>[].obs;
 
   // RxList<SongModel> librarySelected = <SongModel>[].obs;
   RxList<SongModel> adminSongs = <SongModel>[].obs;
 
+  ///spotify list
   final RxList<Map<String, dynamic>> searchSpotifyResults =
       <Map<String, dynamic>>[].obs;
 
-  final RxList<Map<String, String>> searchInYoutubeList =
+  final RxList<Map<String, dynamic>> searchInYoutubeList =
+      <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, String>> youtubeSongsList =
       <Map<String, String>>[].obs;
+
+  // final RxList<SongDetailed> searchYoutubeResults = <SongDetailed>[].obs;
+  final RxBool isSpotifyLoading = false.obs;
+
+  final RxBool isYoutubeLoading = false.obs;
+  final RxBool isAdminSongsLoading = false.obs;
+
+  // Default fallback songs for spotify
+  final defaultSongs = [
+    "Shape of You",
+    "Blinding Lights",
+    "Stay",
+    "Believer",
+    "Dance Monkey",
+    "Perfect",
+    "Peaches"
+  ];
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    ever(spotifyService.isConnected, (connected) {
+      if (connected == true) loadDefaultSpotifySongs();
+    });
+
+    // ever(ytMusicService.isConnected, (connected) {
+    //   if (connected == true) loadYoutubeSongs();
+    // });
+
+    ever(
+      songTypeId,
+      (typeId) {
+        if (typeId == 0) {
+          loadDefaultSpotifySongs();
+        } else if (typeId == 1) {
+          loadDefaultYoutubeSongs();
+        }
+      },
+    );
+
+    debounce(searchQuery, (query) {
+      if (songTypeId.value == 0) {
+        query.toString().isEmpty
+            ? loadDefaultSpotifySongs()
+            : searchSpotifySong(query.toString());
+      } else if (songTypeId.value == 1) {
+        query.toString().isEmpty
+            ? loadDefaultYoutubeSongs()
+            : searchYouTube(query.toString());
+      }
+    }, time: const Duration(milliseconds: 600));
+  }
+
+  //load default spotify songs
+  Future<void> loadDefaultSpotifySongs() async {
+    if (!spotifyService.isConnected.value) return;
+    await searchSpotifySong(searchQuery.value.trim().isEmpty
+        ? defaultSongs.first
+        : searchQuery.value);
+  }
+
+  ///search spotify songs
+  Future<void> searchSpotifySong(String query) async {
+    if (query.isEmpty) return loadDefaultSpotifySongs();
+
+    isSpotifyLoading.value = true;
+    try {
+      final token = await spotifyService.getAccessToken();
+      if (token == null) {
+        // isSpotifyLoading.value = false;
+        return;
+      }
+
+      final url = Uri.parse(
+          'https://api.spotify.com/v1/search?q=$query&type=track&limit=10');
+      final res =
+          await http.get(url, headers: {'Authorization': 'Bearer $token'});
+      // print("************* 2\n${res.body}");
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        final List items = data['tracks']['items'];
+        searchSpotifyResults.assignAll(items.map((track) {
+          printInfo(info: track['name'].toString());
+          printInfo(info: track['uri'].toString());
+          printInfo(info: track['album']['images'][0]['url'].toString());
+          printInfo(info: track['preview_url'].toString());
+          return {
+            'name': track['name'],
+            'artist': track['artists'][0]['name'],
+            'uri': track['uri'],
+            'image': track['album']['images'][0]['url'],
+            'preview': track['preview_url']
+          };
+        }).toList());
+      } else {
+        searchSpotifyResults.clear();
+      }
+    } catch (e) {
+      debugPrint("Spotify search songs error: $e");
+    } finally {
+      isSpotifyLoading.value = false;
+    }
+  }
+
+  //load default youtube songs
+  Future<void> loadDefaultYoutubeSongs() async {
+    print("********** 1");
+    await searchYouTube(searchQuery.value.trim().isEmpty
+        ? defaultSongs.first
+        : searchQuery.value.trim());
+  }
+
+  //search youtube
+  Future<void> searchYouTube(String query) async {
+    print("********** 2");
+    isYoutubeLoading.value = true;
+    try {
+      final url =
+          'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=<query>&key=${ApiService.youtubeApiKey}&maxResults=20';
+      final res = await http.get(Uri.parse(url));
+
+      if (res.statusCode == 200) {
+        print("********** 3");
+        final data = jsonDecode(res.body);
+        final items = data['items'] as List;
+
+        searchInYoutubeList.assignAll(items.map((item) {
+          return {
+            'videoId': item['id']['videoId'],
+            'title': item['snippet']['title'],
+            'thumbnail': item['snippet']['thumbnails']['high']['url'],
+            'channel': item['snippet']['channelTitle'],
+          };
+        }).toList());
+      } else {
+        print("********** 4 ${res.body}");
+        searchInYoutubeList.clear();
+      }
+    } catch (e) {
+      print("********** 5");
+      debugPrint("Youtube search songs error: $e");
+    } finally {
+      print("********** 6");
+      isYoutubeLoading.value = false;
+    }
+  }
+
+  // Future<String> getAudioStream(String videoId) async {
+  //   var yt = YoutubeExplode();
+  //
+  //   var manifest = await yt.videos.streamsClient.getManifest(videoId);
+  //   var audioStream = manifest.audioOnly.withHighestBitrate();
+  //
+  //   return audioStream.url.toString();
+  // }
+
+  Future<List<AdminSongsModel>> loadAdminSongs({String search = ''}) async {
+    try {
+      List<AdminSongsModel> adSongs = [];
+      await ApiService().handleGetResponse(
+        apiMethod: () => SongService().loadAdminSongs(search: search),
+        onSuccess: (Map<String, dynamic> response) {
+          final success = AdminSongsResponseModel.fromJson(response);
+          final newList = success.response?.rows ?? [];
+          adSongs.assignAll(newList);
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+      return adSongs;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> shareSong(List<SongModel> voiceRecordings,
+      String? receiverPhoneNumber, List<int> selectedUsers) async {
+    // Step 1: Upload voice recordings (if any)
+    List<Map<AudioKey, dynamic>> voices = [];
+
+    if (voiceRecordings.isNotEmpty) {
+      for (var voice in voiceRecordings) {
+        final voicePath = await UploadFileService()
+            .fileUploadResult(uploadData: voice.link ?? '');
+
+        if (voicePath != null) {
+          voices
+              .add({AudioKey.path: voicePath, AudioKey.name: voice.name ?? ''});
+        } else {
+          return;
+        }
+      }
+    }
+
+    // Step 2: Prepare payload for API request
+    var data = {
+      'songs': songs
+          .map(
+            (song) => song.toJson(),
+          )
+          .toList(),
+      if (voices.isNotEmpty)
+        'voiceNotes': voices
+            .map((e) => {'name': e[AudioKey.name], 'link': e[AudioKey.path]})
+            .toList(),
+      if (selectedUsers.isNotEmpty)
+        'toUserIds': selectedUsers
+            .map(
+              (user) => user,
+            )
+            .toList(),
+      if (receiverPhoneNumber != null && receiverPhoneNumber != '')
+        'phoneNumber': receiverPhoneNumber,
+    };
+
+    // Step 3: Call API to share songs
+    await ApiService().handleResponse(
+      apiMethod: () => SongService().shareSongs(data),
+      onSuccess: (Map<String, dynamic> response) {
+        // customPrint("add_songs_controller line 64: $response");
+
+        Map<String, dynamic>? responseData = response['data'];
+
+        // Step 4: Handle API response
+        if (responseData == null) {
+          Get.offAll(() => SenderBottomBar());
+          customErrorSnackBar(content: response['message']);
+          return;
+        }
+
+        bool paymentRequired = responseData['paymentRequired'] ?? false;
+        String staus = responseData['status'] ?? '';
+        String approvalLink = responseData['approvalLink'] ?? '';
+
+        if (!paymentRequired) {
+          Get.offAll(() => SenderBottomBar());
+          customErrorSnackBar(content: response['message']);
+        } else {
+          Get.to(() => WebViewScreen(
+                url: approvalLink,
+                title: "Payment",
+                onTap: () {
+                  Get.offAll(() => SenderBottomBar());
+                },
+              ));
+        }
+
+        songTypeId.value = 0;
+        searchController.clear();
+        searchQuery.value = '';
+
+        songs.clear();
+
+        // RxList<SongModel> librarySelected = <SongModel>[].obs;
+        adminSongs.clear();
+
+        searchSpotifyResults.clear();
+
+        searchInYoutubeList.clear();
+      },
+    );
+  }
+
+  Future<void> shareMomentExternally(List<SongModel> songs, String platform,
+      {String? receiver}) async {
+    // Generate a message text
+    String message = "Hey! Check out these songs I shared on MUSEiT 🎵\n\n";
+    for (var song in songs) {
+      message += "${song.name}\n";
+      if (song.link != null) {
+        if (song.typeId == 1) {
+          String trackId = song.link.toString().split(':').last;
+          message += 'https://open'
+              '.spotify'
+              '.com/embed/track/$trackId';
+        } else if (song.typeId == 2) {
+          message += 'https://www.youtube'
+              '.com/watch?v=${song.link ?? ''}';
+        }
+
+        message += "${song.link}\n";
+      }
+    }
+    // Optionally, add your app deep link
+    message += "\nListen on MUSEiT: https://museit.app/moment";
+
+    Uri uri;
+    switch (platform) {
+      case 'SMS':
+        uri = Uri.parse(
+            "sms:${receiver ?? ''}?body=${Uri.encodeComponent(message)}");
+        break;
+      case 'WhatsApp':
+        uri = Uri.parse(
+            "https://wa.me/${receiver ?? ''}?text=${Uri.encodeComponent(message)}");
+        break;
+      case 'Email':
+        uri = Uri(
+          scheme: 'mailto',
+          path: receiver ?? '',
+          query:
+              'subject=${Uri.encodeComponent("MUSEiT Moment")}&body=${Uri.encodeComponent(message)}',
+        );
+        break;
+      default:
+        throw "Unsupported platform";
+    }
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $uri';
+    }
+  }
+}
+/*
   final RxList<Map<String, String>> youtubeSongsList = [
     {
       "name": "You Gotta Be — Des'ree",
@@ -1147,275 +1457,4 @@ class AddSongsController extends GetxController {
       "videoId": "oepmH8S6ivA",
       "thumbnail": "https://img.youtube.com/vi/oepmH8S6ivA/maxresdefault.jpg",
     }
-  ].obs;
-
-  // final RxList<SongDetailed> searchYoutubeResults = <SongDetailed>[].obs;
-  final RxBool isSpotifyLoading = false.obs;
-
-  // final RxBool isYoutubeLoading = false.obs;
-  final RxBool isAdminSongsLoading = false.obs;
-
-  // Default fallback songs
-  final defaultSongs = [
-    "Shape of You",
-    "Blinding Lights",
-    "Stay",
-    "Believer",
-    "Dance Monkey",
-    "Perfect",
-    "Peaches"
-  ];
-
-  @override
-  void onInit() {
-    super.onInit();
-    debounce(searchQuery, (query) {
-      if (songTypeId.value == 0) {
-        query.toString().isEmpty
-            ? loadDefaultSongs()
-            : searchSong(query.toString());
-      } else if (songTypeId.value == 1) {
-        // loadYoutubeSongs(search: query);
-        searchYoutubeSongs(query: query);
-      }
-    }, time: const Duration(milliseconds: 600));
-
-    ever(spotifyService.isConnected, (connected) {
-      if (connected == true) loadDefaultSongs();
-    });
-
-    // ever(ytMusicService.isConnected, (connected) {
-    //   if (connected == true) loadYoutubeSongs();
-    // });
-
-    ever(
-      songTypeId,
-      (typeid) {
-        if (typeid == 0) {
-          loadDefaultSongs();
-        } else if (typeid == 1) {
-          searchYoutubeSongs();
-        }
-      },
-    );
-  }
-
-  Future<List<AdminSongsModel>> loadAdminSongs({String search = ''}) async {
-    try {
-      List<AdminSongsModel> adSongs = [];
-      await ApiService().handleGetResponse(
-        apiMethod: () => SongService().loadAdminSongs(search: search),
-        onSuccess: (Map<String, dynamic> response) {
-          final success = AdminSongsResponseModel.fromJson(response);
-          final newList = success.response?.rows ?? [];
-          adSongs.assignAll(newList);
-        },
-        onError: (error) {
-          throw Exception(error);
-        },
-      );
-      return adSongs;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  /// Searches for songs by the given query and prints the results.
-  Future<void> searchYoutubeSongs({String query = ''}) async {
-    // try {
-    //   isYoutubeLoading.value = true;
-    // searchYoutubeResults.clear();
-    final results = await ytmusic.searchSongs(query == '' ? 'Top' : query);
-    for (final result in results) {
-      // searchYoutubeResults.add(result);
-    }
-    // } catch (e) {
-    //   print("youtube search error: $e");
-    // } finally {
-    //   isYoutubeLoading.value = false;
-    // }
-  }
-
-  Future<void> searchSong(String query) async {
-    if (query.isEmpty) return loadDefaultSongs();
-
-    isSpotifyLoading.value = true;
-    final token = await spotifyService.getAccessToken();
-    if (token == null) {
-      isSpotifyLoading.value = false;
-      return;
-    }
-
-    final url = Uri.parse(
-        'https://api.spotify.com/v1/search?q=$query&type=track&limit=10');
-    final res =
-        await http.get(url, headers: {'Authorization': 'Bearer $token'});
-    // print("************* 2\n${res.body}");
-
-    if (res.statusCode == 200) {
-      final data = jsonDecode(res.body);
-      final List items = data['tracks']['items'];
-      searchSpotifyResults.assignAll(items.map((track) {
-        printInfo(info: track['name'].toString());
-        printInfo(info: track['uri'].toString());
-        printInfo(info: track['album']['images'][0]['url'].toString());
-        printInfo(info: track['preview_url'].toString());
-        return {
-          'name': track['name'],
-          'artist': track['artists'][0]['name'],
-          'uri': track['uri'],
-          'image': track['album']['images'][0]['url'],
-          'preview': track['preview_url']
-        };
-      }).toList());
-    } else {
-      searchSpotifyResults.clear();
-    }
-    isSpotifyLoading.value = false;
-  }
-
-  Future<void> loadDefaultSongs() async {
-    if (!spotifyService.isConnected.value) return;
-    await searchSong(defaultSongs.first);
-  }
-
-  Future<void> shareSong(List<SongModel> voiceRecordings,
-      String? receiverPhoneNumber, List<int> selectedUsers) async {
-    // Step 1: Upload voice recordings (if any)
-    List<Map<AudioKey, dynamic>> voices = [];
-
-    if (voiceRecordings.isNotEmpty) {
-      for (var voice in voiceRecordings) {
-        final voicePath = await UploadFileService()
-            .fileUploadResult(uploadData: voice.link ?? '');
-
-        if (voicePath != null) {
-          voices
-              .add({AudioKey.path: voicePath, AudioKey.name: voice.name ?? ''});
-        } else {
-          return;
-        }
-      }
-    }
-
-    // Step 2: Prepare payload for API request
-    var data = {
-      'songs': songs
-          .map(
-            (song) => song.toJson(),
-          )
-          .toList(),
-      if (voices.isNotEmpty)
-        'voiceNotes': voices
-            .map((e) => {'name': e[AudioKey.name], 'link': e[AudioKey.path]})
-            .toList(),
-      if (selectedUsers.isNotEmpty)
-        'toUserIds': selectedUsers
-            .map(
-              (user) => user,
-            )
-            .toList(),
-      if (receiverPhoneNumber != null && receiverPhoneNumber != '')
-        'phoneNumber': receiverPhoneNumber,
-    };
-
-    // Step 3: Call API to share songs
-    await ApiService().handleResponse(
-      apiMethod: () => SongService().shareSongs(data),
-      onSuccess: (Map<String, dynamic> response) {
-        // customPrint("add_songs_controller line 64: $response");
-
-        Map<String, dynamic>? responseData = response['data'];
-
-        // Step 4: Handle API response
-        if (responseData == null) {
-          Get.offAll(() => SenderBottomBar());
-          customErrorSnackBar(content: response['message']);
-          return;
-        }
-
-        bool paymentRequired = responseData['paymentRequired'] ?? false;
-        String staus = responseData['status'] ?? '';
-        String approvalLink = responseData['approvalLink'] ?? '';
-
-        if (!paymentRequired) {
-          Get.offAll(() => SenderBottomBar());
-          customErrorSnackBar(content: response['message']);
-        } else {
-          Get.to(() => WebViewScreen(
-                url: approvalLink,
-                title: "Payment",
-                onTap: () {
-                  Get.offAll(() => SenderBottomBar());
-                },
-              ));
-        }
-
-        songTypeId.value = 0;
-        searchController.clear();
-        searchQuery.value = '';
-
-        songs.clear();
-
-        // RxList<SongModel> librarySelected = <SongModel>[].obs;
-        adminSongs.clear();
-
-        searchSpotifyResults.clear();
-
-        searchInYoutubeList.clear();
-      },
-    );
-  }
-
-  Future<void> shareMomentExternally(List<SongModel> songs, String platform,
-      {String? receiver}) async {
-    // Generate a message text
-    String message = "Hey! Check out these songs I shared on MUSEiT 🎵\n\n";
-    for (var song in songs) {
-      message += "${song.name}\n";
-      if (song.link != null) {
-        if (song.typeId == 1) {
-          String trackId = song.link.toString().split(':').last;
-          message += 'https://open'
-              '.spotify'
-              '.com/embed/track/$trackId';
-        } else if (song.typeId == 2) {
-          message += 'https://www.youtube'
-              '.com/watch?v=${song.link ?? ''}';
-        }
-
-        message += "${song.link}\n";
-      }
-    }
-    // Optionally, add your app deep link
-    message += "\nListen on MUSEiT: https://museit.app/moment";
-
-    Uri uri;
-    switch (platform) {
-      case 'SMS':
-        uri = Uri.parse(
-            "sms:${receiver ?? ''}?body=${Uri.encodeComponent(message)}");
-        break;
-      case 'WhatsApp':
-        uri = Uri.parse(
-            "https://wa.me/${receiver ?? ''}?text=${Uri.encodeComponent(message)}");
-        break;
-      case 'Email':
-        uri = Uri(
-          scheme: 'mailto',
-          path: receiver ?? '',
-          query:
-              'subject=${Uri.encodeComponent("MUSEiT Moment")}&body=${Uri.encodeComponent(message)}',
-        );
-        break;
-      default:
-        throw "Unsupported platform";
-    }
-
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
-  }
-}
+  ].obs;*/

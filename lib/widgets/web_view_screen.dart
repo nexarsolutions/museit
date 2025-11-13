@@ -56,9 +56,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
 
-          if(widget.onTap!=null) {
+          if (widget.onTap != null) {
             Get.offAll(() => SenderBottomBar());
-          }else{
+          } else {
             Get.back();
           }
         },

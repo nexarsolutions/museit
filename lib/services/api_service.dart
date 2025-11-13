@@ -13,6 +13,8 @@ import 'api_exception.dart';
 class ApiService {
   static String baseUrl = 'http://3.10.169.217:8084/api/';
   static String serverUrl = 'http://3.10.169.217:8084/';
+  static String youtubeApiKey = 'AQ'
+      '.Ab8RN6LtM4Go5j7_GcTrtJGP9RV8mlp6MhfZCcuX32NU8DRVjA';
 
   static final String imageUrl = '${serverUrl}file/';
 
@@ -103,8 +105,8 @@ class ApiService {
     try {
       printInfo(info: "$baseUrl$path");
       final headers = await _getHeaders();
-      printInfo(info:"$headers");
-      printInfo(info:"Body: $data");
+      printInfo(info: "$headers");
+      printInfo(info: "Body: $data");
       final response = await http.post(
         Uri.parse('$baseUrl$path'),
         headers: headers,

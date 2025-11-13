@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dart_ytmusic_api/yt_music.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,11 +55,11 @@ Future<void> main() async {
 
       // Initialize the API
 
-      ytmusic.initialize(
-        gl: "GB", // Force Pakistan region (works)
-        hl: "en", // English
-        cookies: "VISITOR_INFO1_LIVE=xyz; YSC=abc; PREF=hl=en;",
-      );
+      // ytmusic.initialize(
+      //   gl: "GB", // Force Pakistan region (works)
+      //   hl: "en", // English
+      //   cookies: "VISITOR_INFO1_LIVE=xyz; YSC=abc; PREF=hl=en;",
+      // );
 
       // Start the app
       runApp(MyApp());
@@ -77,7 +76,7 @@ Future<void> main() async {
 }
 
 // Create an instance of the YouTube Music API
-YTMusic ytmusic = YTMusic();
+// YTMusic ytmusic = YTMusic();
 
 final Logger logger = Logger(
   printer: PrettyPrinter(
