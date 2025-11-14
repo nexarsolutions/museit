@@ -124,7 +124,7 @@ class AddSongsScreen extends StatelessWidget {
                                   serviceName: 'Spotify',
                                   assetPath:
                                       'assets/images/spotify_selected.png',
-                                  onPressed: spotifyService.openSpotifyAuth,
+                                  onPressed: spotifyService.connectSpotify,
                                 );
                         })
                       : controller.songTypeId.value == 1
