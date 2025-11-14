@@ -70,6 +70,9 @@ dependencies:
 #  basic_utils: ^5.8.2
   jose: ^0.3.5
   carousel_slider: any
+  googleapis_auth: ^2.0.0
+  google_sign_in: ^6.2.0
+
 #  youtube_explode_dart: ^3.0.4
 
 

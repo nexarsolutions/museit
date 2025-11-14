@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:musit/globalModels/admin_songs_model.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
 import 'package:musit/services/upload_file_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../constants/app_enums.dart';
@@ -152,13 +154,96 @@ class AddSongsController extends GetxController {
   }
 
   //search youtube
+  // Future<void> searchYouTube(String query) async {
+  //   print("********** 2");
+  //   isYoutubeLoading.value = true;
+  //   try {
+  //     final GoogleSignIn _googleSignIn = GoogleSignIn(
+  //       scopes: [
+  //         'https://www.googleapis.com/auth/youtube.readonly',
+  //       ],
+  //     );
+  //     final GoogleSignInAccount? account = await _googleSignIn.signIn();
+  //
+  //     if (account == null) {
+  //       print('User cancelled sign-in.');
+  //       return;
+  //     }
+  //     final url =
+  //         'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=<query>&key=${ApiService.youtubeApiKey}&maxResults=20';
+  //     final res = await http.get(Uri.parse(url));
+  //
+  //     if (res.statusCode == 200) {
+  //       print("********** 3");
+  //       final data = jsonDecode(res.body);
+  //       final items = data['items'] as List;
+  //
+  //       searchInYoutubeList.assignAll(items.map((item) {
+  //         return {
+  //           'videoId': item['id']['videoId'],
+  //           'title': item['snippet']['title'],
+  //           'thumbnail': item['snippet']['thumbnails']['high']['url'],
+  //           'channel': item['snippet']['channelTitle'],
+  //         };
+  //       }).toList());
+  //     } else {
+  //       print("********** 4 ${res.body}");
+  //       searchInYoutubeList.clear();
+  //     }
+  //   } catch (e) {
+  //     print("********** 5");
+  //     debugPrint("Youtube search songs error: $e");
+  //   } finally {
+  //     print("********** 6");
+  //     isYoutubeLoading.value = false;
+  //   }
+  // }
+
   Future<void> searchYouTube(String query) async {
     print("********** 2");
     isYoutubeLoading.value = true;
+
     try {
+      final prefs = await SharedPreferences.getInstance();
+      String? accessToken = prefs.getString('youtubeAccessToken');
+      final GoogleSignIn _googleSignIn = GoogleSignIn(
+        scopes: ['https://www.googleapis.com/auth/youtube.readonly'],
+      );
+      // Step 1: If no token, sign in
+      if (accessToken == null) {
+        final GoogleSignInAccount? account = await _googleSignIn.signIn();
+        if (account == null) {
+          print('User cancelled sign-in.');
+          return;
+        }
+
+        final authHeaders = await account.authHeaders;
+        accessToken = authHeaders['Authorization']?.split(' ').last;
+
+        if (accessToken == null) {
+          print('Failed to retrieve access token.');
+          return;
+        }
+
+        // Save token in SharedPreferences
+        await prefs.setString('youtubeAccessToken', accessToken);
+      }
+
+      // Step 2: Make YouTube API call with token
       final url =
-          'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=<query>&key=${ApiService.youtubeApiKey}&maxResults=20';
-      final res = await http.get(Uri.parse(url));
+          'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=$query&maxResults=20';
+
+      final res = await http.get(Uri.parse(url), headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Accept': 'application/json',
+      });
+
+      // Step 3: Check for expired token (401) and retry
+      if (res.statusCode == 401) {
+        print('Access token expired, refreshing...');
+        await prefs.remove('youtubeAccessToken');
+        return searchYouTube(query); // retry after getting new token
+      }
 
       if (res.statusCode == 200) {
         print("********** 3");
@@ -179,7 +264,7 @@ class AddSongsController extends GetxController {
       }
     } catch (e) {
       print("********** 5");
-      debugPrint("Youtube search songs error: $e");
+      debugPrint("YouTube search songs error: $e");
     } finally {
       print("********** 6");
       isYoutubeLoading.value = false;
