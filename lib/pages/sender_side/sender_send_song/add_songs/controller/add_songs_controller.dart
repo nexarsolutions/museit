@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/song_model.dart';
 import '../../../../../services/spotify_auth_service.dart';
+import '../../../../../utils/global_functions.dart';
 import '../../../../../widgets/web_view_screen.dart';
 import '../../../../sendBottombar/sender_bottom_bar.dart';
 
@@ -76,7 +77,7 @@ class AddSongsController extends GetxController {
           loadDefaultSpotifySongs();
         } else if (typeId == 1) {
           loadDefaultYoutubeSongs();
-        }
+        } else if (typeId == 3) {}
       },
     );
 
@@ -147,7 +148,6 @@ class AddSongsController extends GetxController {
 
   //load default youtube songs
   Future<void> loadDefaultYoutubeSongs() async {
-    print("********** 1");
     await searchYouTube(searchQuery.value.trim().isEmpty
         ? defaultSongs.first
         : searchQuery.value.trim());
@@ -200,20 +200,48 @@ class AddSongsController extends GetxController {
   // }
 
   Future<void> searchYouTube(String query) async {
-    print("********** 2");
     isYoutubeLoading.value = true;
 
     try {
+      if (query.trim().isEmpty) {
+        searchInYoutubeList.clear();
+        return;
+      }
+
       final prefs = await SharedPreferences.getInstance();
       String? accessToken = prefs.getString('youtubeAccessToken');
-      final GoogleSignIn _googleSignIn = GoogleSignIn(
+
+      final GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['https://www.googleapis.com/auth/youtube.readonly'],
       );
-      // Step 1: If no token, sign in
+
+      GoogleSignInAccount? account;
+
+      // ------------------------------------------------------
+      // TOKEN VALIDATION BEFORE API REQUEST  🔥
+      // ------------------------------------------------------
+      if (accessToken != null) {
+        final tokenCheck = await http.get(
+          Uri.parse(
+              "https://oauth2.googleapis.com/tokeninfo?access_token=$accessToken"),
+        );
+
+        if (tokenCheck.statusCode != 200) {
+          print("Token invalid or expired → refreshing...");
+
+          await prefs.remove('youtubeAccessToken');
+          await googleSignIn.disconnect();
+
+          return searchYouTube(query);
+        }
+      }
+      // ------------------------------------------------------
+
+      // If no token → force login
       if (accessToken == null) {
-        final GoogleSignInAccount? account = await _googleSignIn.signIn();
+        account = await googleSignIn.signIn();
         if (account == null) {
-          print('User cancelled sign-in.');
+          print('Login cancelled.');
           return;
         }
 
@@ -221,52 +249,82 @@ class AddSongsController extends GetxController {
         accessToken = authHeaders['Authorization']?.split(' ').last;
 
         if (accessToken == null) {
-          print('Failed to retrieve access token.');
+          print('Failed to get token.');
           return;
         }
 
-        // Save token in SharedPreferences
         await prefs.setString('youtubeAccessToken', accessToken);
       }
 
-      // Step 2: Make YouTube API call with token
+      // API request URL
       final url =
           'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=$query&maxResults=20';
 
-      final res = await http.get(Uri.parse(url), headers: {
-        'Authorization': 'Bearer $accessToken',
-        'Accept': 'application/json',
-      });
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Accept': 'application/json',
+        },
+      );
 
-      // Step 3: Check for expired token (401) and retry
-      if (res.statusCode == 401) {
-        print('Access token expired, refreshing...');
+      // Token expired? Retry safely
+      if (response.statusCode == 401) {
+        print('Token expired → refreshing...');
+
         await prefs.remove('youtubeAccessToken');
-        return searchYouTube(query); // retry after getting new token
+        await googleSignIn.disconnect();
+
+        return searchYouTube(query);
       }
 
-      if (res.statusCode == 200) {
-        print("********** 3");
-        final data = jsonDecode(res.body);
-        final items = data['items'] as List;
+      // Quota issues
+      if (response.statusCode == 403) {
+        print("Quota exceeded or forbidden: ${response.body}");
+        return;
+      }
 
-        searchInYoutubeList.assignAll(items.map((item) {
-          return {
-            'videoId': item['id']['videoId'],
-            'title': item['snippet']['title'],
-            'thumbnail': item['snippet']['thumbnails']['high']['url'],
-            'channel': item['snippet']['channelTitle'],
-          };
-        }).toList());
-      } else {
-        print("********** 4 ${res.body}");
+      if (response.statusCode != 200) {
+        print("Error: ${response.body}");
         searchInYoutubeList.clear();
+        return;
       }
+
+      final json = jsonDecode(response.body);
+
+      final rawItems = json['items'];
+
+      if (rawItems is! List) {
+        print("Invalid API format. Items is not a list.");
+        searchInYoutubeList.clear();
+        return;
+      }
+
+      final items = rawItems
+          .whereType<Map<String, dynamic>>()
+          .cast<Map<String, dynamic>>()
+          .toList();
+
+      if (items.isEmpty) {
+        searchInYoutubeList.clear();
+        return;
+      }
+
+      searchInYoutubeList.assignAll(
+        items.map((item) {
+          final snippet = item['snippet'] ?? {};
+          return {
+            'videoId': item['id']?['videoId'],
+            'title': snippet['title'],
+            'thumbnail': snippet['thumbnails']?['high']?['url'],
+            'channel': snippet['channelTitle'],
+          };
+        }).toList(),
+      );
     } catch (e) {
-      print("********** 5");
-      debugPrint("YouTube search songs error: $e");
+      print("Exception occurred: $e");
+      searchInYoutubeList.clear();
     } finally {
-      print("********** 6");
       isYoutubeLoading.value = false;
     }
   }
@@ -344,25 +402,32 @@ class AddSongsController extends GetxController {
     await ApiService().handleResponse(
       apiMethod: () => SongService().shareSongs(data),
       onSuccess: (Map<String, dynamic> response) {
-        // customPrint("add_songs_controller line 64: $response");
+        customPrint("add_songs_controller line 64: $response");
 
         Map<String, dynamic>? responseData = response['data'];
+        print("************0\n$responseData");
 
         // Step 4: Handle API response
         if (responseData == null) {
+          print("************1");
           Get.offAll(() => SenderBottomBar());
           customErrorSnackBar(content: response['message']);
           return;
         }
 
         bool paymentRequired = responseData['paymentRequired'] ?? false;
+        print("************2\n$paymentRequired");
         String staus = responseData['status'] ?? '';
+        print("************3\n$staus");
         String approvalLink = responseData['approvalLink'] ?? '';
+        print("************4\n$approvalLink");
 
         if (!paymentRequired) {
+          print("************5");
           Get.offAll(() => SenderBottomBar());
           customErrorSnackBar(content: response['message']);
         } else {
+          print("************6");
           Get.to(() => WebViewScreen(
                 url: approvalLink,
                 title: "Payment",

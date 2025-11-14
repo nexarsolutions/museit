@@ -15,6 +15,7 @@ class ForgotPasswordScreen extends StatelessWidget {
 
   final controller = Get.put(ForgotPasswordController());
   final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,31 +68,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                         text: 'Submit',
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            customBottomSheet(
-                              padding: EdgeInsets.only(
-                                top: 42,
-                                left: 33,
-                                right: 33,
-                                bottom: 24,
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'A reset link has been emailed to you. Please also check your spam.',
-                                    style: manRopeSemiBold.copyWith(
-                                      fontSize: 14,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(height: 50),
-                                  CustomButton(
-                                      onPressed: () {
-                                        Get.back();
-                                      },
-                                      text: 'Okay'),
-                                ],
-                              ),
-                            );
+                           controller.sendForgotPassword();
                           }
                         },
                       ),
