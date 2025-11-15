@@ -110,6 +110,7 @@ class UserManager {
   }
 
   Future<void> saveFirstTimeAddSongScreen() async {
+    _isFirstTimeAddSongScreen.value = false;
     await _preferences?.setBool(_firstTimeAddSongScreen, false);
   }
 }
