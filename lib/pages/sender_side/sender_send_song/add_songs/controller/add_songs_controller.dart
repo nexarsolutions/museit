@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:music_kit/music_kit.dart';
 import 'package:musit/globalModels/admin_songs_model.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
@@ -503,6 +504,61 @@ class AddSongsController extends GetxController {
     } else {
       throw 'Could not launch $uri';
     }
+  }
+
+  var developerToken =
+      "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjxLRVlfSUQ-In0.eyJpYXQiOjE3NjMxODk5MTIsImV4cCI6MTc3ODc0MTkxMiwiaXNzIjoiPFRFQU1fSUQ-In0.2em3TuAYPAcxYJpwVNznUUMA2DYMg8yrI5690fG852sQE_drX0PoL0ElKdtjCAIgRBbT0TZUwG7QFxCFkBHHAQ";
+
+  Future<List<SongModel>> fetchUserLibrarySongs() async {
+    final musicKit = MusicKit();
+
+    // 1. Check authorization
+    var status = await musicKit.authorizationStatus;
+    if (status is! MusicAuthorizationStatusAuthorized) {
+      status = await musicKit.requestAuthorizationStatus();
+      if (status is! MusicAuthorizationStatusAuthorized) {
+        throw Exception("Apple Music permission not granted.");
+      }
+    }
+
+    // 2. Developer Token (must be generated on server)
+    // const developerToken = "YOUR_DEVELOPER_TOKEN_HERE";
+
+    // 3. User Token
+    final userToken = await musicKit.requestUserToken(developerToken);
+    if (userToken == null) {
+      throw Exception("Unable to generate User Token.");
+    }
+
+    // 4. Fetch library songs from REST API
+    final url =
+        Uri.parse("https://api.music.apple.com/v1/me/library/songs?limit=100");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $developerToken",
+        "Music-User-Token": userToken,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to fetch library songs: ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    final List items = json["data"];
+
+    // 5. Map to SongModel list
+    List<SongModel> songs = items.map((item) {
+      return SongModel(
+        type: item["type"] ?? "",
+        name: item["attributes"]?["name"] ?? "",
+        link: item["href"] ?? "",
+      );
+    }).toList();
+
+    return songs;
   }
 }
 /*

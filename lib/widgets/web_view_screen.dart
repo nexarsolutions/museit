@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:musit/constants/colors.dart';
 import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -26,7 +23,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void initState() {
     super.initState();
-
+    print(widget.url);
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -35,6 +32,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
           onPageFinished: (_) => setState(() => isLoading = false),
         ),
       )
+      ..setUserAgent(
+          "'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'")
       ..loadRequest(Uri.parse(widget.url));
   }
 
@@ -42,9 +41,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         flexibleSpace: CustomAppBar(
           text: widget.title,
           isBack: true,
+          backGroundColor: Colors.white,
           onTap: widget.onTap ??
               () {
                 Get.back();

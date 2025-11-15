@@ -92,6 +92,9 @@ PODS:
     - GTMSessionFetcher/Core
   - image_picker_ios (0.0.1):
     - Flutter
+  - music_kit_darwin (1.3.0):
+    - Flutter
+    - FlutterMacOS
   - OrderedSet (6.0.3)
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -125,6 +128,7 @@ DEPENDENCIES:
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - music_kit_darwin (from `.symlinks/plugins/music_kit_darwin/darwin`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -167,6 +171,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_sign_in_ios/darwin"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
+  music_kit_darwin:
+    :path: ".symlinks/plugins/music_kit_darwin/darwin"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -199,6 +205,7 @@ SPEC CHECKSUMS:
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
+  music_kit_darwin: cbdff3ca754c0f6f66dbcc3300b1da3f1a5910cf
   OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
