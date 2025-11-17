@@ -1,21 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/main.dart';
 import 'package:musit/pages/sendBottombar/controller/sender_bottom_bar_controller.dart';
-import 'package:musit/pages/sender_side/sender_send_song/voice_note/voice_note_screen.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
 import '../../../../utils/dialog_utilities.dart';
 import '../../../../widgets/custom_header.dart';
 import '../../../../widgets/fade_text_carousel.dart';
-import '../../community/sender_community/sender_community_screen.dart';
-import '../../sender_send_song/add_songs/add_songs_screen.dart';
-import '../../sent_playlist/sentSongs/sent_songs_screen.dart';
 
 class SenderHomeScreen extends StatelessWidget {
   const SenderHomeScreen({super.key});
@@ -58,7 +52,7 @@ class SenderHomeScreen extends StatelessWidget {
                           if (userManager.isFirstTimeAddSongScreen) {
                             successDialog(
                                 content:
-                                """A MUSEiT Moment is 1 message + 1 song sent to your favourite people.\nEvery MUSEiT Moment sent, 50p will go towards your selected charity.""");
+                                    """A MUSEiT Moment is 1 message + 1 song sent to your favourite people.\nEvery MUSEiT Moment sent, 50p will go towards your selected charity.""");
                             await userManager.saveFirstTimeAddSongScreen();
                           }
                         },

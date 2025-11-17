@@ -29,7 +29,7 @@ class VoiceNoteScreen extends StatelessWidget {
       body: Column(
         children: [
           SizedBox(
-            height: Get.height * 0.35,
+            height: Get.height * 0.5,
             child: Stack(
               children: [
                 ImageCarouselSlider(
@@ -46,7 +46,7 @@ class VoiceNoteScreen extends StatelessWidget {
                   bottom: 0,
                   child: Container(
                     width: Get.width,
-                    height: Get.height * 0.1,
+                    height: Get.height * 0.15,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,

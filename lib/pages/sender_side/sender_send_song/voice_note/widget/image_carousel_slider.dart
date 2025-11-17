@@ -10,7 +10,7 @@ class ImageCarouselSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
-        height: Get.height * 0.35,
+        height: Get.height * 0.5,
         viewportFraction: 1.0, // full width
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 3),

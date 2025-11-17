@@ -124,7 +124,10 @@ class AddSongsScreen extends StatelessWidget {
                                   serviceName: 'Spotify',
                                   assetPath:
                                       'assets/images/spotify_selected.png',
-                                  onPressed: spotifyService.connectSpotify,
+                                  // onPressed: spotifyService.connectSpotify,
+                                  onPressed: () {
+                                    customErrorSnackBar(content: "Coming soon");
+                                  },
                                 );
                         })
                       : controller.songTypeId.value == 1
