@@ -246,69 +246,59 @@ class AddSongsScreen extends StatelessWidget {
                 CustomButton(
                     onPressed: () {
                       if (controller.songs.isNotEmpty) {
-                        // Get.to(() => VoiceNoteScreen());
-                        Get.to(() => ViewCharityOrganization(
-                              onPressedSave: () {
-                                /// navigat to send view screen
-                                Get.to(() => SenderViewRecipientScreen(
-                                      rowWidget: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () {
-                                              showSendViaPhoneSheet(
-                                                context: Get.context!,
-                                                onPhoneSubmitted: (phone) {
-                                                  controller
-                                                      .shareMomentExternally(
-                                                          controller.songs,
-                                                          'WhatsApp',
-                                                          receiver: phone);
-                                                },
-                                              );
-                                            },
-                                            icon: Image.asset(
-                                              "assets/images/whatsapp.png",
-                                              width: 35, height: 35,
-                                              // color: Colors.green
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () {
-                                              showSendViaPhoneSheet(
-                                                context: Get.context!,
-                                                isEmail: true,
-                                                onPhoneSubmitted: (phone) {
-                                                  controller
-                                                      .shareMomentExternally(
-                                                          controller.songs,
-                                                          'Email',
-                                                          receiver: phone);
-                                                },
-                                              );
-                                            },
-                                            icon: Icon(
-                                              Icons.email,
-                                              color: Colors.red,
-                                              size: 40,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      onPressedSave: (List<int> selectedUser,
-                                          String? phone) {
-                                        if (selectedUser.isEmpty &&
-                                            phone == null) {
-                                          customErrorSnackBar(
-                                              content:
-                                                  "Select Users or enter phone number to continue");
-                                          return;
-                                        }
-                                        controller.shareSong(
-                                            voiceSongs, phone, selectedUser);
-                                      },
-                                    ));
+                        /// navigat to send view screen
+                        Get.to(() => SenderViewRecipientScreen(
+                              rowWidget: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showSendViaPhoneSheet(
+                                        context: Get.context!,
+                                        onPhoneSubmitted: (phone) {
+                                          controller.shareMomentExternally(
+                                              controller.songs, 'WhatsApp',
+                                              receiver: phone);
+                                        },
+                                      );
+                                    },
+                                    icon: Image.asset(
+                                      "assets/images/whatsapp.png",
+                                      width: 35, height: 35,
+                                      // color: Colors.green
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      showSendViaPhoneSheet(
+                                        context: Get.context!,
+                                        isEmail: true,
+                                        onPhoneSubmitted: (phone) {
+                                          controller.shareMomentExternally(
+                                              controller.songs, 'Email',
+                                              receiver: phone);
+                                        },
+                                      );
+                                    },
+                                    icon: Icon(
+                                      Icons.email,
+                                      color: Colors.red,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              onPressedSave:
+                                  (List<int> selectedUser, String? phone) {
+                                if (selectedUser.isEmpty && phone == null) {
+                                  customErrorSnackBar(
+                                      content:
+                                          "Select Users or enter phone number to continue");
+                                  return;
+                                }
+                                controller.shareSong(
+                                    voiceSongs, phone, selectedUser);
                               },
                             ));
                       } else {

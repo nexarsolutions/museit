@@ -25,7 +25,7 @@ class DeepLinkService extends GetxService {
       SpotifyAuthService().handleRedirect(uri);
     }
     if (uri.scheme == 'com.museit' && uri.host == 'paypal-callback') {
-      Get.offAll(() => SenderHomeScreen());
+      Get.back();
     }
     if (uri.scheme == 'com.museit' && uri.host == 'paypalFail-callback') {
       Get.back();

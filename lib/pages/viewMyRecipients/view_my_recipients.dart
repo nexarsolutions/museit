@@ -4,21 +4,13 @@ import 'package:musit/common_widgets/recipients_card.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/globalModels/user_model.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_view_recipient/controller/sender_view_recipient_controller.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
-import 'package:musit/widgets/custom_button.dart';
-
-import '../../../../widgets/custom_text_field.dart';
 
 class ViewMyRecipients extends StatelessWidget {
-  ViewMyRecipients({super.key, this.rowWidget, this.showbutton = true});
-
-  final controller = Get.put(SenderViewRecipientController());
-  final RxBool isSelected = true.obs;
-  final RxnString phoneString = RxnString();
-  final Widget? rowWidget;
-  final bool showbutton;
+  ViewMyRecipients({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,228 +20,69 @@ class ViewMyRecipients extends StatelessWidget {
         children: [
           CustomAppBar(
             text: 'Recipients',
-            isBack: showbutton,
-            // showLastIcon: showbutton,
-            // lastWidget: IconButton(
-            //   onPressed: () {
-            //     showSendViaPhoneSheet(
-            //       context: context,
-            //       onPhoneSubmitted: (phone) {
-            //         phoneString.value = phone;
-            //       },
-            //     );
-            //   },
-            //   icon: Icon(
-            //     Icons.phone,
-            //     color: blackColor,
-            //   ),
-            // ),
           ),
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-              child: Column(
-                children: [
-                  CustomTextField(
-                    borderRadius: 50,
-                    controller: controller.searchController,
-                    hintText: 'Search',
-                    isSuffixIcon: true,
-                    suffixIcon: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: blackColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.asset(
-                        'assets/images/search_icon.png',
-                        scale: 3,
-                      ),
-                    ),
-                    onChanged: (value) {
-                      if (value.trim().isEmpty) {
-                        controller.searchQuery.value = '';
-                      } else {
-                        controller.searchQuery.value = value.trim();
-                      }
-                    },
-                  ),
-                  Obx(
-                    () {
-                      String? phone = phoneString.value;
-
-                      if (phone != null && phone != '') {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListTile(
-                            tileColor: blueColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            leading: Icon(Icons.phone, color: blackColor),
-                            title: Text(
-                              phone ?? '_',
-                              style: manRopeSemiBold,
-                            ),
-                          ),
+              child: Obx(
+                () => FutureBuilder(
+                    future: AuthService().getAllMyRecipients(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return SizedBox(
+                          height: Get.height / 3,
+                          child: Center(child: CircularProgressIndicator()),
                         );
                       }
-                      return const SizedBox(
-                        height: 16,
-                      );
-                    },
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Obx(
-                        () => FutureBuilder(
-                            key: ValueKey(controller.searchQuery.value),
-                            future: AuthService().getAllMyRecipients(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return SizedBox(
-                                  height: Get.height / 3,
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                );
-                              }
-                              if (snapshot.hasError) {
-                                return SizedBox(
-                                  height: Get.height / 3,
-                                  child: Center(
-                                      child: Text(snapshot.error.toString(),
-                                          style: manRopeSemiBold)),
-                                );
-                              }
+                      if (snapshot.hasError) {
+                        return SizedBox(
+                          height: Get.height / 3,
+                          child: Center(
+                              child: Text(snapshot.error.toString(),
+                                  style: manRopeSemiBold)),
+                        );
+                      }
 
-                              if (!snapshot.hasData ||
-                                  snapshot.data == null ||
-                                  snapshot.data!.isEmpty) {
-                                return SizedBox(
-                                  height: Get.height / 3,
-                                  child: Center(
-                                    child: TextButton(
-                                        onPressed: () {
-                                          // showSendViaPhoneSheet(
-                                          //   context: context,
-                                          //   onPhoneSubmitted: (phone) {
-                                          //     phoneString.value = phone;
-                                          //   },
-                                          // );
-                                        },
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              WidgetStatePropertyAll(
-                                                  blackColor),
-                                          foregroundColor:
-                                              WidgetStatePropertyAll(
-                                                  whiteColor),
-                                        ),
-                                        child: Text(
-                                          "Send via Phone Number",
-                                          // style: manRopeSemiBold,
-                                        )),
-                                  ),
-                                  // child: Center(
-                                  //     child: Text("No User Found",
-                                  //         style: manRopeSemiBold)),
-                                );
-                              }
+                      if (!snapshot.hasData ||
+                          snapshot.data == null ||
+                          snapshot.data!.isEmpty) {
+                        return SizedBox(
+                          height: Get.height / 3,
+                          child: Center(
+                              child: Text("Empty", style: manRopeSemiBold)),
+                        );
+                      }
 
-                              final userList = snapshot.requireData;
+                      final userList = snapshot.requireData;
 
-                              return GridView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                primary: false,
-                                padding: EdgeInsets.only(bottom: 30),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 13.0,
-                                  mainAxisSpacing: 10.0,
-                                  mainAxisExtent: 150,
-                                ),
-                                itemCount: userList.length,
-                                itemBuilder: (context, index) {
-                                  final user = userList[index];
-                                  return RecipientsCard(
-                                    user: UserModel(
-                                        id: user.id,
-                                        username: TextEditingController(
-                                            text: user.username ?? ''),
-                                        email: TextEditingController(
-                                            text: user.email ?? ''),
-                                        profile: RxString(user.profile ?? '')),
-                                    isSelected: false,
-                                  );
-                                },
-                              );
-                            }),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 42),
-                  if (showbutton) ...{
-                    CustomButton(onPressed: () {}, text: 'Send'),
-                    SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(() {
-                          return isSelected.value
-                              ? GestureDetector(
-                                  onTap: () {
-                                    isSelected.value = false;
-                                  },
-                                  child: Image.asset(
-                                    'assets/images/tick_purple.png',
-                                    width: 22,
-                                    height: 22,
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    isSelected.value = true;
-                                  },
-                                  child: Container(
-                                    width: 22,
-                                    height: 22,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color(
-                                            0xFF8C7FAC,
-                                          ).withValues(alpha: 0.15),
-                                          Color(
-                                            0xFF7695CA,
-                                          ).withValues(alpha: 0.15),
-                                        ],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                        }),
-                        SizedBox(width: 12),
-                        Text(
-                          'Allow to share in community',
-                          style: manRope.copyWith(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w200,
-                            decoration: TextDecoration.underline,
-                            decorationColor: blackColor,
-                          ),
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        primary: false,
+                        padding: EdgeInsets.only(bottom: 30),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 13.0,
+                          mainAxisSpacing: 10.0,
+                          mainAxisExtent: 150,
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 24),
-                    rowWidget ?? const SizedBox.shrink(),
-                  }
-                ],
+                        itemCount: userList.length,
+                        itemBuilder: (context, index) {
+                          final user = userList[index];
+                          return RecipientsCard(
+                            user: UserModel(
+                                id: user.id,
+                                username: TextEditingController(
+                                    text: user.username ?? ''),
+                                email: TextEditingController(
+                                    text: user.email ?? ''),
+                                profile: RxString(user.profile ?? '')),
+                            isSelected: false,
+                          );
+                        },
+                      );
+                    }),
               ),
             ),
           ),

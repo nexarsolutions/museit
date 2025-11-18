@@ -12,7 +12,6 @@ class SenderBottomBarController extends GetxController {
     SenderHomeScreen(),
     VoiceNoteScreen(),
     ViewMyRecipients(
-      showbutton: false,
     )
   ];
 }

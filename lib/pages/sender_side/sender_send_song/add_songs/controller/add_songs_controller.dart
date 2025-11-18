@@ -18,6 +18,7 @@ import '../../../../../services/spotify_auth_service.dart';
 import '../../../../../utils/global_functions.dart';
 import '../../../../../widgets/web_view_screen.dart';
 import '../../../../sendBottombar/sender_bottom_bar.dart';
+import '../../../../viewCharityOrg/view_charity_organization.dart';
 
 class AddSongsController extends GetxController {
   final spotifyService = Get.find<SpotifyAuthService>();
@@ -378,7 +379,8 @@ class AddSongsController extends GetxController {
                 url: approvalLink,
                 title: "Payment",
                 onTap: () {
-                  Get.offAll(() => SenderBottomBar());
+                  Get.back();
+                  Get.to(() => ViewCharityOrganization());
                 },
               ));
         }
