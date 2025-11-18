@@ -1,19 +1,20 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart' as fs;
+import 'package:get/get.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../common_widgets/song_card.dart';
 import '../../../globalModels/song_model.dart';
 import '../../../widgets/sender_empty_wave_form.dart';
-import '../../../common_widgets/song_card.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../utils/custom_error_snack_bar.dart';
 import '../utils/dialog_utilities.dart';
-import 'package:flutter_sound/flutter_sound.dart' as fs;
 
 class CustomVoiceRecordingScreen extends StatefulWidget {
   /// Called when all recordings need to be processed (e.g. next/continue)
@@ -145,7 +146,7 @@ class _CustomVoiceRecordingScreenState
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 50),
+        const SizedBox(height: 10),
         Obx(
           () => Column(
             children: [
@@ -181,7 +182,7 @@ class _CustomVoiceRecordingScreenState
               else
                 const SenderEmptyWaveForm(),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
               // --- Control Buttons (Play / Record / Reset) ---
               Stack(
@@ -290,48 +291,6 @@ class _CustomVoiceRecordingScreenState
         ),
 
         const SizedBox(height: 24),
-
-        // --- Divider ---
-        Container(
-          width: Get.width,
-          height: 1,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                const Color(0xFF8C7FAC).withOpacity(0.3),
-                const Color(0xFF7695CA).withOpacity(0.3),
-              ],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-
-        // --- List of Saved Recordings ---
-        Obx(
-          () => ListView.builder(
-            padding: const EdgeInsets.only(bottom: 24),
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: recordingList.length,
-            itemBuilder: (context, index) => GestureDetector(
-              onTap: () {
-                Get.to(() => MusicPlayerScreen(
-                    songTitle: recordingList[index].name!,
-                    songUrl: recordingList[index].link!,
-                    imagePath: /*recordingList[index].image!*/ ''));
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: SongCard(model: recordingList[index]),
-              ),
-            ),
-          ),
-        ),
-
-        SizedBox(height: Get.height * 0.05),
-
         // --- Next Button ---
         GestureDetector(
           onTap: () => widget.onNext?.call(recordingList),
@@ -369,7 +328,44 @@ class _CustomVoiceRecordingScreenState
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        // SizedBox(
+        //   height: 16,
+        // ),
+        // Container(
+        //   width: Get.width,
+        //   height: 1,
+        //   decoration: BoxDecoration(
+        //     gradient: LinearGradient(
+        //       colors: [
+        //         const Color(0xFF8C7FAC).withOpacity(0.3),
+        //         const Color(0xFF7695CA).withOpacity(0.3),
+        //       ],
+        //       begin: Alignment.centerLeft,
+        //       end: Alignment.centerRight,
+        //     ),
+        //   ),
+        // ),
+        // --- List of Saved Recordings ---
+        Obx(
+          () => ListView.builder(
+            padding: const EdgeInsets.only(bottom: 16, top: 16),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: recordingList.length,
+            itemBuilder: (context, index) => GestureDetector(
+              onTap: () {
+                Get.to(() => MusicPlayerScreen(
+                    songTitle: recordingList[index].name!,
+                    songUrl: recordingList[index].link!,
+                    imagePath: /*recordingList[index].image!*/ ''));
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: SongCard(model: recordingList[index]),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

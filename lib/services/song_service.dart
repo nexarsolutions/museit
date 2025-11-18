@@ -98,8 +98,10 @@ class SongService {
 
     return await _api.get(url);
   }
+
+  Future<Map<String, dynamic>> songPaymentStatusAPi({String? orderId}) async {
+    String url = "paypal/payment/song/status?orderId=$orderId";
+
+    return await _api.get(url);
+  }
 }
-
-/*nerkigukni@necub.com*/
-
-/*jamlavudro@necub.com museit*/

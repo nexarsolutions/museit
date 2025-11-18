@@ -35,14 +35,14 @@ void showPaymentBottomSheet({
             ),
             const SizedBox(height: 16),
             const Text(
-              "Payment",
+              "Donate",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             CustomTextField(
               controller: amountController,
               keyboardType: TextInputType.number,
-              hintText: "Enter amount",
+              hintText: "Enter donation amount",
               borderRadius: 12,
               isPrefixIcon: true,
               prefixIcon: const Icon(Icons.currency_pound),
@@ -93,7 +93,7 @@ void showPaymentBottomSheet({
                     }
                   },
                   child: Text(
-                    isAmountEntered.value ? "Continue" : "Enter Amount",
+                    isAmountEntered.value ? "Continue" : "Submit",
                     style: const TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),

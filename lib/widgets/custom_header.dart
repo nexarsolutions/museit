@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/main.dart';
+import 'package:musit/services/auth_service.dart';
+import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/utils/extensions.dart';
 
 import '../constants/colors.dart';
@@ -10,9 +12,10 @@ import '../pages/common_sections/notifications/notifications_screen.dart';
 import '../pages/sender_side/profile/profile/profile_screen.dart';
 
 class CustomHeader extends StatelessWidget {
-  const CustomHeader({super.key, this.onTap});
+  CustomHeader({super.key, this.onTap});
 
   final void Function()? onTap;
+  final RxBool switchValue = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -52,22 +55,62 @@ class CustomHeader extends StatelessWidget {
             const SizedBox(width: 10),
             Text('Hi, ${name.withNa}!', style: manRopeSemiBold),
             const Spacer(),
-            GestureDetector(
-              onTap: () {
-                Get.to(() => NotificationsScreen());
-              },
-              child: Container(
-                height: 44,
-                width: 44,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: blackColor,
-                ),
-                child: Image.asset(
-                  'assets/images/notification.png',
-                  scale: 4,
-                ),
-              ),
+            // GestureDetector(
+            //   onTap: () {
+            //     Get.to(() => NotificationsScreen());
+            //   },
+            //   child: Container(
+            //     height: 44,
+            //     width: 44,
+            //     decoration: BoxDecoration(
+            //       shape: BoxShape.circle,
+            //       color: blackColor,
+            //     ),
+            //     child: Image.asset(
+            //       'assets/images/notification.png',
+            //       scale: 4,
+            //     ),
+            //   ),
+            // ),
+            SizedBox(
+              width: 40,
+              child: userManager.cachedUser?.currentRoleId == null
+                  ? const SizedBox.shrink()
+                  : userManager.cachedUser?.currentRoleId == 3
+                      ? const SizedBox.shrink()
+                      : Obx(() => Switch(
+                            value: switchValue.value,
+                            inactiveThumbColor: blackColor,
+                            inactiveTrackColor: blueColor,
+                            onChanged: (value) async {
+                              if (value = true) {
+                                bool roleAvailable = userManager
+                                        .cachedUser?.availableRoles
+                                        .contains(userManager.cachedUser!
+                                                    .currentRoleId ==
+                                                1
+                                            ? 2
+                                            : 1) ??
+                                    false;
+
+                                if (roleAvailable) {
+                                  await AuthService().switchRole(
+                                      roleId: userManager
+                                                  .cachedUser!.currentRoleId ==
+                                              1
+                                          ? 2
+                                          : 1);
+                                } else {
+                                  await AuthService().addRole(
+                                      roleId: userManager
+                                                  .cachedUser!.currentRoleId ==
+                                              1
+                                          ? 2
+                                          : 1);
+                                }
+                              }
+                            },
+                          )),
             ),
           ],
         ),

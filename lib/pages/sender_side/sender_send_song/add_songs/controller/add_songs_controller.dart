@@ -19,6 +19,7 @@ import '../../../../../services/spotify_auth_service.dart';
 import '../../../../../utils/global_functions.dart';
 import '../../../../../widgets/web_view_screen.dart';
 import '../../../../sendBottombar/sender_bottom_bar.dart';
+import '../../../../viewCharityOrg/view_charity_organization.dart';
 
 class AddSongsController extends GetxController {
   final spotifyService = Get.find<SpotifyAuthService>();
@@ -369,6 +370,7 @@ class AddSongsController extends GetxController {
         bool paymentRequired = responseData['paymentRequired'] ?? false;
         String staus = responseData['status'] ?? '';
         String approvalLink = responseData['approvalLink'] ?? '';
+        String orderId = responseData['orderId'] ?? '';
 
         if (!paymentRequired) {
           Get.offAll(() => SenderBottomBar());
@@ -378,8 +380,21 @@ class AddSongsController extends GetxController {
           Get.to(() => WebViewScreen(
                 url: approvalLink,
                 title: "Payment",
-                onTap: () {
-                  Get.offAll(() => SenderBottomBar());
+                onTap: () async {
+                  Get.back();
+                  await ApiService().handleResponse(
+                    apiMethod: () =>
+                        SongService().songPaymentStatusAPi(orderId: orderId),
+                    onSuccess: (success) {
+                      bool isPaid = success['response']['isPaid'] ?? false;
+                      if (isPaid) {
+                        Get.to(() => ViewCharityOrganization());
+                      } else {
+                        Get.offAll(() => SenderBottomBar());
+                        customErrorSnackBar(content: response['message']);
+                      }
+                    },
+                  );
                 },
               ));
         }

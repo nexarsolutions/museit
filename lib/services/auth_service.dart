@@ -4,8 +4,14 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:musit/globalModels/charity_response_model.dart';
 import 'package:musit/globalModels/user_model.dart';
+import 'package:musit/main.dart';
+import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
+import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/spotify_auth_service.dart';
+
+import '../globalModels/song_recipients_model.dart';
+import '../pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 
 class AuthService {
   final _api = ApiService();
@@ -116,6 +122,18 @@ class AuthService {
     return await _api.get("/user/charity/dashboard");
   }
 
+  Future<Map<String, dynamic>> switchRoleApi({required int roleId}) async {
+    return await _api.put("user/switchRole", {"roleId": roleId});
+  }
+
+  Future<Map<String, dynamic>> addRoleApi({required int roleId}) async {
+    return await _api.post("user/addRole", {"roleId": roleId});
+  }
+
+  Future<Map<String, dynamic>> userSongRecipientsApi() async {
+    return await _api.get("user/song/recipients");
+  }
+
   ///******************** Function **********************
   ///
   Future<List<UserModel>> getAllUsers(
@@ -139,13 +157,12 @@ class AuthService {
       rethrow;
     }
   }
-  Future<List<CharityUserModel>> getAllCharity(
-      {String search = ''}) async {
+
+  Future<List<CharityUserModel>> getAllCharity({String search = ''}) async {
     try {
       List<CharityUserModel> userList = [];
       await _api.handleGetResponse(
-        apiMethod: () => getAllCharityApi(
-            search: search),
+        apiMethod: () => getAllCharityApi(search: search),
         onSuccess: (response) {
           final receiptResponseModel = CharityResponseModel.fromJson(response);
           final newUserList = receiptResponseModel.response?.rows ?? [];
@@ -159,5 +176,67 @@ class AuthService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<List<SongRecipientsResponseData>> getAllMyRecipients(
+      {String search = ''}) async {
+    try {
+      List<SongRecipientsResponseData> userList = [];
+      await _api.handleGetResponse(
+        apiMethod: () => userSongRecipientsApi(),
+        onSuccess: (response) {
+          final receiptResponseModel =
+              SongRecipientsResponseModel.fromJson(response);
+          final newUserList = receiptResponseModel.response ?? [];
+          userList.assignAll(newUserList);
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+      return userList;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  ///switch role
+  Future<void> switchRole({required int roleId}) async {
+    await _api.handleResponse(
+      apiMethod: () => switchRoleApi(roleId: roleId),
+      onSuccess: (success) async {
+        String? token = userManager.cachedUser?.token;
+        await userManager.clearUser();
+        UserModel currentUser = UserModel.fromJson(success['response'])
+          ..token = token ?? '';
+        userManager.cachedUser = currentUser;
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (roleId == 2) {
+          Get.offAll(() => RecipientHomeScreen());
+        } else if (roleId == 1) {
+          Get.offAll(() => SenderBottomBar());
+        }
+      },
+    );
+  }
+
+  /// addRole
+  Future<void> addRole({required int roleId}) async {
+    await _api.handleResponse(
+      apiMethod: () => addRoleApi(roleId: roleId),
+      onSuccess: (success) async {
+        String? token = userManager.cachedUser?.token;
+        await userManager.clearUser();
+        UserModel currentUser = UserModel.fromJson(success['response'])
+          ..token = token ?? '';
+        userManager.cachedUser = currentUser;
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (roleId == 2) {
+          Get.offAll(() => RecipientHomeScreen());
+        } else if (roleId == 1) {
+          Get.offAll(() => SenderBottomBar());
+        }
+      },
+    );
   }
 }

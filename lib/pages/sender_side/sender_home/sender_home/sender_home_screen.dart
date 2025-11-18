@@ -1,21 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/main.dart';
 import 'package:musit/pages/sendBottombar/controller/sender_bottom_bar_controller.dart';
-import 'package:musit/pages/sender_side/sender_send_song/voice_note/voice_note_screen.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
 import '../../../../utils/dialog_utilities.dart';
 import '../../../../widgets/custom_header.dart';
 import '../../../../widgets/fade_text_carousel.dart';
-import '../../community/sender_community/sender_community_screen.dart';
-import '../../sender_send_song/add_songs/add_songs_screen.dart';
-import '../../sent_playlist/sentSongs/sent_songs_screen.dart';
 
 class SenderHomeScreen extends StatelessWidget {
   const SenderHomeScreen({super.key});
@@ -58,7 +52,7 @@ class SenderHomeScreen extends StatelessWidget {
                           if (userManager.isFirstTimeAddSongScreen) {
                             successDialog(
                                 content:
-                                """A MUSEiT Moment is 1 message + 1 song sent to your favourite people.\nEvery MUSEiT Moment sent, 50p will go towards your selected charity.""");
+                                    """A MUSEiT Moment is 1 message + 1 song sent to your favourite people.\nEvery MUSEiT Moment sent, 50p will go towards your selected charity.""");
                             await userManager.saveFirstTimeAddSongScreen();
                           }
                         },
@@ -85,144 +79,6 @@ class SenderHomeScreen extends StatelessWidget {
                       text: ' MUSEiT Charity'),
                 ),
                 Spacer(),
-
-                // const SizedBox(height: 53),
-
-                // Row(
-                //   spacing: 19,
-                //   children: [
-                //     _buildSmallCard(
-                //       title: 'MUSEiT Moment',
-                //       image: 'assets/images/send_paid_songs.png',
-                //       onTap: () {
-                //         Get.find<SenderBottomBarController>()
-                //             .selectedTab
-                //             .value = 1;
-                //         // Get.to(() => AddSongsScreen());
-                //       },
-                //     ),
-                //     _buildSmallCard(
-                //       title: "Community",
-                //       image: "assets/images/community.png",
-                //       onTap: () {
-                //         Get.to(() => SenderCommunityScreen());
-                //       },
-                //     ),
-                //     _buildSmallCard(
-                //       title: 'Sent Songs',
-                //       image: 'assets/images/sent_playlist.png',
-                //       onTap: () {
-                //         Get.to(() => SentSongsScreen());
-                //       },
-                //     ),
-                //   ],
-                // ),
-                // Row(
-                //   spacing: 19,
-                //   children: [
-                //     // _buildSmallCard(
-                //     //   title: 'Create Playlist',
-                //     //   image: 'assets/images/create_playlist.png',
-                //     //   onTap: () {
-                //     //     senderCreatePlaylistBottomSheet();
-                //     //   },
-                //     // ),
-                //     // const SizedBox(width: 19),
-                //     // _buildSmallCard(
-                //     //   title: 'Sent Playlist',
-                //     //   image: 'assets/images/sent_playlist.png',
-                //     //   onTap: () {
-                //     //     Get.to(() => SenderSentPlaylistScreen());
-                //     //   },
-                //     // ),
-                //     // const SizedBox(width: 19),
-                //
-                //   ],
-                // ),
-
-                // const SizedBox(height: 53),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                //   child: Row(
-                //     children: [
-                //       // _buildSmallCard(
-                //       //   title: 'Send Song',
-                //       //   image: 'assets/images/send_paid_songs.png',
-                //       //   onTap: () {
-                //       //     Get.to(() => AddSongsScreen());
-                //       //   },
-                //       // ),
-                //       // const SizedBox(width: 19),
-                //       // _buildSmallCard(
-                //       //   title: "Community",
-                //       //   image: "assets/images/community.png",
-                //       //   onTap: () {
-                //       //     Get.to(() => SenderCommunityScreen());
-                //       //   },
-                //       // ),
-                //     ],
-                //   ),
-                // ),
-
-                // const SizedBox(height: 23),
-                // Text(
-                //   'Recently Created Playlists',
-                //   style: manRopeSemiBold.copyWith(fontSize: 14),
-                // ),
-                // const SizedBox(height: 23),
-                // FutureBuilder(
-                //     future: PlaylistService().getPlayList(),
-                //     builder: (context, snapshot) {
-                //       if (snapshot.connectionState ==
-                //           ConnectionState.waiting) {
-                //         return ErrorWidgetFutureStream();
-                //       }
-                //
-                //       if (snapshot.hasError) {
-                //         return ErrorWidgetFutureStream(
-                //           error: snapshot.error.toString(),
-                //         );
-                //       }
-                //
-                //       if (!snapshot.hasData ||
-                //           snapshot.data == null ||
-                //           snapshot.data!.isEmpty) {
-                //         return const ErrorWidgetFutureStream(
-                //           error: 'No Data Found',
-                //         );
-                //       }
-                //
-                //       final playLists = snapshot.requireData;
-                //
-                //       return ListView.builder(
-                //         padding: EdgeInsets.zero,
-                //         physics: NeverScrollableScrollPhysics(),
-                //         primary: false,
-                //         shrinkWrap: true,
-                //         itemCount: playLists.length,
-                //         itemBuilder: (context, index) {
-                //           final playlist = playLists[index];
-                //
-                //           return Padding(
-                //             padding: const EdgeInsets.only(bottom: 30.0),
-                //             child: GestureDetector(
-                //               onTap: () {
-                //                 Get.to(
-                //                   () => ViewSentPlaylistScreen(
-                //                     playListId: playlist.id,
-                //                   ),
-                //                 );
-                //               },
-                //               child: SavedPlaylistCard(
-                //                 showDateTime: true,
-                //                 playlist: playlist,
-                //               ),
-                //             ),
-                //           );
-                //         },
-                //       );
-                //     }),
-                // const SizedBox(height: 23),
               ],
             ),
           ),

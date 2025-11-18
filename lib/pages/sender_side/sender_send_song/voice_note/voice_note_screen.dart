@@ -9,6 +9,8 @@ import 'package:musit/pages/viewCharityOrg/view_charity_organization.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
+import '../../../../services/auth_service.dart';
+import '../../../../utils/dialog_utilities.dart';
 import '../../../../widgets/custom_voice_recording_screen.dart';
 import '../../sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
 import '../../sender_home/sender_view_recipient/widget/send_via_phone_sheet.dart';
@@ -21,6 +23,7 @@ class VoiceNoteScreen extends StatelessWidget {
   });
 
   final controller = Get.put(VoiceNoteController());
+  final RxBool switchValue = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,7 @@ class VoiceNoteScreen extends StatelessWidget {
       body: Column(
         children: [
           SizedBox(
-            height: Get.height * 0.35,
+            height: Get.height * 0.5,
             child: Stack(
               children: [
                 ImageCarouselSlider(
@@ -39,14 +42,61 @@ class VoiceNoteScreen extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: CustomAppBar(
-                        text: 'Add Voice Note',
-                        isBack: false,
-                        textColor: whiteColor)),
+                      text: 'Add Voice Note',
+                      isBack: true,
+                      onTap: () {
+                        Get.put(SenderBottomBarController()).selectedTab
+                            .value=0;
+                      },
+                      textColor: whiteColor,
+                      lastWidget: SizedBox(
+                        width: 40,
+                        child: userManager.cachedUser?.currentRoleId == null
+                            ? const SizedBox.shrink()
+                            : userManager.cachedUser?.currentRoleId == 3
+                                ? const SizedBox.shrink()
+                                : Obx(() => Switch(
+                                      value: switchValue.value,
+                                      inactiveThumbColor: blackColor,
+                                      inactiveTrackColor: blueColor,
+                                      onChanged: (value) async {
+                                        if (value = true) {
+                                          bool roleAvailable = userManager
+                                                  .cachedUser?.availableRoles
+                                                  .contains(userManager
+                                                              .cachedUser!
+                                                              .currentRoleId ==
+                                                          1
+                                                      ? 2
+                                                      : 1) ??
+                                              false;
+
+                                          if (roleAvailable) {
+                                            await AuthService().switchRole(
+                                                roleId: userManager.cachedUser!
+                                                            .currentRoleId ==
+                                                        1
+                                                    ? 2
+                                                    : 1);
+                                          } else {
+                                            await AuthService().addRole(
+                                                roleId: userManager.cachedUser!
+                                                            .currentRoleId ==
+                                                        1
+                                                    ? 2
+                                                    : 1);
+                                          }
+                                        }
+                                      },
+                                    )),
+                      ),
+                      showLastIcon: true,
+                    )),
                 Positioned(
                   bottom: 0,
                   child: Container(
                     width: Get.width,
-                    height: Get.height * 0.1,
+                    height: Get.height * 0.15,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
