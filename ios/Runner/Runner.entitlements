@@ -6,5 +6,7 @@
 	<array>
 		<string>com.museit://spotify-callback</string>
 	</array>
+
+
 </dict>
 </plist>
