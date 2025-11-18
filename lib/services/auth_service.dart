@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:musit/globalModels/charity_response_model.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/main.dart';
+import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
 import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/spotify_auth_service.dart';
@@ -200,25 +201,6 @@ class AuthService {
   }
 
   ///switch role
-  Future<bool> isRoleAvailable({required int roleId}) async {
-    try {
-      bool isRoleAvailable = false;
-      await _api.handleGetResponse(
-        apiMethod: () => switchRoleApi(roleId: roleId),
-        onSuccess: (success) {
-          isRoleAvailable = true;
-        },
-        onError: (error) {
-          isRoleAvailable = false;
-        },
-      );
-      return isRoleAvailable;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  ///switch role
   Future<void> switchRole({required int roleId}) async {
     await _api.handleResponse(
       apiMethod: () => switchRoleApi(roleId: roleId),
@@ -232,7 +214,7 @@ class AuthService {
         if (roleId == 2) {
           Get.offAll(() => RecipientHomeScreen());
         } else if (roleId == 1) {
-          Get.offAll(() => SenderHomeScreen());
+          Get.offAll(() => SenderBottomBar());
         }
       },
     );
@@ -252,7 +234,7 @@ class AuthService {
         if (roleId == 2) {
           Get.offAll(() => RecipientHomeScreen());
         } else if (roleId == 1) {
-          Get.offAll(() => SenderHomeScreen());
+          Get.offAll(() => SenderBottomBar());
         }
       },
     );

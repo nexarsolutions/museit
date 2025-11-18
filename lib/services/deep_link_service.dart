@@ -24,17 +24,17 @@ class DeepLinkService extends GetxService {
       print('🎯 DeepLink received: $uri');
       SpotifyAuthService().handleRedirect(uri);
     }
-    if (uri.scheme == 'com.museit' && uri.host == 'paypal-callback') {
-      Get.back();
-    }
-    if (uri.scheme == 'com.museit' && uri.host == 'paypalFail-callback') {
-      Get.back();
-    }
-    if (uri.scheme == 'com.museit' && uri.host == 'donate-callback') {
-      Get.back();
-    }
-    if (uri.scheme == 'com.museit' && uri.host == 'donateFail-callback') {
-      Get.back();
-    }
+    // if (uri.scheme == 'com.museit' && uri.host == 'paypal-callback') {
+    //   Get.back();
+    // }
+    // if (uri.scheme == 'com.museit' && uri.host == 'paypalFail-callback') {
+    //   Get.back();
+    // }
+    // if (uri.scheme == 'com.museit' && uri.host == 'donate-callback') {
+    //   Get.back();
+    // }
+    // if (uri.scheme == 'com.museit' && uri.host == 'donateFail-callback') {
+    //   Get.back();
+    // }
   }
 }

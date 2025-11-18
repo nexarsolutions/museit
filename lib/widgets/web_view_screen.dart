@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:musit/constants/colors.dart';
-import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -40,6 +36,14 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..loadRequest(Uri.parse(widget.url));
   }
 
+  void handleBack() {
+    if (widget.onTap != null) {
+      widget.onTap!();
+    } else {
+      Get.back();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,22 +51,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
         flexibleSpace: CustomAppBar(
           text: widget.title,
           isBack: true,
-          onTap: widget.onTap ??
-              () {
-                Get.back();
-              },
+          onTap: handleBack,
         ),
       ),
       body: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
-          if (didPop) return;
-
-          if (widget.onTap != null) {
-            Get.offAll(() => SenderBottomBar());
-          } else {
-            Get.back();
-          }
+          if (!didPop) handleBack();
         },
         child: SafeArea(
           child: Padding(

@@ -7,10 +7,15 @@ import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
+import '../../main.dart';
+import '../sendBottombar/controller/sender_bottom_bar_controller.dart';
+
 class ViewMyRecipients extends StatelessWidget {
   ViewMyRecipients({
     super.key,
   });
+
+  final RxBool switchValue = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +25,51 @@ class ViewMyRecipients extends StatelessWidget {
         children: [
           CustomAppBar(
             text: 'Recipients',
+            isBack: true,
+            onTap: () {
+              Get.put(SenderBottomBarController()).selectedTab.value = 1;
+            },
+            showLastIcon: true,
+            lastWidget: SizedBox(
+              width: 40,
+              child: userManager.cachedUser?.currentRoleId == null
+                  ? const SizedBox.shrink()
+                  : userManager.cachedUser?.currentRoleId == 3
+                      ? const SizedBox.shrink()
+                      : Obx(() => Switch(
+                            value: switchValue.value,
+                            inactiveThumbColor: blackColor,
+                            inactiveTrackColor: blueColor,
+                            onChanged: (value) async {
+                              if (value = true) {
+                                bool roleAvailable = userManager
+                                        .cachedUser?.availableRoles
+                                        .contains(userManager.cachedUser!
+                                                    .currentRoleId ==
+                                                1
+                                            ? 2
+                                            : 1) ??
+                                    false;
+
+                                if (roleAvailable) {
+                                  await AuthService().switchRole(
+                                      roleId: userManager
+                                                  .cachedUser!.currentRoleId ==
+                                              1
+                                          ? 2
+                                          : 1);
+                                } else {
+                                  await AuthService().addRole(
+                                      roleId: userManager
+                                                  .cachedUser!.currentRoleId ==
+                                              1
+                                          ? 2
+                                          : 1);
+                                }
+                              }
+                            },
+                          )),
+            ),
           ),
           Expanded(
             child: SingleChildScrollView(

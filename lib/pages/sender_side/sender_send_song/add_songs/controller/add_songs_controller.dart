@@ -369,6 +369,7 @@ class AddSongsController extends GetxController {
         bool paymentRequired = responseData['paymentRequired'] ?? false;
         String staus = responseData['status'] ?? '';
         String approvalLink = responseData['approvalLink'] ?? '';
+        String orderId = responseData['orderId'] ?? '';
 
         if (!paymentRequired) {
           Get.offAll(() => SenderBottomBar());
@@ -378,9 +379,21 @@ class AddSongsController extends GetxController {
           Get.to(() => WebViewScreen(
                 url: approvalLink,
                 title: "Payment",
-                onTap: () {
+                onTap: () async {
                   Get.back();
-                  Get.to(() => ViewCharityOrganization());
+                  await ApiService().handleResponse(
+                    apiMethod: () =>
+                        SongService().songPaymentStatusAPi(orderId: orderId),
+                    onSuccess: (success) {
+                      bool isPaid = success['response']['isPaid'] ?? false;
+                      if (isPaid) {
+                        Get.to(() => ViewCharityOrganization());
+                      } else {
+                        Get.offAll(() => SenderBottomBar());
+                        customErrorSnackBar(content: response['message']);
+                      }
+                    },
+                  );
                 },
               ));
         }
