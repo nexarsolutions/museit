@@ -3,14 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server/gmail.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/main.dart';
 import 'package:musit/pages/auth/login/login_screen.dart';
 import 'package:musit/pages/auth/verify/verify_screen.dart';
 import 'package:musit/pages/charity_side/charity_profile_creation/charity_profile_creation_screen.dart';
 import 'package:musit/pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/utils/dialog_utilities.dart';
@@ -61,12 +60,20 @@ class SignupController extends GetxController {
       loadingDialog(message: "Sending OTP");
       //email app credentials
       //todo: ask the client and change later
-      String username = 'mansoorsatti2498@gmail.com';
-      String password = 'cyhg edrv pdmf qajn';
+      String username = 'welcome@museit.life';
+      String password = 'V;ib3.9hAEn.vO%N';
       //generating otp
       verificationCode.value = Random().nextInt(99999) + 100000;
       //assign smtp server and send message
-      final smtpServer = gmail(username, password);
+      // final smtpServer = gmail(username, password);
+      final smtpServer = SmtpServer(
+        "rs6-lon.serverhostgroup.com",
+        port: 465,
+        ssl: true,
+        username: username,
+        password: password,
+      );
+
       final message =
           _emailTemplate(username, verificationCode.value.toString());
 

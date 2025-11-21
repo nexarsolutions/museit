@@ -44,7 +44,7 @@ class SignupScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     CustomTextField(
                       controller: controller.userModel.username,
-                      hintText: 'Add text',
+                      hintText: 'Enter name',
                       isPrefixIcon: true,
                       prefixIcon: Image.asset(
                         'assets/images/person_icon.png',
@@ -60,7 +60,7 @@ class SignupScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     CustomTextField(
                       controller: controller.userModel.email,
-                      hintText: 'Example@nexar.com',
+                      hintText: 'Example@museit.life',
                       keyboardType: TextInputType.emailAddress,
                       isPrefixIcon: true,
                       prefixIcon: Image.asset(
@@ -172,7 +172,7 @@ class SignupScreen extends StatelessWidget {
                       child: CustomButton(
                         onPressed: () {
                           if (controller.formKey.currentState!.validate()) {
-                          controller.checkEmailExists(roleId);
+                            controller.checkEmailExists(roleId);
                           }
                         },
                         text: 'Sign up',

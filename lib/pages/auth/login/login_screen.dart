@@ -41,7 +41,7 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(height: 8),
                     CustomTextField(
                       controller: controller.emailController,
-                      hintText: 'Add text',
+                      hintText: 'Add email',
                       isPrefixIcon: true,
                       keyboardType: TextInputType.emailAddress,
                       prefixIcon: Image.asset(
