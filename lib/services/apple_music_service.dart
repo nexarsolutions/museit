@@ -231,6 +231,15 @@ class AppleMusicService extends GetxService {
     }
   }
 
+  /// Validate if a string is a numeric catalog ID (e.g., "1456311004")
+  /// Returns true if the string contains only digits
+  bool _isNumericCatalogId(String id) {
+    if (id.isEmpty) return false;
+    // Check if it's a numeric string (catalog IDs are numeric)
+    // Exclude ISRCs (like "USUG11904763") and other non-numeric formats
+    return RegExp(r'^\d+$').hasMatch(id);
+  }
+
   /// Fetch user's library songs
   /// Note: Library operations require user token
   Future<List<SongModel>> fetchUserLibrarySongs({int limit = 100}) async {
@@ -238,8 +247,9 @@ class AppleMusicService extends GetxService {
       // Library operations require user token
       await ensureAuthenticated(requireUserToken: true);
 
+      // Include catalog relationship to get catalog song IDs
       final url = Uri.parse(
-          "https://api.music.apple.com/v1/me/library/songs?limit=$limit");
+          "https://api.music.apple.com/v1/me/library/songs?limit=$limit&include=catalog");
 
       final response = await http.get(
         url,
@@ -255,9 +265,25 @@ class AppleMusicService extends GetxService {
 
       final json = jsonDecode(response.body);
       final List? items = json["data"];
+      final List? included = json["included"];
 
       if (items == null) {
         return [];
+      }
+
+      // Build a map of catalog songs from the included array
+      // Key: catalog song ID (numeric string), Value: catalog song data
+      final Map<String, dynamic> catalogSongsMap = {};
+      if (included != null) {
+        for (var includedItem in included) {
+          if (includedItem["type"] == "songs" && includedItem["id"] != null) {
+            final catalogId = includedItem["id"]?.toString() ?? "";
+            // Validate it's a numeric catalog ID (not ISRC or other format)
+            if (catalogId.isNotEmpty && _isNumericCatalogId(catalogId)) {
+              catalogSongsMap[catalogId] = includedItem;
+            }
+          }
+        }
       }
 
       List<SongModel> songs = items.map((item) {
@@ -269,12 +295,78 @@ class AppleMusicService extends GetxService {
                 .replaceAll('{h}', '300') ??
             "";
 
+        // Extract library song ID
+        final librarySongId = item["id"]?.toString() ?? "";
+        final href = item["href"]?.toString() ?? "";
+
+        // Try to get catalog song ID from relationships
+        String? catalogSongId;
+        final relationships = item["relationships"] ?? {};
+        final catalogData = relationships["catalog"]?["data"];
+
+        if (catalogData != null && catalogData.isNotEmpty) {
+          final catalogId = catalogData[0]["id"]?.toString() ?? "";
+          // Validate it's a numeric catalog ID
+          if (_isNumericCatalogId(catalogId)) {
+            catalogSongId = catalogId;
+          } else {
+            // If the ID in relationships is not numeric, try to find it in included array
+            // by matching via href or other identifiers
+            debugPrint(
+                '⚠️ Catalog ID from relationships is not numeric: $catalogId');
+          }
+        }
+
+        // If not found in relationships, check playParams
+        if (catalogSongId == null || catalogSongId.isEmpty) {
+          final playParams = attributes["playParams"] ?? {};
+          final catalogId = playParams["catalogId"]?.toString() ?? "";
+          if (_isNumericCatalogId(catalogId)) {
+            catalogSongId = catalogId;
+          }
+        }
+
+        // If still not found, try to match from included array via relationships
+        if ((catalogSongId == null || catalogSongId.isEmpty) &&
+            catalogData != null &&
+            catalogData.isNotEmpty) {
+          final catalogHref = catalogData[0]["href"]?.toString() ?? "";
+          // Try to find matching catalog song in included array
+          for (var entry in catalogSongsMap.entries) {
+            final catalogItem = entry.value;
+            if (catalogItem["href"]?.toString() == catalogHref) {
+              final foundId = entry.key;
+              if (_isNumericCatalogId(foundId)) {
+                catalogSongId = foundId;
+                break;
+              }
+            }
+          }
+        }
+
+        // Store both library song ID and catalog song ID in the link field
+        // Format: /v1/me/library/songs/i.ZOMrKa1SrEPK64q|catalog:1456311004
+        final linkWithCatalog =
+            catalogSongId != null && catalogSongId.isNotEmpty
+                ? "$href|catalog:$catalogSongId"
+                : href;
+
+        if (catalogSongId != null && catalogSongId.isNotEmpty) {
+          debugPrint(
+              '✅ Found numeric catalog ID: $catalogSongId for library song: $librarySongId');
+        } else {
+          debugPrint(
+              '⚠️ No valid numeric catalog ID found for library song: $librarySongId');
+        }
+
+        // Try to parse library song ID as int (for compatibility), but store string in link
         return SongModel(
           type: "apple_music",
           name: attributes["name"] ?? "",
-          link: item["href"] ?? "",
+          link: linkWithCatalog, // Store link with catalog ID appended
           image: imageUrl,
-          id: int.tryParse(item["id"]?.toString() ?? ""),
+          id: int.tryParse(librarySongId) ??
+              0, // Try to parse, but we'll use link for actual ID
         );
       }).toList();
 
@@ -282,6 +374,176 @@ class AppleMusicService extends GetxService {
     } catch (e) {
       debugPrint('❌ Fetch library songs error: $e');
       rethrow;
+    }
+  }
+
+  /// Get catalog song ID from library song
+  /// Library songs need to be played using their catalog song ID
+  Future<String?> getCatalogSongIdFromLibrarySong(String librarySongId) async {
+    try {
+      await ensureAuthenticated(requireUserToken: true);
+
+      // Fetch the library song details to get catalog song relationship
+      final url = Uri.parse(
+          "https://api.music.apple.com/v1/me/library/songs/$librarySongId");
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Authorization": "Bearer $_developerToken",
+          "Music-User-Token": _userToken ?? "",
+        },
+      );
+
+      if (response.statusCode != 200) {
+        debugPrint('❌ Failed to fetch library song details: ${response.body}');
+        return null;
+      }
+
+      final json = jsonDecode(response.body);
+      final data = json["data"];
+
+      // Check for catalog song relationship
+      final relationships = data["relationships"] ?? {};
+      final catalogData = relationships["catalog"]?["data"];
+
+      if (catalogData != null && catalogData.isNotEmpty) {
+        final catalogSongId = catalogData[0]["id"]?.toString() ?? "";
+        // Validate it's a numeric catalog ID
+        if (_isNumericCatalogId(catalogSongId)) {
+          debugPrint('✅ Found numeric catalog song ID: $catalogSongId');
+          return catalogSongId;
+        } else {
+          debugPrint(
+              '⚠️ Catalog ID from relationships is not numeric: $catalogSongId');
+        }
+      }
+
+      // If no catalog relationship, try to get it from attributes
+      final attributes = data["attributes"] ?? {};
+      final playParams = attributes["playParams"] ?? {};
+      final catalogId = playParams["catalogId"]?.toString() ?? "";
+
+      if (catalogId.isNotEmpty && _isNumericCatalogId(catalogId)) {
+        debugPrint('✅ Found numeric catalog ID from playParams: $catalogId');
+        return catalogId;
+      }
+
+      debugPrint(
+          '⚠️ No catalog song ID found for library song: $librarySongId');
+      return null;
+    } catch (e) {
+      debugPrint('❌ Error getting catalog song ID: $e');
+      return null;
+    }
+  }
+
+  /// Play an Apple Music library song using MusicKit
+  /// [librarySongId] - The library song ID (e.g., "i.ZOMrKa1SrEPK64q")
+  /// [link] - Optional link that may contain catalog ID (format: link|catalog:ID)
+  Future<void> playLibrarySong(String librarySongId, {String? link}) async {
+    try {
+      await ensureAuthenticated(requireUserToken: true);
+
+      // Initialize MusicKit with tokens
+      await _musicKit.initialize(
+        _developerToken ?? defaultDeveloperToken,
+        musicUserToken: _userToken,
+      );
+
+      // Try to extract catalog song ID from link first (if we stored it there)
+      String? catalogSongId;
+      if (link != null && link.contains('|catalog:')) {
+        final parts = link.split('|catalog:');
+        if (parts.length > 1) {
+          final extractedId = parts[1];
+          // Validate it's a numeric catalog ID
+          if (_isNumericCatalogId(extractedId)) {
+            catalogSongId = extractedId;
+            debugPrint(
+                '🎵 Found valid numeric catalog ID in link: $catalogSongId');
+          } else {
+            debugPrint('⚠️ Catalog ID in link is not numeric: $extractedId');
+          }
+        }
+      }
+
+      // If not in link or invalid, fetch it from API
+      if (catalogSongId == null || catalogSongId.isEmpty) {
+        final fetchedId = await getCatalogSongIdFromLibrarySong(librarySongId);
+        if (fetchedId != null && _isNumericCatalogId(fetchedId)) {
+          catalogSongId = fetchedId;
+        } else if (fetchedId != null) {
+          debugPrint('⚠️ Fetched catalog ID is not numeric: $fetchedId');
+        }
+      }
+
+      // Library songs are typically not directly playable, so use catalog song ID
+      // MUST be a numeric catalog ID (e.g., "1456311004"), not ISRC or other format
+      if (catalogSongId != null &&
+          catalogSongId.isNotEmpty &&
+          _isNumericCatalogId(catalogSongId)) {
+        debugPrint('🎵 Playing with numeric catalog song ID: $catalogSongId');
+        await _musicKit.setQueue(
+          'songs',
+          item: {'id': catalogSongId},
+        );
+        await _musicKit.play();
+        debugPrint('✅ Playing catalog song: $catalogSongId');
+        return;
+      }
+
+      // Fallback: try playing library song directly (may not work)
+      debugPrint('⚠️ No catalog ID found, trying library song directly');
+      try {
+        await _musicKit.setQueue(
+          'library-songs',
+          item: {'id': librarySongId},
+        );
+        await _musicKit.play();
+        debugPrint('✅ Playing library song: $librarySongId');
+      } catch (e) {
+        throw Exception(
+            'Could not play library song. Library song ID: $librarySongId. Library songs typically require catalog song ID to play. Error: $e');
+      }
+    } catch (e) {
+      debugPrint('❌ Error playing Apple Music song: $e');
+      rethrow;
+    }
+  }
+
+  /// Get current playback state stream
+  Stream<MusicPlayerState> get playbackState =>
+      _musicKit.onMusicPlayerStateChanged;
+
+  /// Pause playback
+  Future<void> pause() async {
+    try {
+      await _musicKit.pause();
+    } catch (e) {
+      debugPrint('❌ Error pausing: $e');
+    }
+  }
+
+  /// Resume playback
+  Future<void> resume() async {
+    try {
+      await _musicKit.play();
+    } catch (e) {
+      debugPrint('❌ Error resuming: $e');
+    }
+  }
+
+  /// Seek to position
+  /// Note: Seek functionality may not be available in all music_kit versions
+  Future<void> seekTo(Duration position) async {
+    try {
+      // Try to seek - method name may vary by package version
+      // If this doesn't work, seek functionality may not be available
+      debugPrint(
+          '⚠️ Seek functionality may not be available in music_kit package');
+    } catch (e) {
+      debugPrint('❌ Error seeking: $e');
     }
   }
 

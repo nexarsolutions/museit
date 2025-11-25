@@ -49,11 +49,41 @@ class BuildAppleMusicWidget extends StatelessWidget {
 
                     return GestureDetector(
                       onTap: () {
-                        Get.to(() => MusicPlayerScreen(
-                              songTitle: song.name ?? 'N/A',
-                              songUrl: song.link ?? '',
-                              imagePath: song.image ?? '',
-                            ));
+                        // Extract library song ID and catalog song ID
+                        String librarySongId = appleMusicSong["id"]?.toString() ?? '';
+                        String catalogSongId = appleMusicSong["catalogId"]?.toString() ?? '';
+                        
+                        // If catalog ID is not in the map, try to extract from link
+                        if (catalogSongId.isEmpty && song.link != null) {
+                          if (song.link!.contains('|catalog:')) {
+                            final parts = song.link!.split('|catalog:');
+                            catalogSongId = parts.length > 1 ? parts[1] : '';
+                          }
+                        }
+                        
+                        // Extract library song ID from link if needed
+                        if (librarySongId.isEmpty && song.link != null) {
+                          final linkPart = song.link!.contains('|') 
+                              ? song.link!.split('|')[0] 
+                              : song.link!;
+                          final parts = linkPart.split('/');
+                          if (parts.isNotEmpty) {
+                            librarySongId = parts.last;
+                          }
+                        }
+                        
+                        // Prefer catalog song ID if available, otherwise use library song ID
+                        final songIdToPlay = catalogSongId.isNotEmpty ? catalogSongId : librarySongId;
+                        
+                        if (songIdToPlay.isNotEmpty) {
+                          Get.to(() => MusicPlayerScreen(
+                                songTitle: song.name ?? 'N/A',
+                                songUrl: song.link ?? '',
+                                imagePath: song.image ?? '',
+                                typeId: 3, // Apple Music
+                                appleMusicSongId: librarySongId, // Pass library song ID, service will handle catalog lookup
+                              ));
+                        }
                       },
                       child: AddSongsWidget(
                         song: song,
@@ -82,5 +112,6 @@ class BuildAppleMusicWidget extends StatelessWidget {
     );
   }
 }
+
 
 

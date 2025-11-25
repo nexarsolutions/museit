@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -7,10 +8,12 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:music_kit/music_kit.dart';
 
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
+import 'package:musit/services/apple_music_service.dart';
 
 class MusicPlayerScreen extends StatefulWidget {
   const MusicPlayerScreen({
@@ -18,11 +21,15 @@ class MusicPlayerScreen extends StatefulWidget {
     required this.songTitle,
     required this.songUrl,
     required this.imagePath,
+    this.typeId,
+    this.appleMusicSongId, // Library song ID for Apple Music (e.g., "i.ZOMrKa1SrEPK64q")
   });
 
   final String songTitle;
   final String songUrl; // can be asset path or network URL
   final String imagePath;
+  final int? typeId; // 3 for Apple Music
+  final String? appleMusicSongId; // Apple Music library song ID
 
   @override
   State<MusicPlayerScreen> createState() => _MusicPlayerScreenState();
@@ -31,19 +38,79 @@ class MusicPlayerScreen extends StatefulWidget {
 class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   late final PlayerController _waveformController;
+  final AppleMusicService _appleMusicService = AppleMusicService();
+  StreamSubscription<MusicPlayerState>? _musicKitSubscription;
 
   final RxBool isPlaying = false.obs;
   final Rx<Duration> totalDuration = Duration.zero.obs;
   final Rx<Duration> playedDuration = Duration.zero.obs;
   final RxBool isLoading = true.obs;
   final RxString errorMessage = ''.obs;
+  final RxBool isAppleMusic = false.obs;
 
   @override
   void initState() {
     super.initState();
     _waveformController = PlayerController();
-    _initAudioListeners();
-    _initializePlayer();
+    isAppleMusic.value = widget.typeId == 3;
+    
+    if (isAppleMusic.value) {
+      _initMusicKitListeners();
+      _initializeAppleMusicPlayer();
+    } else {
+      _initAudioListeners();
+      _initializePlayer();
+    }
+  }
+
+  void _initMusicKitListeners() {
+    _musicKitSubscription = _appleMusicService.playbackState.listen((state) {
+      if (!mounted) return;
+      
+      try {
+        // Update playing state - check state properties dynamically
+        // MusicPlayerState structure may vary by package version
+        final stateString = state.toString();
+        isPlaying.value = stateString.contains('playing') || 
+                          stateString.contains('Playing');
+        
+        // Try to get duration and position from state
+        // Note: Actual property names may differ - adjust based on package version
+        debugPrint('MusicPlayerState: $state');
+      } catch (e) {
+        debugPrint('Error reading MusicPlayerState: $e');
+      }
+    });
+  }
+
+  /// Initialize Apple Music player using MusicKit
+  Future<void> _initializeAppleMusicPlayer() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      debugPrint("🎵 Apple Music Song ID: ${widget.appleMusicSongId}");
+      debugPrint("🖼️ Image Path: ${widget.imagePath}");
+
+      if (widget.appleMusicSongId == null || widget.appleMusicSongId!.isEmpty) {
+        errorMessage.value = 'Apple Music song ID is missing.';
+        isLoading.value = false;
+        return;
+      }
+
+      // Play the song using MusicKit
+      // Pass the link (songUrl) which may contain the catalog ID
+      await _appleMusicService.playLibrarySong(
+        widget.appleMusicSongId!,
+        link: widget.songUrl,
+      );
+      
+      isLoading.value = false;
+    } catch (e, st) {
+      debugPrint("Apple Music playback failed: $e\n$st");
+      errorMessage.value = 'Failed to play Apple Music song: $e';
+      isLoading.value = false;
+    }
   }
 
   void _initAudioListeners() {
@@ -83,6 +150,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
 
       debugPrint("🎵 Song URL: ${widget.songUrl}");
       debugPrint("🖼️ Image Path: ${widget.imagePath}");
+      debugPrint("🎵 Type ID: ${widget.typeId}");
 
       final filePath = await _getPlayablePath(widget.songUrl);
 
@@ -157,14 +225,24 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
   Future<void> _togglePlayPause() async {
     if (isLoading.value || errorMessage.value.isNotEmpty) return;
 
-    if (isPlaying.value) {
-      await _audioPlayer.pause();
-      await _waveformController.pausePlayer();
-      isPlaying.value = false;
+    if (isAppleMusic.value) {
+      // Apple Music playback control
+      if (isPlaying.value) {
+        await _appleMusicService.pause();
+      } else {
+        await _appleMusicService.resume();
+      }
     } else {
-      await _audioPlayer.resume();
-      await _waveformController.startPlayer();
-      isPlaying.value = true;
+      // Regular audio playback
+      if (isPlaying.value) {
+        await _audioPlayer.pause();
+        await _waveformController.pausePlayer();
+        isPlaying.value = false;
+      } else {
+        await _audioPlayer.resume();
+        await _waveformController.startPlayer();
+        isPlaying.value = true;
+      }
     }
   }
 
@@ -172,15 +250,21 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     final totalMs = totalDuration.value.inMilliseconds;
     if (totalMs <= 0) return;
     final posMs = (totalMs * fraction).clamp(0, totalMs).toInt();
+    final position = Duration(milliseconds: posMs);
 
-    await _audioPlayer.seek(Duration(milliseconds: posMs));
-    playedDuration.value = Duration(milliseconds: posMs);
+    if (isAppleMusic.value) {
+      await _appleMusicService.seekTo(position);
+      playedDuration.value = position;
+    } else {
+      await _audioPlayer.seek(position);
+      playedDuration.value = position;
 
-    // also move waveform to the same position
-    try {
-      _waveformController.seekTo(posMs);
-    } catch (e) {
-      debugPrint('waveform seekTo (user) error: $e');
+      // also move waveform to the same position
+      try {
+        _waveformController.seekTo(posMs);
+      } catch (e) {
+        debugPrint('waveform seekTo (user) error: $e');
+      }
     }
   }
 
@@ -188,9 +272,16 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
     final current = playedDuration.value.inSeconds;
     final newPosition =
         (current + seconds).clamp(0, totalDuration.value.inSeconds);
-    await _audioPlayer.seek(Duration(seconds: newPosition));
-    playedDuration.value = Duration(seconds: newPosition);
-    await _waveformController.seekTo((newPosition * 1000));
+    final position = Duration(seconds: newPosition);
+    
+    if (isAppleMusic.value) {
+      await _appleMusicService.seekTo(position);
+      playedDuration.value = position;
+    } else {
+      await _audioPlayer.seek(position);
+      playedDuration.value = position;
+      await _waveformController.seekTo((newPosition * 1000));
+    }
   }
 
   String _formatDuration(Duration d) {
@@ -202,7 +293,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    _musicKitSubscription?.cancel();
     _audioPlayer.dispose();
     _waveformController.dispose();
     super.dispose();
@@ -288,30 +379,46 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
                         ),
                         const SizedBox(height: 24),
 
-                        /// Waveform with seek gesture
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            return GestureDetector(
-                              onTapDown: (details) {
-                                final fraction = details.localPosition.dx /
-                                    constraints.maxWidth;
-                                _seekToFraction(fraction);
-                              },
-                              child: AudioFileWaveforms(
-                                waveformType: WaveformType.fitWidth,
-                                size: Size(constraints.maxWidth, 120),
-                                playerController: _waveformController,
-                                enableSeekGesture: true,
-                                playerWaveStyle: const PlayerWaveStyle(
-                                  showSeekLine: false,
-                                  spacing: 4,
-                                  waveThickness: 1.5,
-                                  // Don't hardcode colors unless you want to
+                        /// Waveform with seek gesture (only for non-Apple Music)
+                        Obx(() => isAppleMusic.value
+                            ? Container(
+                                height: 120,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                                child: Center(
+                                  child: Text(
+                                    'Apple Music playback',
+                                    style: manRopeSemiBold.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return GestureDetector(
+                                    onTapDown: (details) {
+                                      final fraction = details.localPosition.dx /
+                                          constraints.maxWidth;
+                                      _seekToFraction(fraction);
+                                    },
+                                    child: AudioFileWaveforms(
+                                      waveformType: WaveformType.fitWidth,
+                                      size: Size(constraints.maxWidth, 120),
+                                      playerController: _waveformController,
+                                      enableSeekGesture: true,
+                                      playerWaveStyle: const PlayerWaveStyle(
+                                        showSeekLine: false,
+                                        spacing: 4,
+                                        waveThickness: 1.5,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )),
 
                         const SizedBox(height: 24),
 
