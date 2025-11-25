@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../common_widgets/song_card.dart';
 import '../../../../constants/colors.dart';
 import '../../../../widgets/custom_app_bar.dart';
-import '../../../../widgets/web_view_screen.dart';
 import 'controller/send_song_screen_controller.dart';
 
 class SentSongsScreen extends StatelessWidget {

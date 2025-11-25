@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:musit/widgets/custom_bottom_sheet.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 
-import '../../../../../utils/custom_error_snack_bar.dart';
 
 void showSendViaPhoneSheet(
     {required BuildContext context,

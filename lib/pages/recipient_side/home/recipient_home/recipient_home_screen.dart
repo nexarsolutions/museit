@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/utils/custom_error_snack_bar.dart';
 
 import '../../../../widgets/custom_header.dart';
 import '../../../../widgets/fade_text_carousel.dart';
 import '../../recieved_songs/recieved_songs_screen.dart';
-import '../../recipient_community/recipient_community/recipient_community_screen.dart';
 import '../../recipient_profile/recipient_profile/recipient_profile_screen.dart';
 import 'controller/recipient_home_controller.dart';
 
@@ -58,7 +58,7 @@ class RecipientHomeScreen extends StatelessWidget {
                           image: "assets/images/community.png",
                           primary: true,
                           onTap: () {
-                            Get.to(() => RecipientCommunityScreen());
+                            customErrorSnackBar(content: "Coming Soon");
                           },
                         ),
                       ),
@@ -66,7 +66,7 @@ class RecipientHomeScreen extends StatelessWidget {
                   ),
 
                   Spacer(),
-                   SizedBox(height: Get.height*0.1),
+                  SizedBox(height: Get.height * 0.1),
                 ],
               ),
             ),

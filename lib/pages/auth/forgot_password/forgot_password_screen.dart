@@ -4,7 +4,6 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/auth/widget/auth_header.dart';
 import 'package:musit/utils/validators.dart';
-import 'package:musit/widgets/custom_bottom_sheet.dart';
 
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';

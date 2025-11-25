@@ -12,10 +12,10 @@ class ImageCarouselSlider extends StatelessWidget {
       options: CarouselOptions(
         height: Get.height * 0.5,
         viewportFraction: 1.0, // full width
-        autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 3),
-        autoPlayAnimationDuration: const Duration(milliseconds: 800),
-        enableInfiniteScroll: true,
+        autoPlay: false,
+        // autoPlayInterval: const Duration(seconds: 3),
+        // autoPlayAnimationDuration: const Duration(milliseconds: 800),
+        enableInfiniteScroll: false,
         scrollDirection: Axis.horizontal,
       ),
       items: images.map((imagePath) {

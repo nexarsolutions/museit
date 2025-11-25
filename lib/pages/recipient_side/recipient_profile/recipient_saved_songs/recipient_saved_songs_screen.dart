@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
-import '../../../../common_widgets/song_card.dart';
-import '../../../music_player/music_player_screen.dart';
 import 'controller/recipient_saved_songs_controller.dart';
 
 class RecipientSavedSongsScreen extends StatelessWidget {

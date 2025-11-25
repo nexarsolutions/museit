@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/globalModels/user_model.dart';

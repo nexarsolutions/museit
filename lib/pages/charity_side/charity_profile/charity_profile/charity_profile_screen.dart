@@ -27,7 +27,6 @@ class CharityProfileScreen extends StatelessWidget {
           CustomAppBar(
             text: 'Profile',
             isBack: true,
-            showLastIcon: true,
             lastWidget: Container(
               height: 44,
               width: 44,

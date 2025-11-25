@@ -11,7 +11,6 @@ class SenderBottomBarController extends GetxController {
   static List<Widget> widgets = [
     SenderHomeScreen(),
     VoiceNoteScreen(),
-    ViewMyRecipients(
-    )
+    ViewMyRecipients()
   ];
 }

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-import 'package:music_kit/music_kit.dart';
+
+// import 'package:music_kit/music_kit.dart';
 import 'package:musit/globalModels/admin_songs_model.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
@@ -48,7 +49,7 @@ class AddSongsController extends GetxController {
 
   final RxBool isYoutubeLoading = false.obs;
   final RxBool isAdminSongsLoading = false.obs;
-  
+
   // Apple Music list
   final RxList<Map<String, dynamic>> searchAppleMusicList =
       <Map<String, dynamic>>[].obs;
@@ -172,21 +173,24 @@ class AddSongsController extends GetxController {
           'id': '123456789',
           'name': 'Blinding Lights',
           'artist': 'The Weeknd',
-          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/6d/7c/736d7cfb-c79d-c888-1243-9c6c550e2a0e/20UMGIM88115.rgb.jpg/300x300bb.jpg',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/6d/7c/736d7cfb-c79d-c888-1243-9c6c550e2a0e/20UMGIM88115.rgb.jpg/300x300bb.jpg',
           'link': 'https://music.apple.com/gb/song/blinding-lights/1493128407',
         },
         {
           'id': '987654321',
           'name': 'Shape of You',
           'artist': 'Ed Sheeran',
-          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5d/4d/81/5d4d815f-7c08-2a54-bc0b-0279f5c4b827/886446879880.jpg/300x300bb.jpg',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5d/4d/81/5d4d815f-7c08-2a54-bc0b-0279f5c4b827/886446879880.jpg/300x300bb.jpg',
           'link': 'https://music.apple.com/gb/song/shape-of-you/1440833238',
         },
         {
           'id': '456789123',
           'name': 'Watermelon Sugar',
           'artist': 'Harry Styles',
-          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-53336fc38cb0/886447913412.jpg/300x300bb.jpg',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-53336fc38cb0/886447913412.jpg/300x300bb.jpg',
           'link': 'https://music.apple.com/gb/song/watermelon-sugar/1508442214',
         },
       ];
@@ -216,21 +220,24 @@ class AddSongsController extends GetxController {
           'id': '123456789',
           'name': 'Blinding Lights',
           'artist': 'The Weeknd',
-          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/6d/7c/736d7cfb-c79d-c888-1243-9c6c550e2a0e/20UMGIM88115.rgb.jpg/300x300bb.jpg',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/6d/7c/736d7cfb-c79d-c888-1243-9c6c550e2a0e/20UMGIM88115.rgb.jpg/300x300bb.jpg',
           'link': 'https://music.apple.com/gb/song/blinding-lights/1493128407',
         },
         {
           'id': '987654321',
           'name': 'Shape of You',
           'artist': 'Ed Sheeran',
-          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5d/4d/81/5d4d815f-7c08-2a54-bc0b-0279f5c4b827/886446879880.jpg/300x300bb.jpg',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5d/4d/81/5d4d815f-7c08-2a54-bc0b-0279f5c4b827/886446879880.jpg/300x300bb.jpg',
           'link': 'https://music.apple.com/gb/song/shape-of-you/1440833238',
         },
         {
           'id': '456789123',
           'name': 'Watermelon Sugar',
           'artist': 'Harry Styles',
-          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-53336fc38cb0/886447913412.jpg/300x300bb.jpg',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-53336fc38cb0/886447913412.jpg/300x300bb.jpg',
           'link': 'https://music.apple.com/gb/song/watermelon-sugar/1508442214',
         },
       ];
@@ -239,7 +246,8 @@ class AddSongsController extends GetxController {
         final songName = (song['name'] ?? '').toString().toLowerCase();
         final artistName = (song['artist'] ?? '').toString().toLowerCase();
         final searchLower = query.toLowerCase();
-        return songName.contains(searchLower) || artistName.contains(searchLower);
+        return songName.contains(searchLower) ||
+            artistName.contains(searchLower);
       }).toList();
 
       if (filteredSongs.isEmpty) {
@@ -414,8 +422,8 @@ class AddSongsController extends GetxController {
     }
   }
 
-  Future<void> shareSong(List<SongModel> voiceRecordings,
-      String? receiverPhoneNumber, List<int> selectedUsers) async {
+  Future<void> shareSong(
+      List<SongModel> voiceRecordings, List<int> selectedUsers) async {
     // Step 1: Upload voice recordings (if any)
     List<Map<AudioKey, dynamic>> voices = [];
 
@@ -445,13 +453,11 @@ class AddSongsController extends GetxController {
             .map((e) => {'name': e[AudioKey.name], 'link': e[AudioKey.path]})
             .toList(),
       if (selectedUsers.isNotEmpty)
-        'toUserIds': selectedUsers
+        'defaultRecipientIds': selectedUsers
             .map(
               (user) => user,
             )
             .toList(),
-      if (receiverPhoneNumber != null && receiverPhoneNumber != '')
-        'phoneNumber': receiverPhoneNumber,
     };
 
     // Step 3: Call API to share songs
@@ -517,7 +523,7 @@ class AddSongsController extends GetxController {
     );
   }
 
-  Future<void> shareMomentExternally(List<SongModel> songs, String platform,
+/*  Future<void> shareMomentExternally(List<SongModel> songs, String platform,
       {String? receiver}) async {
     // Generate a message text
     String message = "Hey! Check out these songs I shared on MUSEiT 🎵\n\n";
@@ -567,9 +573,9 @@ class AddSongsController extends GetxController {
     } else {
       throw 'Could not launch $uri';
     }
-  }
+  }*/
 
-  var developerToken =
+/*var developerToken =
       "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjxLRVlfSUQ-In0.eyJpYXQiOjE3NjMxODk5MTIsImV4cCI6MTc3ODc0MTkxMiwiaXNzIjoiPFRFQU1fSUQ-In0.2em3TuAYPAcxYJpwVNznUUMA2DYMg8yrI5690fG852sQE_drX0PoL0ElKdtjCAIgRBbT0TZUwG7QFxCFkBHHAQ";
 
   Future<List<SongModel>> fetchUserLibrarySongs() async {
@@ -622,7 +628,7 @@ class AddSongsController extends GetxController {
     }).toList();
 
     return songs;
-  }
+  }*/
 }
 /*
   final RxList<Map<String, String>> youtubeSongsList = [

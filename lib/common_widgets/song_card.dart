@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/globalModels/song_model.dart';
-import 'package:musit/utils/extensions.dart';
 import 'package:shimmer/shimmer.dart'; // ✅ updated import
 
 class SongCard extends StatelessWidget {
