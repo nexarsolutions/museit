@@ -83,6 +83,7 @@ class AddSongsScreen extends StatelessWidget {
                   selectedIndex: controller.songTypeId.value,
                   // GetX ya setState use kar sakte ho
                   onTabSelected: (index) {
+                    print(index);
                     controller.songTypeId.value = index;
                   },
                   tabs: [
@@ -154,19 +155,24 @@ class AddSongsScreen extends StatelessWidget {
                                           await appleMusicService
                                               .checkConnection();
                                           // Load library songs after connection
-                                          if (appleMusicService.isConnected.value) {
-                                            controller.loadDefaultAppleMusicSongs();
+                                          if (appleMusicService
+                                              .isConnected.value) {
+                                            controller
+                                                .loadDefaultAppleMusicSongs();
                                           }
                                         } catch (e) {
                                           final errorMessage = e.toString();
-                                          debugPrint('Apple Music Error: $errorMessage');
+                                          debugPrint(
+                                              'Apple Music Error: $errorMessage');
                                           errorDialogWithCopy(
-                                            title: "Apple Music Connection Error",
+                                            title:
+                                                "Apple Music Connection Error",
                                             content:
                                                 "Failed to connect to Apple Music. Please check the error details below and share them if you need support.",
-                                            errorDetails: errorMessage.isNotEmpty
-                                                ? errorMessage
-                                                : 'Unknown error occurred',
+                                            errorDetails:
+                                                errorMessage.isNotEmpty
+                                                    ? errorMessage
+                                                    : 'Unknown error occurred',
                                           );
                                         }
                                       },

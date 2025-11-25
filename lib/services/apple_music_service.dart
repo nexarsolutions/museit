@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:music_kit/music_kit.dart';
 import 'package:musit/globalModels/song_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppleMusicService extends GetxService {
   // Singleton
@@ -438,18 +439,12 @@ class AppleMusicService extends GetxService {
     }
   }
 
-  /// Play an Apple Music library song using MusicKit
+  /// Play an Apple Music library song by opening Apple Music app
   /// [librarySongId] - The library song ID (e.g., "i.ZOMrKa1SrEPK64q")
   /// [link] - Optional link that may contain catalog ID (format: link|catalog:ID)
   Future<void> playLibrarySong(String librarySongId, {String? link}) async {
     try {
       await ensureAuthenticated(requireUserToken: true);
-
-      // Initialize MusicKit with tokens
-      await _musicKit.initialize(
-        _developerToken ?? defaultDeveloperToken,
-        musicUserToken: _userToken,
-      );
 
       // Try to extract catalog song ID from link first (if we stored it there)
       String? catalogSongId;
@@ -478,36 +473,45 @@ class AppleMusicService extends GetxService {
         }
       }
 
-      // Library songs are typically not directly playable, so use catalog song ID
+      // Open Apple Music app with the song using public Apple Music URL
       // MUST be a numeric catalog ID (e.g., "1456311004"), not ISRC or other format
       if (catalogSongId != null &&
           catalogSongId.isNotEmpty &&
           _isNumericCatalogId(catalogSongId)) {
-        debugPrint('🎵 Playing with numeric catalog song ID: $catalogSongId');
-        await _musicKit.setQueue(
-          'songs',
-          item: {'id': catalogSongId},
-        );
-        await _musicKit.play();
-        debugPrint('✅ Playing catalog song: $catalogSongId');
-        return;
+        debugPrint(
+            '🎵 Opening Apple Music app with catalog song ID: $catalogSongId');
+        // Generate public Apple Music URL format: https://music.apple.com/[country]/song/id/[catalog-id]
+        // Using 'us' as default country code (can be made configurable based on user's region)
+        final appleMusicUrl =
+            Uri.parse('https://music.apple.com/us/song/id/$catalogSongId');
+
+        if (await canLaunchUrl(appleMusicUrl)) {
+          await launchUrl(appleMusicUrl, mode: LaunchMode.externalApplication);
+          debugPrint(
+              '✅ Opened Apple Music app for catalog song: $catalogSongId');
+          return;
+        } else {
+          throw Exception('Could not launch Apple Music URL: $appleMusicUrl');
+        }
       }
 
-      // Fallback: try playing library song directly (may not work)
-      debugPrint('⚠️ No catalog ID found, trying library song directly');
+      // Fallback: try opening Apple Music app without specific song
+      debugPrint('⚠️ No catalog ID found, opening Apple Music app');
       try {
-        await _musicKit.setQueue(
-          'library-songs',
-          item: {'id': librarySongId},
-        );
-        await _musicKit.play();
-        debugPrint('✅ Playing library song: $librarySongId');
+        final musicUrl = Uri.parse('music://');
+        if (await canLaunchUrl(musicUrl)) {
+          await launchUrl(musicUrl, mode: LaunchMode.externalApplication);
+          debugPrint('✅ Opened Apple Music app');
+        } else {
+          throw Exception(
+              'Could not open Apple Music app. Please ensure Apple Music is installed. Library song ID: $librarySongId');
+        }
       } catch (e) {
         throw Exception(
-            'Could not play library song. Library song ID: $librarySongId. Library songs typically require catalog song ID to play. Error: $e');
+            'Could not open Apple Music app. Library song ID: $librarySongId. Library songs typically require catalog song ID to open. Error: $e');
       }
     } catch (e) {
-      debugPrint('❌ Error playing Apple Music song: $e');
+      debugPrint('❌ Error opening Apple Music app: $e');
       rethrow;
     }
   }
