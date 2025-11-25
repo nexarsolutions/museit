@@ -48,6 +48,11 @@ class AddSongsController extends GetxController {
 
   final RxBool isYoutubeLoading = false.obs;
   final RxBool isAdminSongsLoading = false.obs;
+  
+  // Apple Music list
+  final RxList<Map<String, dynamic>> searchAppleMusicList =
+      <Map<String, dynamic>>[].obs;
+  final RxBool isAppleMusicLoading = false.obs;
 
   // Default fallback songs for spotify
   final defaultSongs = [
@@ -79,6 +84,8 @@ class AddSongsController extends GetxController {
           loadDefaultSpotifySongs();
         } else if (typeId == 1) {
           loadDefaultYoutubeSongs();
+        } else if (typeId == 2) {
+          // Apple Music - no default songs, just connect button
         } else if (typeId == 3) {}
       },
     );
@@ -92,6 +99,8 @@ class AddSongsController extends GetxController {
         query.toString().isEmpty
             ? loadDefaultYoutubeSongs()
             : searchYouTube(query.toString());
+      } else if (songTypeId.value == 2) {
+        // Apple Music search - will be implemented when connected
       }
     }, time: const Duration(milliseconds: 600));
   }
@@ -151,6 +160,99 @@ class AddSongsController extends GetxController {
     await searchYouTube(searchQuery.value.trim().isEmpty
         ? defaultSongs.first
         : searchQuery.value.trim());
+  }
+
+  // Load default Apple Music songs (dummy data for testing)
+  Future<void> loadDefaultAppleMusicSongs() async {
+    isAppleMusicLoading.value = true;
+    try {
+      // Dummy Apple Music songs for testing
+      final dummySongs = [
+        {
+          'id': '123456789',
+          'name': 'Blinding Lights',
+          'artist': 'The Weeknd',
+          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/6d/7c/736d7cfb-c79d-c888-1243-9c6c550e2a0e/20UMGIM88115.rgb.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/blinding-lights/1493128407',
+        },
+        {
+          'id': '987654321',
+          'name': 'Shape of You',
+          'artist': 'Ed Sheeran',
+          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5d/4d/81/5d4d815f-7c08-2a54-bc0b-0279f5c4b827/886446879880.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/shape-of-you/1440833238',
+        },
+        {
+          'id': '456789123',
+          'name': 'Watermelon Sugar',
+          'artist': 'Harry Styles',
+          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-53336fc38cb0/886447913412.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/watermelon-sugar/1508442214',
+        },
+      ];
+
+      searchAppleMusicList.assignAll(dummySongs);
+    } catch (e) {
+      debugPrint("Error loading Apple Music songs: $e");
+      searchAppleMusicList.clear();
+    } finally {
+      isAppleMusicLoading.value = false;
+    }
+  }
+
+  // Search Apple Music (using dummy data for now)
+  Future<void> searchAppleMusic(String query) async {
+    isAppleMusicLoading.value = true;
+    try {
+      if (query.trim().isEmpty) {
+        searchAppleMusicList.clear();
+        return;
+      }
+
+      // For now, filter dummy songs based on query
+      // In production, this would call the Apple Music API
+      final allDummySongs = [
+        {
+          'id': '123456789',
+          'name': 'Blinding Lights',
+          'artist': 'The Weeknd',
+          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/6d/7c/736d7cfb-c79d-c888-1243-9c6c550e2a0e/20UMGIM88115.rgb.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/blinding-lights/1493128407',
+        },
+        {
+          'id': '987654321',
+          'name': 'Shape of You',
+          'artist': 'Ed Sheeran',
+          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5d/4d/81/5d4d815f-7c08-2a54-bc0b-0279f5c4b827/886446879880.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/shape-of-you/1440833238',
+        },
+        {
+          'id': '456789123',
+          'name': 'Watermelon Sugar',
+          'artist': 'Harry Styles',
+          'image': 'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-53336fc38cb0/886447913412.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/watermelon-sugar/1508442214',
+        },
+      ];
+
+      final filteredSongs = allDummySongs.where((song) {
+        final songName = (song['name'] ?? '').toString().toLowerCase();
+        final artistName = (song['artist'] ?? '').toString().toLowerCase();
+        final searchLower = query.toLowerCase();
+        return songName.contains(searchLower) || artistName.contains(searchLower);
+      }).toList();
+
+      if (filteredSongs.isEmpty) {
+        searchAppleMusicList.clear();
+      } else {
+        searchAppleMusicList.assignAll(filteredSongs);
+      }
+    } catch (e) {
+      debugPrint("Error searching Apple Music: $e");
+      searchAppleMusicList.clear();
+    } finally {
+      isAppleMusicLoading.value = false;
+    }
   }
 
   Future<void> searchYouTube(String query) async {

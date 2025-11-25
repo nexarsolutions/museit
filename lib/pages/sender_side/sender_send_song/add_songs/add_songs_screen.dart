@@ -6,15 +6,16 @@ import 'package:musit/pages/music_player/music_player_screen.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/widget/build_youtube_widget.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/widget/connect_account_prompt.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
+import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 import 'package:musit/widgets/error_widget_future_stream.dart';
 
 import '../../../../globalModels/song_model.dart';
+import '../../../../services/apple_music_service.dart';
 import '../../../../services/spotify_auth_service.dart';
 import '../../../../widgets/custom_tab_button.dart';
-import '../../../viewCharityOrg/view_charity_organization.dart';
 import '../../sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
 import '../../sender_home/sender_view_recipient/widget/send_via_phone_sheet.dart';
 import 'controller/add_songs_controller.dart';
@@ -25,6 +26,7 @@ class AddSongsScreen extends StatelessWidget {
 
   final controller = Get.put(AddSongsController());
   final SpotifyAuthService spotifyService = Get.find<SpotifyAuthService>();
+  final AppleMusicService appleMusicService = AppleMusicService();
   final List<SongModel> voiceSongs;
 
   @override
@@ -137,7 +139,25 @@ class AddSongsScreen extends StatelessWidget {
                                   serviceName: 'Apple Music',
                                   assetPath:
                                       'assets/images/selected_apple_music.png',
-                                  onPressed: null,
+                                  onPressed: () async {
+                                    try {
+                                      await appleMusicService
+                                          .connectAppleMusic();
+                                      await appleMusicService
+                                          .checkConnection();
+                                    } catch (e) {
+                                      final errorMessage = e.toString();
+                                      debugPrint('Apple Music Error: $errorMessage');
+                                      errorDialogWithCopy(
+                                        title: "Apple Music Connection Error",
+                                        content:
+                                            "Failed to connect to Apple Music. Please check the error details below and share them if you need support.",
+                                        errorDetails: errorMessage.isNotEmpty 
+                                            ? errorMessage 
+                                            : 'Unknown error occurred',
+                                      );
+                                    }
+                                  },
                                 )
                               : Obx(
                                   () => FutureBuilder(
