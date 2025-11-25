@@ -27,7 +27,6 @@ class ProfileScreen extends StatelessWidget {
           CustomAppBar(
             text: 'Profile',
             isBack: true,
-            showLastIcon: true,
             lastWidget: Container(
               height: 44,
               width: 44,
@@ -50,7 +49,11 @@ class ProfileScreen extends StatelessWidget {
                     },
                   );
                 },
-                child: Image.asset('assets/images/logout_icon.png', scale: 3.5),
+                child: Image.asset(
+                  'assets/images/logout_icon.png',
+                  scale: 3.5,
+                  color: whiteColor,
+                ),
               ),
             ),
           ),
@@ -145,37 +148,6 @@ class ProfileScreen extends StatelessWidget {
                       changePasswordBottomSheet();
                     },
                   ),
-                  // ProfileWidget(
-                  //   iconPath: 'assets/images/subscriptions.png',
-                  //   title: 'Subscriptions',
-                  //   onTap: () {
-                  //     Get.to(
-                  //       () => SubscriptionScreen(
-                  //         isSkip: false,
-                  //         skipOnTap: () {},
-                  //         iSender: true,
-                  //         isBack: true,
-                  //         paymentConfirmOnTap: () {
-                  //           Get.offAll(() => SenderBottomBar());
-                  //         },
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  // ProfileWidget(
-                  //   iconPath: 'assets/images/purchase_history.png',
-                  //   title: 'Purchase History',
-                  //   onTap: () {
-                  //     Get.to(() => PurchaseHistoryScreen());
-                  //   },
-                  // ),
-                  // ProfileWidget(
-                  //   iconPath: 'assets/images/saved_playlists.png',
-                  //   title: 'Saved Playlists',
-                  //   onTap: () {
-                  //     Get.to(() => SavedPlaylistScreen());
-                  //   },
-                  // ),
                   ProfileWidget(
                     iconPath: 'assets/images/privacy_policy.png',
                     title: 'Privacy Policy',
@@ -215,7 +187,6 @@ class ProfileScreen extends StatelessWidget {
                       );
                     },
                   ),
-
                   CustomButton(
                     onPressed: () {
                       Get.dialog(
@@ -331,7 +302,6 @@ class ProfileScreen extends StatelessWidget {
                     },
                     text: "Delete Account",
                   ),
-
                   SizedBox(height: 24),
                 ],
               ),

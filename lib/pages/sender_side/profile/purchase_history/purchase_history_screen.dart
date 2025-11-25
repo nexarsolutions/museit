@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
-import 'package:musit/pages/sender_side/profile/purchase_history/widget/paid_songs_widget.dart';
 import 'package:musit/pages/sender_side/profile/purchase_history/widget/renew_subscription_widget.dart';
 import 'package:musit/pages/sender_side/profile/purchase_history/widget/support_plan_card.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../widgets/custom_tab_button.dart';
-import '../../../music_player/music_player_screen.dart';
 import '../view_support_plan/view_support_plan_screen.dart';
 import 'controller/purchase_history_controller.dart';
 

@@ -1,15 +1,12 @@
-import 'dart:convert';
-
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:musit/globalModels/charity_response_model.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/main.dart';
 import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/api_service.dart';
-import 'package:musit/services/spotify_auth_service.dart';
 
+import '../globalModels/filtered_recipients.dart';
+import '../globalModels/presaved_receipents.dart';
 import '../globalModels/song_recipients_model.dart';
 import '../pages/recipient_side/home/recipient_home/recipient_home_screen.dart';
 
@@ -75,6 +72,18 @@ class AuthService {
           .join('&');
       url += '?$queryString';
     }
+
+    return await _api.get(url);
+  }
+
+  Future<Map<String, dynamic>> defaultRecipientsApi() async {
+    String url = "recipients/default/all";
+
+    return await _api.get(url);
+  }
+
+  Future<Map<String, dynamic>> filterRecipientsApi() async {
+    String url = "recipients/filter/list";
 
     return await _api.get(url);
   }
@@ -146,6 +155,48 @@ class AuthService {
         onSuccess: (response) {
           final receiptResponseModel = ReceiptResponseModel.fromJson(response);
           final newUserList = receiptResponseModel.response?.users ?? [];
+          userList.assignAll(newUserList);
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+      return userList;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<PreSavedRecipient>> getAllPreSavedRecipients() async {
+    try {
+      List<PreSavedRecipient> userList = [];
+      await _api.handleGetResponse(
+        apiMethod: () => defaultRecipientsApi(),
+        onSuccess: (response) {
+          final receiptResponseModel =
+              PreSavedRecipientResponseModel.fromJson(response);
+          final newUserList = receiptResponseModel.response?.rows ?? [];
+          userList.assignAll(newUserList);
+        },
+        onError: (error) {
+          throw Exception(error);
+        },
+      );
+      return userList;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<UserModel>> getAllFilteredRecipients() async {
+    try {
+      List<UserModel> userList = [];
+      await _api.handleGetResponse(
+        apiMethod: () => filterRecipientsApi(),
+        onSuccess: (response) {
+          final receiptResponseModel =
+              FilteredRecipientResponseModel.fromJson(response);
+          final newUserList = receiptResponseModel.response ?? [];
           userList.assignAll(newUserList);
         },
         onError: (error) {

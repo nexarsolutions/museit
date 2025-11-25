@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends StatelessWidget {
   final String text;
   final String? image;
   final double? fontSize;
@@ -12,7 +12,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color textColor;
   final TextAlign? textAlign;
   final bool isBack;
-  final bool showLastIcon;
   final Widget? lastWidget;
   final bool hideColor;
   final VoidCallback? onTap;
@@ -22,10 +21,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double? rightAppBarPadding;
   final double? bottomAppBarPadding;
   final double? appBarContainerHeight;
-  final double centerPadding;
+
+  // final double centerPadding;
   final Color? backArrowColor;
   final Color? backGroundColor;
-  final bool showFirstWidget;
   final Widget? firstWidget;
   final Widget? centerWidget;
 
@@ -38,7 +37,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.textColor = blackColor,
     this.textAlign = TextAlign.center,
     this.isBack = false,
-    this.showLastIcon = false,
     this.lastWidget,
     this.hideColor = false,
     this.onTap,
@@ -48,10 +46,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leftAppBarPadding,
     this.rightAppBarPadding,
     this.bottomAppBarPadding,
-    this.centerPadding = 0,
+    // this.centerPadding = 0,
     this.backArrowColor,
     this.backGroundColor,
-    this.showFirstWidget = false,
     this.firstWidget,
     this.centerWidget,
   });
@@ -79,70 +76,44 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
 
       // 1) Stack holds your original Row (only LEFT+RIGHT)...
-      child: Stack(
+      child: Row(
+        spacing: 4,
         children: [
-          // A) original side‐widget Row WITHOUT the Expanded text
-// A) original side‐widget Row, now centered vertically
-          Align(
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // ← exactly your 'firstWidget' / back logic
-                showFirstWidget
-                    ? firstWidget!
-                    : isBack
-                        ? GestureDetector(
-                            onTap: onTap ?? () => Get.back(),
-                            child: Container(
-                              height: 44,
-                              width: 44,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: blackColor,
-                              ),
-                              child: Image.asset(
-                                'assets/images/back_arrow.png',
-                                scale: 3.5,
-                              ),
-                            ),
-                          )
-                        : const SizedBox(width: 36, height: 36),
-
-                // → exactly your 'lastWidget' logic
-                showLastIcon ? lastWidget! : const SizedBox(width: 36, height: 36),
-              ],
-            ),
-          ),
-
-          // B) and then the title CENTERED on top of that Row
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.center,
-              child: centerWidget ??
-                  Padding(
-                    padding: EdgeInsets.only(left: centerPadding),
-                    child: Text(
-                      text,
-                      style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontSize: fontSize,
-                        fontWeight: fontWeight,
-                        color: textColor,
+          firstWidget ??
+              (isBack
+                  ? GestureDetector(
+                      onTap: onTap ?? () => Get.back(),
+                      child: Container(
+                        height: 44,
+                        width: 44,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: blackColor,
+                        ),
+                        child: Image.asset(
+                          'assets/images/back_arrow.png',
+                          scale: 3.5,
+                        ),
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: textAlign,
-                    ),
-                  ),
-            ),
-          ),
+                    )
+                  : const SizedBox(width: 44, height: 44)),
+          Spacer(),
+          centerWidget ??
+              Text(
+                text,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
+                  color: textColor,
+                ),
+                overflow: TextOverflow.ellipsis,
+                textAlign: textAlign,
+              ),
+          Spacer(),
+          lastWidget ?? const SizedBox(width: 44, height: 44),
         ],
       ),
     );
   }
-
-  // So you can still use `Scaffold(appBar: CustomAppBar(...))`
-  @override
-  Size get preferredSize => Size.fromHeight(appBarContainerHeight ?? 110);
 }

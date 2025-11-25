@@ -1,6 +1,4 @@
-import 'package:get/get.dart';
 import 'package:musit/services/api_service.dart';
-import '../globalModels/song_model.dart';
 
 class SongService {
   final _api = ApiService();

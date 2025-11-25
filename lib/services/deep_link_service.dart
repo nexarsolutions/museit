@@ -1,6 +1,5 @@
 import 'package:app_links/app_links.dart';
 import 'package:get/get.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'spotify_auth_service.dart';
 
 class DeepLinkService extends GetxService {

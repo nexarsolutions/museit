@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/main.dart';
 import 'package:musit/services/auth_service.dart';
-import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/utils/extensions.dart';
 
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
-import '../pages/common_sections/notifications/notifications_screen.dart';
 import '../pages/sender_side/profile/profile/profile_screen.dart';
 
 class CustomHeader extends StatelessWidget {
@@ -26,6 +24,7 @@ class CustomHeader extends StatelessWidget {
         padding:
             const EdgeInsets.only(left: 16.0, right: 16, top: 50, bottom: 16),
         child: Row(
+          spacing: 10,
           children: [
             GestureDetector(
               onTap: onTap ??
@@ -52,28 +51,17 @@ class CustomHeader extends StatelessWidget {
                       ),
               ),
             ),
-            const SizedBox(width: 10),
-            Text('Hi, ${name.withNa}!', style: manRopeSemiBold),
-            const Spacer(),
-            // GestureDetector(
-            //   onTap: () {
-            //     Get.to(() => NotificationsScreen());
-            //   },
-            //   child: Container(
-            //     height: 44,
-            //     width: 44,
-            //     decoration: BoxDecoration(
-            //       shape: BoxShape.circle,
-            //       color: blackColor,
-            //     ),
-            //     child: Image.asset(
-            //       'assets/images/notification.png',
-            //       scale: 4,
-            //     ),
-            //   ),
-            // ),
+            Expanded(
+                child: Text('Hi, ${name.withNa}!', style: manRopeSemiBold)),
+            Text(
+              userManager.cachedUser?.currentRoleId == 1
+                  ? 'Receiver'
+                  : 'Sender',
+              style: TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.bold, color: blackColor),
+            ),
             SizedBox(
-              width: 40,
+              width: 44,
               child: userManager.cachedUser?.currentRoleId == null
                   ? const SizedBox.shrink()
                   : userManager.cachedUser?.currentRoleId == 3

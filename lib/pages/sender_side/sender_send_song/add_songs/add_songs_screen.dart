@@ -16,8 +16,7 @@ import '../../../../globalModels/song_model.dart';
 import '../../../../services/apple_music_service.dart';
 import '../../../../services/spotify_auth_service.dart';
 import '../../../../widgets/custom_tab_button.dart';
-import '../../sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
-import '../../sender_home/sender_view_recipient/widget/send_via_phone_sheet.dart';
+import '../../sender_home/preSavedRecipients/pre_saved_recipients_screen.dart';
 import 'controller/add_songs_controller.dart';
 import 'widget/build_apple_music_widget.dart';
 import 'widget/build_spotify_widget.dart';
@@ -165,8 +164,8 @@ class AddSongsScreen extends StatelessWidget {
                                             title: "Apple Music Connection Error",
                                             content:
                                                 "Failed to connect to Apple Music. Please check the error details below and share them if you need support.",
-                                            errorDetails: errorMessage.isNotEmpty 
-                                                ? errorMessage 
+                                            errorDetails: errorMessage.isNotEmpty
+                                                ? errorMessage
                                                 : 'Unknown error occurred',
                                           );
                                         }
@@ -281,59 +280,16 @@ class AddSongsScreen extends StatelessWidget {
                 CustomButton(
                     onPressed: () {
                       if (controller.songs.isNotEmpty) {
-                        /// navigat to send view screen
-                        Get.to(() => SenderViewRecipientScreen(
-                              rowWidget: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      showSendViaPhoneSheet(
-                                        context: Get.context!,
-                                        onPhoneSubmitted: (phone) {
-                                          controller.shareMomentExternally(
-                                              controller.songs, 'WhatsApp',
-                                              receiver: phone);
-                                        },
-                                      );
-                                    },
-                                    icon: Image.asset(
-                                      "assets/images/whatsapp.png",
-                                      width: 35, height: 35,
-                                      // color: Colors.green
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      showSendViaPhoneSheet(
-                                        context: Get.context!,
-                                        isEmail: true,
-                                        onPhoneSubmitted: (phone) {
-                                          controller.shareMomentExternally(
-                                              controller.songs, 'Email',
-                                              receiver: phone);
-                                        },
-                                      );
-                                    },
-                                    icon: Icon(
-                                      Icons.email,
-                                      color: Colors.red,
-                                      size: 40,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              onPressedSave:
-                                  (List<int> selectedUser, String? phone) {
-                                if (selectedUser.isEmpty && phone == null) {
+                        /// navigate to send view screen
+                        Get.to(() => PreSavedRecipientsScreen(
+                              onPressedSave: (List<int> selectedUser) {
+                                if (selectedUser.isEmpty) {
                                   customErrorSnackBar(
                                       content:
                                           "Select Users or enter phone number to continue");
                                   return;
                                 }
-                                controller.shareSong(
-                                    voiceSongs, phone, selectedUser);
+                                controller.shareSong(voiceSongs, selectedUser);
                               },
                             ));
                       } else {

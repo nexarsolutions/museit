@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:musit/utils/global_functions.dart';
 
 import '../utils/dialog_utilities.dart';
 import 'api_service.dart';

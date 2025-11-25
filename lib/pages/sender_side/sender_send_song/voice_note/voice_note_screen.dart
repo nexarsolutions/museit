@@ -5,16 +5,10 @@ import 'package:musit/main.dart';
 import 'package:musit/pages/sendBottombar/controller/sender_bottom_bar_controller.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/add_songs_screen.dart';
 import 'package:musit/pages/sender_side/sender_send_song/voice_note/widget/image_carousel_slider.dart';
-import 'package:musit/pages/viewCharityOrg/view_charity_organization.dart';
-import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../services/auth_service.dart';
-import '../../../../utils/dialog_utilities.dart';
 import '../../../../widgets/custom_voice_recording_screen.dart';
-import '../../sender_home/sender_view_recipient/sender_view_recipient_screen.dart';
-import '../../sender_home/sender_view_recipient/widget/send_via_phone_sheet.dart';
-import '../add_songs/controller/add_songs_controller.dart';
 import 'controller/voice_note_controller.dart';
 
 class VoiceNoteScreen extends StatelessWidget {
@@ -45,52 +39,68 @@ class VoiceNoteScreen extends StatelessWidget {
                       text: 'Add Voice Note',
                       isBack: true,
                       onTap: () {
-                        Get.put(SenderBottomBarController()).selectedTab
-                            .value=0;
+                        Get.put(SenderBottomBarController()).selectedTab.value =
+                            0;
                       },
                       textColor: whiteColor,
-                      lastWidget: SizedBox(
-                        width: 40,
-                        child: userManager.cachedUser?.currentRoleId == null
-                            ? const SizedBox.shrink()
-                            : userManager.cachedUser?.currentRoleId == 3
-                                ? const SizedBox.shrink()
-                                : Obx(() => Switch(
-                                      value: switchValue.value,
-                                      inactiveThumbColor: blackColor,
-                                      inactiveTrackColor: blueColor,
-                                      onChanged: (value) async {
-                                        if (value = true) {
-                                          bool roleAvailable = userManager
-                                                  .cachedUser?.availableRoles
-                                                  .contains(userManager
-                                                              .cachedUser!
-                                                              .currentRoleId ==
-                                                          1
-                                                      ? 2
-                                                      : 1) ??
-                                              false;
+                      lastWidget: userManager.cachedUser?.currentRoleId == null
+                          ? const SizedBox.shrink()
+                          : userManager.cachedUser?.currentRoleId == 3
+                              ? const SizedBox.shrink()
+                              : Row(
+                                  spacing: 4,
+                                  children: [
+                                    Text(
+                                      userManager.cachedUser?.currentRoleId == 1
+                                          ? 'Receiver '
+                                          : 'Sender ',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: whiteColor),
+                                    ),
+                                    SizedBox(
+                                      width: 40,
+                                      child: Obx(() => Switch(
+                                            value: switchValue.value,
+                                            inactiveThumbColor: blackColor,
+                                            inactiveTrackColor: blueColor,
+                                            onChanged: (value) async {
+                                              if (value = true) {
+                                                bool roleAvailable = userManager
+                                                        .cachedUser
+                                                        ?.availableRoles
+                                                        .contains(userManager
+                                                                    .cachedUser!
+                                                                    .currentRoleId ==
+                                                                1
+                                                            ? 2
+                                                            : 1) ??
+                                                    false;
 
-                                          if (roleAvailable) {
-                                            await AuthService().switchRole(
-                                                roleId: userManager.cachedUser!
-                                                            .currentRoleId ==
-                                                        1
-                                                    ? 2
-                                                    : 1);
-                                          } else {
-                                            await AuthService().addRole(
-                                                roleId: userManager.cachedUser!
-                                                            .currentRoleId ==
-                                                        1
-                                                    ? 2
-                                                    : 1);
-                                          }
-                                        }
-                                      },
-                                    )),
-                      ),
-                      showLastIcon: true,
+                                                if (roleAvailable) {
+                                                  await AuthService().switchRole(
+                                                      roleId: userManager
+                                                                  .cachedUser!
+                                                                  .currentRoleId ==
+                                                              1
+                                                          ? 2
+                                                          : 1);
+                                                } else {
+                                                  await AuthService().addRole(
+                                                      roleId: userManager
+                                                                  .cachedUser!
+                                                                  .currentRoleId ==
+                                                              1
+                                                          ? 2
+                                                          : 1);
+                                                }
+                                              }
+                                            },
+                                          )),
+                                    ),
+                                  ],
+                                ),
                     )),
                 Positioned(
                   bottom: 0,

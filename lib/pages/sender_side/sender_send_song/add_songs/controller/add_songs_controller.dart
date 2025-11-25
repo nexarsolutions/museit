@@ -50,12 +50,10 @@ class AddSongsController extends GetxController {
 
   final RxBool isYoutubeLoading = false.obs;
   final RxBool isAdminSongsLoading = false.obs;
-  
+
   // Apple Music list
   final RxList<Map<String, dynamic>> searchAppleMusicList =
       <Map<String, dynamic>>[].obs;
-  final RxList<Map<String, dynamic>> _allAppleMusicSongs =
-      <Map<String, dynamic>>[].obs; // Store all songs for filtering
   final RxBool isAppleMusicLoading = false.obs;
 
   // Default fallback songs for spotify
@@ -73,18 +71,8 @@ class AddSongsController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Check Apple Music connection status on init
-    appleMusicService.checkConnection();
-
     ever(spotifyService.isConnected, (connected) {
       if (connected == true) loadDefaultSpotifySongs();
-    });
-
-    // Listen to Apple Music connection changes
-    ever(appleMusicService.isConnected, (connected) {
-      if (connected == true && songTypeId.value == 2) {
-        loadDefaultAppleMusicSongs();
-      }
     });
 
     // ever(ytMusicService.isConnected, (connected) {
@@ -99,12 +87,7 @@ class AddSongsController extends GetxController {
         } else if (typeId == 1) {
           loadDefaultYoutubeSongs();
         } else if (typeId == 2) {
-          // Check connection and load Apple Music library songs if connected
-          appleMusicService.checkConnection().then((_) {
-            if (appleMusicService.isConnected.value) {
-              loadDefaultAppleMusicSongs();
-            }
-          });
+          // Apple Music - no default songs, just connect button
         } else if (typeId == 3) {}
       },
     );
@@ -119,12 +102,7 @@ class AddSongsController extends GetxController {
             ? loadDefaultYoutubeSongs()
             : searchYouTube(query.toString());
       } else if (songTypeId.value == 2) {
-        // Apple Music search
-        if (appleMusicService.isConnected.value) {
-          query.toString().isEmpty
-              ? loadDefaultAppleMusicSongs()
-              : searchAppleMusic(query.toString());
-        }
+        // Apple Music search - will be implemented when connected
       }
     }, time: const Duration(milliseconds: 600));
   }
@@ -186,21 +164,127 @@ class AddSongsController extends GetxController {
         : searchQuery.value.trim());
   }
 
-  // Load Apple Music library songs
+  // Load default Apple Music songs (dummy data for testing)
   Future<void> loadDefaultAppleMusicSongs() async {
-    if (!appleMusicService.isConnected.value) return;
-    
     isAppleMusicLoading.value = true;
     try {
+      // Dummy Apple Music songs for testing
+      final dummySongs = [
+        {
+          'id': '123456789',
+          'name': 'Blinding Lights',
+          'artist': 'The Weeknd',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/6d/7c/736d7cfb-c79d-c888-1243-9c6c550e2a0e/20UMGIM88115.rgb.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/blinding-lights/1493128407',
+        },
+        {
+          'id': '987654321',
+          'name': 'Shape of You',
+          'artist': 'Ed Sheeran',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5d/4d/81/5d4d815f-7c08-2a54-bc0b-0279f5c4b827/886446879880.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/shape-of-you/1440833238',
+        },
+        {
+          'id': '456789123',
+          'name': 'Watermelon Sugar',
+          'artist': 'Harry Styles',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-53336fc38cb0/886447913412.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/watermelon-sugar/1508442214',
+        },
+      ];
+
+      searchAppleMusicList.assignAll(dummySongs);
+    } catch (e) {
+      debugPrint("Error loading Apple Music songs: $e");
+      searchAppleMusicList.clear();
+    } finally {
+      isAppleMusicLoading.value = false;
+    }
+  }
+
+  // Search Apple Music (using dummy data for now)
+  Future<void> searchAppleMusic(String query) async {
+    isAppleMusicLoading.value = true;
+    try {
+      if (query.trim().isEmpty) {
+        searchAppleMusicList.clear();
+        return;
+      }
+
+      // For now, filter dummy songs based on query
+      // In production, this would call the Apple Music API
+      final allDummySongs = [
+        {
+          'id': '123456789',
+          'name': 'Blinding Lights',
+          'artist': 'The Weeknd',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/6d/7c/736d7cfb-c79d-c888-1243-9c6c550e2a0e/20UMGIM88115.rgb.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/blinding-lights/1493128407',
+        },
+        {
+          'id': '987654321',
+          'name': 'Shape of You',
+          'artist': 'Ed Sheeran',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5d/4d/81/5d4d815f-7c08-2a54-bc0b-0279f5c4b827/886446879880.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/shape-of-you/1440833238',
+        },
+        {
+          'id': '456789123',
+          'name': 'Watermelon Sugar',
+          'artist': 'Harry Styles',
+          'image':
+              'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-53336fc38cb0/886447913412.jpg/300x300bb.jpg',
+          'link': 'https://music.apple.com/gb/song/watermelon-sugar/1508442214',
+        },
+      ];
+
+      final filteredSongs = allDummySongs.where((song) {
+        final songName = (song['name'] ?? '').toString().toLowerCase();
+        final artistName = (song['artist'] ?? '').toString().toLowerCase();
+        final searchLower = query.toLowerCase();
+        return songName.contains(searchLower) ||
+            artistName.contains(searchLower);
+  final RxList<Map<String, dynamic>> _allAppleMusicSongs =
+      <Map<String, dynamic>>[].obs; // Store all songs for filtering
+    // Check Apple Music connection status on init
+    appleMusicService.checkConnection();
+
+    // Listen to Apple Music connection changes
+    ever(appleMusicService.isConnected, (connected) {
+      if (connected == true && songTypeId.value == 2) {
+        loadDefaultAppleMusicSongs();
+      }
+    });
+
+          // Check connection and load Apple Music library songs if connected
+          appleMusicService.checkConnection().then((_) {
+            if (appleMusicService.isConnected.value) {
+              loadDefaultAppleMusicSongs();
+            }
+          });
+        // Apple Music search
+        if (appleMusicService.isConnected.value) {
+          query.toString().isEmpty
+              ? loadDefaultAppleMusicSongs()
+              : searchAppleMusic(query.toString());
+        }
+  // Load Apple Music library songs
+    if (!appleMusicService.isConnected.value) return;
+
       final songs = await appleMusicService.fetchUserLibrarySongs(limit: 100);
-      
+
       // Convert SongModel list to Map format for the widget
       final songsList = songs.map((song) {
         // Extract library song ID and catalog song ID from link
         // Format: /v1/me/library/songs/i.ZOMrKa1SrEPK64q|catalog:123456789
         String librarySongId = song.id?.toString() ?? '';
         String catalogSongId = '';
-        
+
         if (song.link != null) {
           // Check if link contains catalog ID (format: link|catalog:ID)
           if (song.link!.contains('|catalog:')) {
@@ -220,7 +304,7 @@ class AddSongsController extends GetxController {
             }
           }
         }
-        
+
         return {
           'id': librarySongId,
           'catalogId': catalogSongId, // Store catalog ID separately
@@ -229,38 +313,21 @@ class AddSongsController extends GetxController {
           'link': song.link ?? '',
         };
       }).toList();
-      
+
       // Store all songs for filtering
       _allAppleMusicSongs.assignAll(songsList);
       // Display all songs initially
       searchAppleMusicList.assignAll(songsList);
-    } catch (e) {
       debugPrint("Error loading Apple Music library songs: $e");
-      searchAppleMusicList.clear();
-    } finally {
-      isAppleMusicLoading.value = false;
-    }
-  }
-
   // Search Apple Music (filters library songs)
-  Future<void> searchAppleMusic(String query) async {
-    isAppleMusicLoading.value = true;
-    try {
-      if (query.trim().isEmpty) {
         // Show all songs if query is empty
         searchAppleMusicList.assignAll(_allAppleMusicSongs);
-        return;
-      }
-
       // If no songs loaded, load them first
       if (_allAppleMusicSongs.isEmpty) {
         await loadDefaultAppleMusicSongs();
       }
-
       // Filter from all songs
       final filteredSongs = _allAppleMusicSongs.where((song) {
-        final songName = (song['name'] ?? '').toString().toLowerCase();
-        final searchLower = query.toLowerCase();
         return songName.contains(searchLower);
       }).toList();
 
@@ -436,8 +503,8 @@ class AddSongsController extends GetxController {
     }
   }
 
-  Future<void> shareSong(List<SongModel> voiceRecordings,
-      String? receiverPhoneNumber, List<int> selectedUsers) async {
+  Future<void> shareSong(
+      List<SongModel> voiceRecordings, List<int> selectedUsers) async {
     // Step 1: Upload voice recordings (if any)
     List<Map<AudioKey, dynamic>> voices = [];
 
@@ -467,13 +534,11 @@ class AddSongsController extends GetxController {
             .map((e) => {'name': e[AudioKey.name], 'link': e[AudioKey.path]})
             .toList(),
       if (selectedUsers.isNotEmpty)
-        'toUserIds': selectedUsers
+        'defaultRecipientIds': selectedUsers
             .map(
               (user) => user,
             )
             .toList(),
-      if (receiverPhoneNumber != null && receiverPhoneNumber != '')
-        'phoneNumber': receiverPhoneNumber,
     };
 
     // Step 3: Call API to share songs
@@ -539,7 +604,7 @@ class AddSongsController extends GetxController {
     );
   }
 
-  Future<void> shareMomentExternally(List<SongModel> songs, String platform,
+/*  Future<void> shareMomentExternally(List<SongModel> songs, String platform,
       {String? receiver}) async {
     // Generate a message text
     String message = "Hey! Check out these songs I shared on MUSEiT 🎵\n\n";
@@ -589,7 +654,7 @@ class AddSongsController extends GetxController {
     } else {
       throw 'Could not launch $uri';
     }
-  }
+  }*/
 
   var developerToken =
       "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjxLRVlfSUQ-In0.eyJpYXQiOjE3NjMxODk5MTIsImV4cCI6MTc3ODc0MTkxMiwiaXNzIjoiPFRFQU1fSUQ-In0.2em3TuAYPAcxYJpwVNznUUMA2DYMg8yrI5690fG852sQE_drX0PoL0ElKdtjCAIgRBbT0TZUwG7QFxCFkBHHAQ";

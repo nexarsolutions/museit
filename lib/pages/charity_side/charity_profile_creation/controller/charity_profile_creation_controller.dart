@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/auth_service.dart';

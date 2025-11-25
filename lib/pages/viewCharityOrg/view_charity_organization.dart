@@ -5,7 +5,6 @@ import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/globalModels/payment_model.dart';
 import 'package:musit/globalModels/user_model.dart';
-import 'package:musit/pages/sender_side/sender_home/sender_home/sender_home_screen.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/services/payment_service.dart';

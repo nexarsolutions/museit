@@ -13,13 +13,17 @@ class SubscriptionScreen extends StatelessWidget {
     super.key,
     this.paymentConfirmOnTap,
     this.isBack = false,
-    required this.iSender, required this.skipOnTap, required this.isSkip,
+    required this.iSender,
+    required this.skipOnTap,
+    required this.isSkip,
   });
+
   final void Function()? paymentConfirmOnTap;
   final void Function() skipOnTap;
   final bool isBack;
   final bool isSkip;
   final bool iSender;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,11 +33,12 @@ class SubscriptionScreen extends StatelessWidget {
           CustomAppBar(
             text: 'Subscriptions',
             isBack: isBack,
-            showLastIcon: isSkip,
-            lastWidget: GestureDetector(
-              onTap: skipOnTap,
-              child: Text('Skip', style: manRopeSemiBold),
-            ),
+            lastWidget: isSkip
+                ? GestureDetector(
+                    onTap: skipOnTap,
+                    child: Text('Skip', style: manRopeSemiBold),
+                  )
+                : null,
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -46,8 +51,7 @@ class SubscriptionScreen extends StatelessWidget {
                         () => PaymentDetailsScreen(
                           // isSender: iSender,
 
-                          confirmOnTap:
-                              paymentConfirmOnTap ??
+                          confirmOnTap: paymentConfirmOnTap ??
                               () {
                                 iSender == true
                                     ? Get.to(() => SenderHomeScreen())
@@ -71,8 +75,7 @@ class SubscriptionScreen extends StatelessWidget {
                         () => PaymentDetailsScreen(
                           // isSender: iSender,
 
-                          confirmOnTap:
-                              paymentConfirmOnTap ??
+                          confirmOnTap: paymentConfirmOnTap ??
                               () {
                                 iSender == true
                                     ? Get.to(() => SenderHomeScreen())
@@ -95,8 +98,7 @@ class SubscriptionScreen extends StatelessWidget {
                       Get.to(
                         () => PaymentDetailsScreen(
                           // isSender: iSender,
-                          confirmOnTap:
-                              paymentConfirmOnTap ??
+                          confirmOnTap: paymentConfirmOnTap ??
                               () {
                                 iSender == true
                                     ? Get.to(() => SenderHomeScreen())

@@ -11,7 +11,6 @@ import '../../../../services/auth_service.dart';
 import '../../../charity_side/charity_home/charity_home/charity_home_screen.dart';
 import '../../../recipient_side/home/recipient_home/recipient_home_screen.dart';
 import '../../../sendBottombar/sender_bottom_bar.dart';
-import '../../../sender_side/sender_home/sender_home/sender_home_screen.dart';
 
 class LoginController extends GetxController {
   final emailController = TextEditingController();
