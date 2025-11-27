@@ -295,31 +295,37 @@ class AddSongsScreen extends StatelessWidget {
                               onPressedSave:
                                   (List<PreSavedRecipient> selectedUser,
                                       bool addToCart) async {
+
+                                List<PreSavedRecipient> _selectedUsers
+                                =List<PreSavedRecipient>.from(selectedUser.map((e)=>e));
+                                print("Selected User=${_selectedUsers.length}");
                                 if (userManager.cartItems.isEmpty &&
-                                    selectedUser.isEmpty) {
+                                    _selectedUsers.isEmpty) {
                                   customErrorSnackBar(
                                       content: "Select Users to continue");
                                   return;
                                 }
 
-                                if (addToCart && selectedUser.isEmpty) {
+                                if (addToCart && _selectedUsers.isEmpty) {
                                   customErrorSnackBar(
                                       content: "Nothing to add");
                                   return;
                                 }
 
-                                if (addToCart) {
+                                if (addToCart && _selectedUsers.isNotEmpty) {
                                   controller.addToCart(
-                                      voiceSongs, selectedUser);
+                                      voiceSongs, _selectedUsers);
                                   await Future.delayed(Duration(seconds: 2));
-                                  Get.offAll(() => SenderBottomBar());
+                                  print("selectedUser");
+                                  print(_selectedUsers.length);
+                                  Get.to(() => SenderBottomBar());
                                   customErrorSnackBar(
                                       content: "Successfully added to cart");
                                   return;
                                 }
-                                if (selectedUser.isNotEmpty) {
+                                if (_selectedUsers.isNotEmpty) {
                                   controller.addToCart(
-                                      voiceSongs, selectedUser);
+                                      voiceSongs, _selectedUsers);
                                 }
 
                                 Get.to(() => ViewCharityOrganization());

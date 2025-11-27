@@ -5,6 +5,7 @@ import 'package:musit/constants/text_styles.dart';
 import 'package:musit/main.dart';
 import 'package:musit/utils/dialog_utilities.dart';
 
+import '../sender_side/sender_home/preSavedRecipients/widget/view_cart.dart';
 import 'controller/sender_bottom_bar_controller.dart';
 
 class SenderBottomBar extends StatelessWidget {
@@ -18,6 +19,30 @@ class SenderBottomBar extends StatelessWidget {
       bottom: true,
       top: false,
       child: Scaffold(
+        floatingActionButton:      SizedBox(
+          height: 70,
+          width: 80,
+          child: FloatingActionButton(
+
+            backgroundColor: Colors.white,
+
+            onPressed: () { Get.bottomSheet(
+              SafeArea(child: CartListBottomSheet(cartItems: userManager.cartItems)),
+              isScrollControlled: true,
+              backgroundColor: Colors.white,
+              shape: const RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+            ); },
+            child: Column(
+              children: [
+               Icon(Icons.shopping_basket_sharp,fontWeight: FontWeight.bold,),
+                Text("View Cart ")
+              ],
+            ),
+          ),
+        ),
         backgroundColor: whiteColor,
         body: Obx(
           () => SenderBottomBarController.widgets

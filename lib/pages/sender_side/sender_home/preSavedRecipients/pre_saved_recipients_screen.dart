@@ -148,34 +148,52 @@ class PreSavedRecipientsScreen extends StatelessWidget {
               children: [
                 Flexible(
                   child: CustomButton(
+
+
                       onPressed: () {
                         // if (controller.selectedUsersId.value.isEmpty) {
                         //   errorDialog(
                         //       content: "Select User/Receipt to continue.");
                         //   return;
                         // }
-                        onPressedSave(controller.selectedUsersId, false);
+                        print("length0");
+
+                        print(controller.selectedUsersId.length);
+                        onPressedSave(controller.selectedUsersId.value, false);
                       },
                       text: 'Send'),
                 ),
-                IconButton(
-                    onPressed: () {
-                      onPressedSave(controller.selectedUsersId, true);
-                    },
-                    icon: Icon(Icons.add_shopping_cart_outlined)),
-                IconButton(
-                    onPressed: () {
-                      Get.bottomSheet(
-                        SafeArea(child: CartListBottomSheet(cartItems: userManager.cartItems)),
-                        isScrollControlled: true,
-                        backgroundColor: Colors.white,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.shopping_basket_sharp)),
+                Column(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          print("length");
+                          print(controller.selectedUsersId.length);
+
+                          onPressedSave(controller.selectedUsersId.value, true);
+                        },
+                        icon: Icon(Icons.add_shopping_cart_outlined,fontWeight: FontWeight.bold,)),
+                    Text("Add to Cart ")
+                  ],
+                ),
+                Column(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          Get.bottomSheet(
+                            SafeArea(child: CartListBottomSheet(cartItems: userManager.cartItems)),
+                            isScrollControlled: true,
+                            backgroundColor: Colors.white,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.vertical(top: Radius.circular(20)),
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.shopping_basket_sharp,fontWeight: FontWeight.bold,)),
+                    Text("View Cart ")
+                  ],
+                ),
               ],
             ),
           ),

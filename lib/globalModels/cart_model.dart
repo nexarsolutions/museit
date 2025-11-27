@@ -18,6 +18,7 @@ class CartModel {
         defaultRecipientIds = <PreSavedRecipient>[].obs;
 
   Map<String, dynamic> toMap() {
+    print("defaultRecipientIds length: ${defaultRecipientIds.length}");
     return {
       'songs': songs.map(
         (song) {
@@ -28,6 +29,7 @@ class CartModel {
               "typeId": song.typeId,
               "name": song.name,
               "link": publicUrl,
+
             };
           }
           // For other song types, use toJson as normal
