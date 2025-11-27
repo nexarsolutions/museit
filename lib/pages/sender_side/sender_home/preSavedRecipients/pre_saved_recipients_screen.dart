@@ -8,7 +8,6 @@ import 'package:musit/main.dart';
 import 'package:musit/pages/allRecipients/all_recipients.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/controller/pre_saved_recipients_controller.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/widget/view_cart.dart';
-import 'package:musit/pages/sender_side/sender_send_song/add_songs/controller/add_songs_controller.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
@@ -119,7 +118,6 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                                       ),
                                 isSelected: isSelected,
                                 onTap: () {
-
                                   if (isSelected) {
                                     controller.selectedUsersId.removeWhere(
                                         (element) =>
@@ -148,8 +146,6 @@ class PreSavedRecipientsScreen extends StatelessWidget {
               children: [
                 Flexible(
                   child: CustomButton(
-
-
                       onPressed: () {
                         // if (controller.selectedUsersId.value.isEmpty) {
                         //   errorDialog(
@@ -172,7 +168,9 @@ class PreSavedRecipientsScreen extends StatelessWidget {
 
                           onPressedSave(controller.selectedUsersId.value, true);
                         },
-                        icon: Icon(Icons.add_shopping_cart_outlined,fontWeight: FontWeight.bold,)),
+                        icon: Icon(
+                          Icons.add_shopping_cart_outlined,
+                        )),
                     Text("Add to Cart ")
                   ],
                 ),
@@ -181,16 +179,20 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                     IconButton(
                         onPressed: () {
                           Get.bottomSheet(
-                            SafeArea(child: CartListBottomSheet(cartItems: userManager.cartItems)),
+                            SafeArea(
+                                child: CartListBottomSheet(
+                                    cartItems: userManager.cartItems)),
                             isScrollControlled: true,
                             backgroundColor: Colors.white,
                             shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.vertical(top: Radius.circular(20)),
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20)),
                             ),
                           );
                         },
-                        icon: Icon(Icons.shopping_basket_sharp,fontWeight: FontWeight.bold,)),
+                        icon: Icon(
+                          Icons.shopping_basket_sharp,
+                        )),
                     Text("View Cart ")
                   ],
                 ),

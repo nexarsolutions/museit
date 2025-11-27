@@ -295,9 +295,9 @@ class AddSongsScreen extends StatelessWidget {
                               onPressedSave:
                                   (List<PreSavedRecipient> selectedUser,
                                       bool addToCart) async {
-
-                                List<PreSavedRecipient> _selectedUsers
-                                =List<PreSavedRecipient>.from(selectedUser.map((e)=>e));
+                                List<PreSavedRecipient> _selectedUsers =
+                                    List<PreSavedRecipient>.from(
+                                        selectedUser.map((e) => e));
                                 print("Selected User=${_selectedUsers.length}");
                                 if (userManager.cartItems.isEmpty &&
                                     _selectedUsers.isEmpty) {
@@ -315,7 +315,8 @@ class AddSongsScreen extends StatelessWidget {
                                 if (addToCart && _selectedUsers.isNotEmpty) {
                                   controller.addToCart(
                                       voiceSongs, _selectedUsers);
-                                  await Future.delayed(Duration(seconds: 2));
+                                  await Future.delayed(
+                                      Duration(milliseconds: 100));
                                   print("selectedUser");
                                   print(_selectedUsers.length);
                                   Get.to(() => SenderBottomBar());

@@ -19,25 +19,29 @@ class SenderBottomBar extends StatelessWidget {
       bottom: true,
       top: false,
       child: Scaffold(
-        floatingActionButton:      SizedBox(
+        floatingActionButton: SizedBox(
           height: 70,
           width: 80,
           child: FloatingActionButton(
-
             backgroundColor: Colors.white,
-
-            onPressed: () { Get.bottomSheet(
-              SafeArea(child: CartListBottomSheet(cartItems: userManager.cartItems)),
-              isScrollControlled: true,
-              backgroundColor: Colors.white,
-              shape: const RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-            ); },
+            onPressed: () {
+              Get.bottomSheet(
+                SafeArea(
+                    child:
+                        CartListBottomSheet(cartItems: userManager.cartItems)),
+                isScrollControlled: true,
+                backgroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+              );
+            },
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-               Icon(Icons.shopping_basket_sharp,fontWeight: FontWeight.bold,),
+                Icon(
+                  Icons.shopping_basket_sharp,
+                ),
                 Text("View Cart ")
               ],
             ),

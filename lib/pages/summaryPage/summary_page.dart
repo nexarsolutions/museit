@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/main.dart';
-import 'package:musit/pages/select_role/select_role_screen.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/controller/add_songs_controller.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
@@ -24,6 +23,7 @@ class SentSongSummaryPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: whiteColor,
       body: SafeArea(
+        top: false,
         child: Column(
           spacing: 10,
           children: [

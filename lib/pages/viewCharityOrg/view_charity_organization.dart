@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:musit/common_widgets/recipients_card.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
-import 'package:musit/globalModels/payment_model.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/controller/add_songs_controller.dart';
 import 'package:musit/pages/viewCharityOrg/widget/view_carity_card.dart';
-import 'package:musit/services/api_service.dart';
 import 'package:musit/services/auth_service.dart';
-import 'package:musit/services/payment_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
-import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/show_payment_bootm_sheet.dart';
 
 import '../../../../widgets/custom_text_field.dart';
-import '../../widgets/web_view_screen.dart';
-import '../sendBottombar/sender_bottom_bar.dart';
 import '../summaryPage/summary_page.dart';
 import 'controller/view_charity_org_controller.dart';
 
@@ -130,6 +123,7 @@ class ViewCharityOrganization extends StatelessWidget {
                                 itemCount: userList.length,
                                 itemBuilder: (context, index) {
                                   final charityUser = userList[index];
+
                                   return Obx(() {
                                     bool? isSelected =
                                         controller.selectedCharity.value ==
@@ -157,13 +151,10 @@ class ViewCharityOrganization extends StatelessWidget {
                   ),
                   SizedBox(height: 16),
 
-                  Obx(
-                    () => Center(
-                        child: Text(
-                            'Would you like to donate extra £${Get.find<AddSongsController>().moreCharityAmount.value}',
-                            textAlign: TextAlign.center,
-                            style: manRope.copyWith(fontSize: 13))),
-                  ),
+                  Center(
+                      child: Text('Would you like to donate extra ',
+                          textAlign: TextAlign.center,
+                          style: manRope.copyWith(fontSize: 13))),
 
                   SizedBox(height: 6),
                   CustomButton(

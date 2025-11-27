@@ -4,6 +4,7 @@ import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/main.dart';
 import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
 import 'package:musit/services/api_service.dart';
+import 'package:musit/utils/global_functions.dart';
 
 import '../globalModels/filtered_recipients.dart';
 import '../globalModels/presaved_receipents.dart';
@@ -215,6 +216,8 @@ class AuthService {
       await _api.handleGetResponse(
         apiMethod: () => getAllCharityApi(search: search),
         onSuccess: (response) {
+          print("response");
+          customPrint(response.toString());
           final receiptResponseModel = CharityResponseModel.fromJson(response);
           final newUserList = receiptResponseModel.response?.rows ?? [];
           userList.assignAll(newUserList);
