@@ -151,7 +151,6 @@ class SentSongsScreen extends StatelessWidget {
                                     horizontal: 12, vertical: 10),
                                 child: SongCard(
                                   model: song,
-                                  showPlaylistIcon: false,
                                 ),
                               ),
                             )),

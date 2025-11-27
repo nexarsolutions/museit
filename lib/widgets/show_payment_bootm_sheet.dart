@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/widgets/custom_bottom_sheet.dart';
 import 'package:musit/widgets/custom_text_field.dart';
-
-
 void showPaymentBottomSheet({
   required BuildContext context,
   required Function(double amount) onAmountSubmitted,
 }) {
   final amountController = TextEditingController();
-  final isAmountEntered = false.obs;
+  final RxDouble selectedAmount = 0.0.obs;
   final formKey = GlobalKey<FormState>();
+
+  final List<double> presetAmounts = [10, 20, 50, 100, 200];
 
   customBottomSheet(
     child: Container(
@@ -33,15 +33,44 @@ void showPaymentBottomSheet({
               ),
             ),
             const SizedBox(height: 16),
+
             const Text(
               "Donate",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 16),
+
+            const SizedBox(height: 20),
+
+            /// 💸 Preset Amounts
+            Obx(() => Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: presetAmounts.map((amount) {
+                final isSelected = selectedAmount.value == amount;
+
+                return ChoiceChip(
+                  label: Text("£$amount"),
+                  selected: isSelected,
+                  selectedColor: Colors.black,
+                  labelStyle: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  onSelected: (_) {
+                    selectedAmount.value = amount;
+                    amountController.text = amount.toString();
+                  },
+                );
+              }).toList(),
+            )),
+
+            const SizedBox(height: 20),
+
+            /// ✍️ Custom Amount
             CustomTextField(
               controller: amountController,
               keyboardType: TextInputType.number,
-              hintText: "Enter donation amount",
+              hintText: "Or enter custom amount",
               borderRadius: 12,
               isPrefixIcon: true,
               prefixIcon: const Icon(Icons.currency_pound),
@@ -52,28 +81,20 @@ void showPaymentBottomSheet({
                 }
 
                 final amount = double.tryParse(text);
-                if (amount == null) {
-                  return "Please enter a valid number";
-                }
+                if (amount == null) return "Enter valid number";
+                if (amount <= 0) return "Amount must be greater than zero";
+                if (amount > 1000000) return "Amount too large";
 
-                if (amount <= 0) {
-                  return "Amount must be greater than zero";
-                }
-
-                if (amount > 1000000) {
-                  return "Amount too large";
-                }
-
-                return null; // ✅ All good
+                return null;
               },
               onChanged: (value) {
-                isAmountEntered.value = value.trim().isNotEmpty;
+                selectedAmount.value = double.tryParse(value) ?? 0.0;
               },
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
-            /// Reactive submit button
+            /// 🚀 Submit Button
             Obx(() {
               return SizedBox(
                 width: double.infinity,
@@ -87,17 +108,17 @@ void showPaymentBottomSheet({
                   ),
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      onAmountSubmitted(
-                          double.tryParse(amountController.text.trim()) ?? 0.0);
+                      onAmountSubmitted(selectedAmount.value);
                     }
                   },
                   child: Text(
-                    isAmountEntered.value ? "Continue" : "Submit",
+                    selectedAmount.value > 0 ? "Continue" : "Submit",
                     style: const TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
               );
             }),
+
             const SizedBox(height: 8),
           ],
         ),

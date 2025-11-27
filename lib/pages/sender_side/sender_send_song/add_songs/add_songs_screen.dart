@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
+import 'package:musit/main.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
+import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/widget/build_youtube_widget.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/widget/connect_account_prompt.dart';
+import 'package:musit/pages/viewCharityOrg/view_charity_organization.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/utils/dialog_utilities.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
@@ -12,6 +15,7 @@ import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_text_field.dart';
 import 'package:musit/widgets/error_widget_future_stream.dart';
 
+import '../../../../globalModels/presaved_receipents.dart';
 import '../../../../globalModels/song_model.dart';
 import '../../../../services/apple_music_service.dart';
 import '../../../../services/spotify_auth_service.dart';
@@ -288,14 +292,37 @@ class AddSongsScreen extends StatelessWidget {
                       if (controller.songs.isNotEmpty) {
                         /// navigate to send view screen
                         Get.to(() => PreSavedRecipientsScreen(
-                              onPressedSave: (List<int> selectedUser) {
-                                if (selectedUser.isEmpty) {
+                              onPressedSave:
+                                  (List<PreSavedRecipient> selectedUser,
+                                      bool addToCart) async {
+                                if (userManager.cartItems.isEmpty &&
+                                    selectedUser.isEmpty) {
                                   customErrorSnackBar(
-                                      content:
-                                          "Select Users or enter phone number to continue");
+                                      content: "Select Users to continue");
                                   return;
                                 }
-                                controller.shareSong(voiceSongs, selectedUser);
+
+                                if (addToCart && selectedUser.isEmpty) {
+                                  customErrorSnackBar(
+                                      content: "Nothing to add");
+                                  return;
+                                }
+
+                                if (addToCart) {
+                                  controller.addToCart(
+                                      voiceSongs, selectedUser);
+                                  await Future.delayed(Duration(seconds: 2));
+                                  Get.offAll(() => SenderBottomBar());
+                                  customErrorSnackBar(
+                                      content: "Successfully added to cart");
+                                  return;
+                                }
+                                if (selectedUser.isNotEmpty) {
+                                  controller.addToCart(
+                                      voiceSongs, selectedUser);
+                                }
+
+                                Get.to(() => ViewCharityOrganization());
                               },
                             ));
                       } else {

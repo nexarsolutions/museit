@@ -122,29 +122,32 @@ class EditProfileScreen extends StatelessWidget {
                                   bottom: -3,
                                   child: GestureDetector(
                                     onTap: () async {
-                                      pickImageBottomSheetFromCameraGallery(
-                                        () async {
-                                          String? pickedImagePath =
-                                              await pickImage(
-                                            ImageSource.camera,
-                                          );
-                                          if (pickedImagePath != null) {
-                                            user.profile.value =
-                                                pickedImagePath;
-                                            Get.back();
-                                          }
-                                        },
-                                        () async {
-                                          String? pickedImagePath =
-                                              await pickImage(
-                                            ImageSource.gallery,
-                                          );
-                                          if (pickedImagePath != null) {
-                                            user.profile.value =
-                                                pickedImagePath;
-                                            Get.back();
-                                          }
-                                        },
+                                      pickImageBottomSheet(
+                                        (camera) => user.profile.value = camera,
+                                        (gallery) => user.profile.value =
+                                            gallery,
+                                        // () async {
+                                        //   String? pickedImagePath =
+                                        //       await pickImage(
+                                        //     ImageSource.camera,
+                                        //   );
+                                        //   if (pickedImagePath != null) {
+                                        //     user.profile.value =
+                                        //         pickedImagePath;
+                                        //     Get.back();
+                                        //   }
+                                        // },
+                                        // () async {
+                                        //   String? pickedImagePath =
+                                        //       await pickImage(
+                                        //     ImageSource.gallery,
+                                        //   );
+                                        //   if (pickedImagePath != null) {
+                                        //     user.profile.value =
+                                        //         pickedImagePath;
+                                        //     Get.back();
+                                        //   }
+                                        // },
                                       );
                                     },
                                     child: Image.asset(

@@ -36,7 +36,7 @@ class VoiceNoteScreen extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: CustomAppBar(
-                      text: 'Add Voice Note',
+                      text: '',
                       isBack: true,
                       onTap: () {
                         Get.put(SenderBottomBarController()).selectedTab.value =

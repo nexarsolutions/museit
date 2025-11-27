@@ -4,18 +4,23 @@ import 'package:musit/common_widgets/recipients_card.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/globalModels/user_model.dart';
+import 'package:musit/main.dart';
 import 'package:musit/pages/allRecipients/all_recipients.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/controller/pre_saved_recipients_controller.dart';
+import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/widget/view_cart.dart';
+import 'package:musit/pages/sender_side/sender_send_song/add_songs/controller/add_songs_controller.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
+import '../../../../globalModels/presaved_receipents.dart';
 import '../../../../widgets/custom_button.dart';
 
 class PreSavedRecipientsScreen extends StatelessWidget {
   PreSavedRecipientsScreen({super.key, required this.onPressedSave});
 
   final controller = Get.put(PreSavedRecipientsController());
-  final Function(List<int> selectedUsersId) onPressedSave;
+  final Function(List<PreSavedRecipient> selectedUsersId, bool addToCart)
+      onPressedSave;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +100,7 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                             () {
                               bool? isSelected =
                                   controller.selectedUsersId.value.any(
-                                (element) => element == userList[index].id,
+                                (element) => element.id == userList[index].id,
                               );
 
                               return RecipientsCard(
@@ -114,14 +119,16 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                                       ),
                                 isSelected: isSelected,
                                 onTap: () {
+
                                   if (isSelected) {
                                     controller.selectedUsersId.removeWhere(
                                         (element) =>
-                                            element == userList[index].id);
+                                            element.id == userList[index].id);
                                   } else {
                                     if (userList[index].id != null) {
+                                      controller.selectedUsersId.clear();
                                       controller.selectedUsersId
-                                          .add(userList[index].id!);
+                                          .add(userList[index]);
                                     }
                                   }
                                 },
@@ -134,16 +141,44 @@ class PreSavedRecipientsScreen extends StatelessWidget {
               ),
             ),
           ),
-          CustomButton(
-              onPressed: () {
-                // if (controller.selectedUsersId.value.isEmpty) {
-                //   errorDialog(
-                //       content: "Select User/Receipt to continue.");
-                //   return;
-                // }
-                onPressedSave(controller.selectedUsersId);
-              },
-              text: 'Send'),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              spacing: 10,
+              children: [
+                Flexible(
+                  child: CustomButton(
+                      onPressed: () {
+                        // if (controller.selectedUsersId.value.isEmpty) {
+                        //   errorDialog(
+                        //       content: "Select User/Receipt to continue.");
+                        //   return;
+                        // }
+                        onPressedSave(controller.selectedUsersId, false);
+                      },
+                      text: 'Send'),
+                ),
+                IconButton(
+                    onPressed: () {
+                      onPressedSave(controller.selectedUsersId, true);
+                    },
+                    icon: Icon(Icons.add_shopping_cart_outlined)),
+                IconButton(
+                    onPressed: () {
+                      Get.bottomSheet(
+                        SafeArea(child: CartListBottomSheet(cartItems: userManager.cartItems)),
+                        isScrollControlled: true,
+                        backgroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.shopping_basket_sharp)),
+              ],
+            ),
+          ),
           SizedBox(height: 12),
         ],
       ),

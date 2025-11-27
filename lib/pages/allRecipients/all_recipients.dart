@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/common_widgets/recipients_card.dart';
@@ -6,7 +8,9 @@ import 'package:musit/constants/text_styles.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/services/song_service.dart';
+import 'package:musit/services/upload_file_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
+import 'package:musit/utils/image_picker_bottom_sheet.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 import 'package:musit/widgets/custom_tab_button.dart';
@@ -90,6 +94,77 @@ class AllRecipients extends StatelessWidget {
                                   controller: controller.phoneController,
                                   keyboardType: TextInputType.phone,
                                   hintText: 'Phone Number',
+                                ),
+
+                                const SizedBox(height: 16),
+                                GestureDetector(
+                                  onTap: () {
+                                    pickImageBottomSheet(
+                                      (camera) {
+                                        controller.selectedImage.value = camera;
+                                      },
+                                      (gallery) {
+                                        controller.selectedImage.value =
+                                            gallery;
+                                      },
+                                    );
+                                  },
+                                  child: Stack(
+                                    alignment: Alignment.bottomRight,
+                                    children: [
+                                      Obx(
+                                        () => CircleAvatar(
+                                          radius: 45,
+                                          backgroundImage: controller
+                                                      .selectedImage.value !=
+                                                  null
+                                              ? FileImage(File(controller
+                                                  .selectedImage.value!))
+                                              : controller.selectedLogo.value !=
+                                                      null
+                                                  ? AssetImage(controller
+                                                      .selectedLogo
+                                                      .value!) as ImageProvider
+                                                  : AssetImage(
+                                                      controller.logoList[0]),
+                                        ),
+                                      ),
+                                      CircleAvatar(
+                                        radius: 14,
+                                        backgroundColor: Colors.black,
+                                        child: Icon(Icons.camera_alt,
+                                            size: 16, color: Colors.white),
+                                      )
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  height: 90,
+                                  child: SingleChildScrollView(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      spacing: 10,
+                                      children: List.generate(
+                                        controller.logoList.length,
+                                        (index) => GestureDetector(
+                                          onTap: () => {
+                                            controller.selectedLogo.value =
+                                                controller.logoList[index],
+                                            controller.selectedImage.value =
+                                                null
+                                          },
+                                          child: CircleAvatar(
+                                            radius: 45,
+                                            backgroundImage: AssetImage(
+                                                controller.logoList[index]),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ])
                             : FutureBuilder(
@@ -182,6 +257,13 @@ class AllRecipients extends StatelessWidget {
           ),
           CustomButton(
               onPressed: () async {
+                String? netImage;
+                if (selectedIndex.value == 1 &&
+                    controller.selectedImage.value != '') {
+                  netImage = await UploadFileService().fileUploadResult(
+                      uploadData: controller.selectedImage.value!);
+                }
+
                 await ApiService().handleResponse(
                   apiMethod: () async => await ApiService().post(
                       "recipients/default/add",
@@ -204,7 +286,9 @@ class AllRecipients extends StatelessWidget {
                                   .trim()
                                   .isNotEmpty)
                                 "phone": controller.phoneController.text.trim(),
-                              // "picture": "saqib.jpg"
+                              "picture": netImage ??
+                                  "https://museit-s3bucket.s3.amazonaws"
+                                      ".com/1764239445835-app_icon.jpg"
                             }),
                   onSuccess: (response) {
                     onPressedSave();

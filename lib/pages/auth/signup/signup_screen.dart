@@ -17,7 +17,7 @@ class SignupScreen extends StatelessWidget {
   });
 
   final controller = Get.put(SignupController());
-  final int
+  final RxInt
       roleId; //1- sender/muse, 2- receiver/charity, 3- charity organization
 
   @override
@@ -26,7 +26,14 @@ class SignupScreen extends StatelessWidget {
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          AuthHeader(title: 'Sign Up'),
+          Obx(
+            () => AuthHeader(
+                title: roleId.value == 1
+                    ? 'Sign Up Sender'
+                    : roleId.value == 2
+                        ? 'Sign Up Recipient'
+                        : 'Sign Up'),
+          ),
           SizedBox(height: 18),
           Expanded(
             child: SingleChildScrollView(
@@ -167,12 +174,42 @@ class SignupScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    const SizedBox(height: 42),
+                    const SizedBox(height: 10),
+                    if (roleId.value != 3)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Obx(
+                            () => Text(
+                              "Switch to ${roleId.value == 1 ? 'Recipient' : 'Sender'}",
+                            ),
+                          ),
+                          Obx(() => Switch(
+                                value: controller.switchValue.value,
+                                inactiveThumbColor: blackColor,
+                                inactiveTrackColor: blueColor,
+                                onChanged: (value) async {
+                                  controller.switchValue.toggle();
+
+                                  // if (value) {
+                                  roleId.value == 1
+                                      ? roleId.value = 2
+                                      : roleId.value = 1;
+                                  // }
+                                  // await Future.delayed(
+                                  //     Duration(milliseconds: 500));
+
+                                  // controller.switchValue.toggle();
+                                },
+                              )),
+                        ],
+                      ),
+                    const SizedBox(height: 10),
                     Center(
                       child: CustomButton(
                         onPressed: () {
                           if (controller.formKey.currentState!.validate()) {
-                            controller.checkEmailExists(roleId);
+                            controller.checkEmailExists(roleId.value);
                           }
                         },
                         text: 'Sign up',

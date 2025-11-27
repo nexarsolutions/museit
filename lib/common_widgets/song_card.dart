@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
@@ -9,12 +10,13 @@ class SongCard extends StatelessWidget {
   const SongCard({
     super.key,
     required this.model,
-    this.showPlaylistIcon = false,
+    this.lastWidget,
     this.index,
   });
 
   final SongModel model;
-  final bool showPlaylistIcon;
+
+  final Widget? lastWidget;
   final int? index;
 
   @override
@@ -56,11 +58,7 @@ class SongCard extends StatelessWidget {
                 // 🖼 Image with shimmer placeholder
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: _buildImageWithShimmer(
-                      '' /*model.paidSong != null
-                      ? model.paidSong!.image.showImage
-                      : model.image.showImage*/
-                      ),
+                  child: _buildImageWithShimmer(model.image),
                 ),
 
                 const SizedBox(width: 12),
@@ -98,12 +96,7 @@ class SongCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
 
-                if (showPlaylistIcon)
-                  ReorderableDragStartListener(
-                    index: index ?? 0,
-                    child: Image.asset('assets/images/playlist_icon.png',
-                        scale: 3.5),
-                  ),
+                lastWidget ?? const SizedBox.shrink()
               ],
             ),
           ),
@@ -114,6 +107,14 @@ class SongCard extends StatelessWidget {
 
   // ✅ Helper: build shimmer fallback for network image
   Widget _buildImageWithShimmer(String? imageUrl) {
+    return CachedNetworkImage(
+      imageUrl: imageUrl ?? '',
+      height: 60,
+      width: 60,
+      placeholder: (context, url) => Image.asset('assets/images/app_icon.jpg'),
+      errorWidget: (context, url, error) =>
+          Image.asset('assets/images/app_icon.jpg'),
+    );
     return Image.network(
       imageUrl ?? '',
       width: 60,

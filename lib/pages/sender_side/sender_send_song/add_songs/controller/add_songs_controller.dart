@@ -6,6 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:music_kit/music_kit.dart';
 import 'package:musit/globalModels/admin_songs_model.dart';
+import 'package:musit/globalModels/cart_model.dart';
+import 'package:musit/main.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
 import 'package:musit/services/upload_file_service.dart';
@@ -13,6 +15,7 @@ import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../constants/app_enums.dart';
+import '../../../../../globalModels/presaved_receipents.dart';
 import '../../../../../globalModels/song_model.dart';
 import '../../../../../services/apple_music_service.dart';
 import '../../../../../services/spotify_auth_service.dart';
@@ -28,6 +31,8 @@ class AddSongsController extends GetxController {
   final RxInt songTypeId = 0.obs;
   final searchController = TextEditingController();
   RxString searchQuery = ''.obs;
+  final RxnInt selectedCharityId = RxnInt();
+  final RxnDouble moreCharityAmount = RxnDouble();
 
   ///songs list to handle selection for backend storage
   RxList<SongModel> songs = <SongModel>[].obs;
@@ -450,7 +455,7 @@ class AddSongsController extends GetxController {
     }
 
     String link = song.link!;
-    
+
     // Extract catalog ID if present in format: link|catalog:ID
     String? catalogId;
     if (link.contains('|catalog:')) {
@@ -462,7 +467,9 @@ class AddSongsController extends GetxController {
     }
 
     // If we have a valid catalog ID, convert to public Apple Music URL
-    if (catalogId != null && catalogId.isNotEmpty && _isNumericCatalogId(catalogId)) {
+    if (catalogId != null &&
+        catalogId.isNotEmpty &&
+        _isNumericCatalogId(catalogId)) {
       // Generate public Apple Music URL format: https://music.apple.com/[country]/song/id/[catalog-id]
       // Using 'us' as default country code (can be made configurable based on user's region)
       // Format: https://music.apple.com/us/song/id/[catalog-id]
@@ -474,9 +481,8 @@ class AddSongsController extends GetxController {
     return song.link ?? '';
   }
 
-  Future<void> shareSong(
-      List<SongModel> voiceRecordings, List<int> selectedUsers) async {
-    // Step 1: Upload voice recordings (if any)
+  Future<void> addToCart(List<SongModel> voiceRecordings,
+      List<PreSavedRecipient> selectedUsers) async {
     List<Map<AudioKey, dynamic>> voices = [];
 
     if (voiceRecordings.isNotEmpty) {
@@ -492,42 +498,28 @@ class AddSongsController extends GetxController {
         }
       }
     }
+    userManager.cartItems.add(CartModel(
+      defaultRecipientIds:
+          RxList<PreSavedRecipient>.from(selectedUsers.map((e) => e)),
+      songs: RxList<SongModel>.from(songs.map(
+        (element) => element,
+      )),
+      voices: RxList<Map<AudioKey, dynamic>>.from(voices.map(
+        (e) => e,
+      )),
+    ));
+    await Future.delayed(Duration(milliseconds: 500));
+    songs.clear();
+    selectedUsers.clear();
+    voiceRecordings.clear();
+  }
 
-    // Step 2: Prepare payload for API request
-    // Process Apple Music songs (typeId == 3) to normalize URLs and ensure catalog IDs
+  Future<void> shareSong() async {
     var data = {
-      'songs': songs
-          .map(
-            (song) {
-              // If it's an Apple Music song, convert to public Apple Music URL format
-              if (song.typeId == 3) {
-                final publicUrl = _convertToPublicAppleMusicUrl(song);
-                return {
-                  "typeId": song.typeId,
-                  "name": song.name,
-                  "link": publicUrl,
-                };
-              }
-              // For other song types, use toJson as normal
-              return song.toJson();
-            },
-          )
-          .toList(),
-      if (voices.isNotEmpty)
-        'voiceNotes': voices
-            .map((e) => {'name': e[AudioKey.name], 'link': e[AudioKey.path]})
-            .toList(),
-      if (selectedUsers.isNotEmpty)
-        'defaultRecipientIds': selectedUsers
-            .map(
-              (user) => user,
-            )
-            .toList(),
+      "cartItems": userManager.cartItems.map((e) => e.toMap()).toList(),
+      "charityId": selectedCharityId.value,
+      if (moreCharityAmount.value != null) "amount": moreCharityAmount.value
     };
-
-    print("data here");
-
-    print(data.toString());
 
     // Step 3: Call API to share songs
     await ApiService().handleResponse(
@@ -588,6 +580,7 @@ class AddSongsController extends GetxController {
         searchSpotifyResults.clear();
 
         searchInYoutubeList.clear();
+        userManager.cartItems.clear();
       },
     );
   }

@@ -24,17 +24,20 @@ class CustomImagePicker extends StatelessWidget {
   });
 
   Future<void> _handleUploadTap() async {
-    pickImageBottomSheetFromCameraGallery(
-      () async {
-        final path = await pickImage(ImageSource.camera);
-        if (path != null) pickedImagePath.value = path;
-        Get.back();
-      },
-      () async {
-        final path = await pickImage(ImageSource.gallery);
-        if (path != null) pickedImagePath.value = path;
-        Get.back();
-      },
+    pickImageBottomSheet(
+          (camera) => pickedImagePath.value = camera,
+          (gallery) => pickedImagePath.value =
+          gallery,
+      // () async {
+      //   final path = await pickImage(ImageSource.camera);
+      //   if (path != null) pickedImagePath.value = path;
+      //   Get.back();
+      // },
+      // () async {
+      //   final path = await pickImage(ImageSource.gallery);
+      //   if (path != null) pickedImagePath.value = path;
+      //   Get.back();
+      // },
     );
   }
 

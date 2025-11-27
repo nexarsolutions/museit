@@ -118,34 +118,39 @@ class EditCharityProfileScreen extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: () async {
-                                  pickImageBottomSheetFromCameraGallery(
-                                        () async {
-                                      String?
-                                      pickedImagePath =
-                                      await pickImage(
-                                        ImageSource
-                                            .camera,
-                                      );
-                                      controller
-                                          .pickedImagePath
-                                          .value =
-                                      pickedImagePath!;
-                                      Get.back();
-                                    },
-                                        () async {
-                                      String?
-                                      pickedImagePath =
-                                      await pickImage(
-                                        ImageSource
-                                            .gallery,
-                                      );
-                                      controller
-                                          .pickedImagePath
-                                          .value =
-                                      pickedImagePath!;
-                                      Get.back();
-                                    },
-                                  );
+                                  pickImageBottomSheet(
+                                    (camera) => controller.pickedImagePath
+                                        .value=camera,
+
+                                    //     () async {
+                                    //   String?
+                                    //   pickedImagePath =
+                                    //   await pickImage(
+                                    //     ImageSource
+                                    //         .camera,
+                                    //   );
+                                    //   controller
+                                    //       .pickedImagePath
+                                    //       .value =
+                                    //   pickedImagePath!;
+                                    //   Get.back();
+                                    // },
+                                    (gallery) => controller.pickedImagePath
+                                        .value=gallery,
+                                    //     () async {
+                                          //   String?
+                                          //   pickedImagePath =
+                                          //   await pickImage(
+                                          //     ImageSource
+                                          //         .gallery,
+                                          //   );
+                                          //   controller
+                                          //       .pickedImagePath
+                                          //       .value =
+                                          //   pickedImagePath!;
+                                          //   Get.back();
+                                          // },
+                                        );
                                 },
                                 child: Image.asset(
                                   'assets/images/upload_icon.png',

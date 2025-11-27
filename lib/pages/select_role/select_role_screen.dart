@@ -62,14 +62,14 @@ class SelectRoleScreen extends StatelessWidget {
             Spacer(),
             CustomButton(
               onPressed: () {
-                Get.to(() => SignupScreen(roleId: 1));
+                Get.to(() => SignupScreen(roleId: 1.obs));
               },
-              text: 'MUSE',
+              text: 'Sender',
             ),
             SizedBox(height: 16),
             CustomButton(
               onPressed: () {
-                Get.to(() => SignupScreen(roleId: 2));
+                Get.to(() => SignupScreen(roleId: 2.obs));
               },
               text: 'Recipient',
               backgroundColor: whiteColor,
@@ -103,7 +103,8 @@ class SelectRoleScreen extends StatelessWidget {
                       style: manRope.copyWith(
                           fontWeight: FontWeight.w600, color: greenColor),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => Get.to(() => SignupScreen(roleId: 3)),
+                        ..onTap =
+                            () => Get.to(() => SignupScreen(roleId: 3.obs)),
                     ),
                   ],
                 ),

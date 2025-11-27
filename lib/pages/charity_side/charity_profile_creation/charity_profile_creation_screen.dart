@@ -89,25 +89,29 @@ class CharityProfileCreationScreen extends StatelessWidget {
         _uploadBox(
           imagePath: controller.registrationCertPath,
           onTap: () async {
-            pickImageBottomSheetFromCameraGallery(
-              () async {
-                String? pickedImagePath = await pickImage(
-                  ImageSource.camera,
-                );
-                if (pickedImagePath != null) {
-                  controller.registrationCertPath.value = pickedImagePath;
-                  Get.back();
-                }
-              },
-              () async {
-                String? pickedImagePath = await pickImage(
-                  ImageSource.gallery,
-                );
-                if (pickedImagePath != null) {
-                  controller.registrationCertPath.value = pickedImagePath;
-                  Get.back();
-                }
-              },
+            pickImageBottomSheet(
+                  (camera) => controller.registrationCertPath
+                  .value=camera,
+              // () async {
+              //   String? pickedImagePath = await pickImage(
+              //     ImageSource.camera,
+              //   );
+              //   if (pickedImagePath != null) {
+              //     controller.registrationCertPath.value = pickedImagePath;
+              //     Get.back();
+              //   }
+              // },
+                  (gallery) => controller.registrationCertPath
+                  .value=gallery,
+              // () async {
+              //   String? pickedImagePath = await pickImage(
+              //     ImageSource.gallery,
+              //   );
+              //   if (pickedImagePath != null) {
+              //     controller.registrationCertPath.value = pickedImagePath;
+              //     Get.back();
+              //   }
+              // },
             );
           },
         ),

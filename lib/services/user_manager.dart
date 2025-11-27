@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:musit/globalModels/cart_model.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,15 +28,17 @@ class UserManager {
   final RxBool _isFirstOpen = false.obs;
   final RxBool _isFirstTimeAddSongScreen = false.obs;
 
-  bool get isFirstOpen => _isFirstOpen.value;
-
-  bool get isFirstTimeAddSongScreen => _isFirstTimeAddSongScreen.value;
-
   // In-memory cache of the company model
   final Rxn<UserModel> _cachedUserModel = Rxn<UserModel>();
 
+  final RxList<CartModel> cartItems = <CartModel>[].obs;
+
   ///get current user
   UserModel? get cachedUser => _cachedUserModel.value;
+
+  bool get isFirstOpen => _isFirstOpen.value;
+
+  bool get isFirstTimeAddSongScreen => _isFirstTimeAddSongScreen.value;
 
   ///get obx user
   Rxn<UserModel> get obsUser => _cachedUserModel;

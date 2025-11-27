@@ -84,23 +84,23 @@ Future<String?> pickImage(ImageSource imageSource) async {
   }
 }
 
-Future<String?> pickVideo(ImageSource source) async {
-  final picker = ImagePicker();
-  final XFile? video = await picker.pickVideo(source: source);
-  return video?.path;
-}
-
-Future<String?> pickDocument() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
-  );
-
-  if (result != null && result.files.single.path != null) {
-    return result.files.single.path!;
-  }
-  return null;
-}
+// Future<String?> pickVideo(ImageSource source) async {
+//   final picker = ImagePicker();
+//   final XFile? video = await picker.pickVideo(source: source);
+//   return video?.path;
+// }
+//
+// Future<String?> pickDocument() async {
+//   FilePickerResult? result = await FilePicker.platform.pickFiles(
+//     type: FileType.custom,
+//     allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+//   );
+//
+//   if (result != null && result.files.single.path != null) {
+//     return result.files.single.path!;
+//   }
+//   return null;
+// }
 
 void customPrint(String message, {int chunkSize = 800}) {
   final pattern = RegExp('.{1,$chunkSize}', dotAll: true);

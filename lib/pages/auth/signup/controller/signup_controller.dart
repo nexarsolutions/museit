@@ -38,6 +38,9 @@ class SignupController extends GetxController {
   final _apiService = ApiService();
   final _authService = AuthService();
 
+  RxBool switchValue = false.obs;
+
+
   //=================Check If Email Exists=========
   Future<void> checkEmailExists(int roleId) async {
     this.roleId.value = roleId;

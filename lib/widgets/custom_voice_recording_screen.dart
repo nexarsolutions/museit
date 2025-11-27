@@ -123,7 +123,8 @@ class _CustomVoiceRecordingScreenState
     recordingList.clear(); //if multiple change later
     recordingList.add(
       SongModel(
-        // image: 'assets/images/recording_thumbnail.png',
+        image:
+            'https://museit.life/wp-content/uploads/2025/11/unnamed-removebg-preview.png',
         name: fileName,
         link: currentRecordingPath,
       ),
@@ -146,7 +147,14 @@ class _CustomVoiceRecordingScreenState
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: 4),
+        Center(
+          child: Text(
+            'Record Voice Note',
+            style: manRopeSemiBold.copyWith(fontWeight: FontWeight.w900),
+          ),
+        ),
+        const SizedBox(height: 4),
         Obx(
           () => Column(
             children: [
@@ -182,7 +190,7 @@ class _CustomVoiceRecordingScreenState
               else
                 const SenderEmptyWaveForm(),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 4),
 
               // --- Control Buttons (Play / Record / Reset) ---
               Stack(
@@ -361,7 +369,19 @@ class _CustomVoiceRecordingScreenState
               },
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
-                child: SongCard(model: recordingList[index]),
+                child: SongCard(
+                  model: recordingList[index],
+                  lastWidget: IconButton(
+                      onPressed: () {
+                        try {
+                          recordingList.removeAt(index);
+                          customErrorSnackBar(content: "Removed Successfully");
+                        } catch (e) {
+                          customErrorSnackBar(content: e.toString());
+                        }
+                      },
+                      icon: Icon(Icons.delete)),
+                ),
               ),
             ),
           ),
