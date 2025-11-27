@@ -22,8 +22,11 @@ class CartListBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          SizedBox(
+            height: 20,
+          ),
           cartItems.isEmpty
-              ? Container(
+              ? SizedBox(
                   height: 300,
                   child: Center(child: Text("Cart is Empty")),
                 )
@@ -46,7 +49,7 @@ class CartListBottomSheet extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Cart ${index + 1}",
+                                    "Item ${index + 1}",
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

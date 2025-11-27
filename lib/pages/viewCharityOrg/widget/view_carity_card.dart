@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
@@ -19,6 +18,8 @@ class ViewCharityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("assets/images/${user.profile.value.showImage}");
+    print(user.profile);
     // Outer Container for the gradient border.
     return GestureDetector(
       onTap: onTap,
@@ -53,17 +54,15 @@ class ViewCharityCard extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.network(
-                        user.profile.value != ''
-                            ? user.profile.value.showImage
-                            : '',
-                        height: 70,
+                      Image.asset(
+                        "assets/images/${user.profile.value}",
+                        height: 50,
                         fit: BoxFit.fitHeight,
                         errorBuilder: (context, error, stackTrace) {
                           return Center(
                             child: Text(
-                              user.username.text != ''
-                                  ? user.username.text.split('').first
+                              user.username.text.isNotEmpty
+                                  ? user.username.text[0].toUpperCase()
                                   : '?',
                               style: TextStyle(
                                 fontSize: 20,

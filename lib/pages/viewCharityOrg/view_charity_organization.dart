@@ -123,23 +123,45 @@ class ViewCharityOrganization extends StatelessWidget {
                                 itemCount: userList.length,
                                 itemBuilder: (context, index) {
                                   final charityUser = userList[index];
+                                  print(charityUser.organtization);
+                                  // Organization → Asset Map
+                                  final organizationToAsset = {
+                                    "Endometriosis UK": "endometriosis.png",
+                                    "Trussell": "trussell-trust.png",
+                                    "Brain Tumour Research":
+                                        "brain-tumour-research.png",
+                                    "Pancreatic Cancer UK":
+                                        "pancreatic-cancer-uk.png",
+                                    "Shelter": "shelter.png",
+                                    "Motor Neurone Disease Association":
+                                        "mnda.png",
+                                  };
+
+                                  // Safely assign correct profile image
+                                  final resolvedProfile = organizationToAsset[
+                                          charityUser.organtization] ??
+                                      "default.png";
+
+                                  // Update locally
+                                  charityUser.user?.profile = resolvedProfile;
 
                                   return Obx(() {
-                                    bool? isSelected =
+                                    final isSelected =
                                         controller.selectedCharity.value ==
-                                            userList[index].id;
+                                            charityUser.id;
+
                                     return ViewCharityCard(
                                       user: UserModel(
                                         profile: RxString(
                                             charityUser.user?.profile ?? ''),
                                         username: TextEditingController(
-                                            text: charityUser.organtization ??
-                                                ''),
+                                          text: charityUser.organtization ?? '',
+                                        ),
                                       ),
                                       isSelected: isSelected,
-                                      onTap: () async {
+                                      onTap: () {
                                         controller.selectedCharity.value =
-                                            userList[index].id;
+                                            charityUser.id;
                                       },
                                     );
                                   });

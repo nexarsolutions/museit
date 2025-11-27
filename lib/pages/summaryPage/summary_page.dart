@@ -34,11 +34,14 @@ class SentSongSummaryPage extends StatelessWidget {
             // ==== Image Section ====
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                "assets/images/song_summary.jpg",
-                height: Get.height * 0.35,
-                width: Get.width,
-                fit: BoxFit.fitWidth,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  "assets/images/song_summary.jpg",
+                  height: Get.height * 0.35,
+                  width: Get.width,
+                  fit: BoxFit.fitWidth,
+                ),
               ),
             ),
 
@@ -57,7 +60,7 @@ class SentSongSummaryPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Cart ${index + 1}",
+                        "Item ${index + 1}",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
