@@ -261,10 +261,14 @@ class AllRecipients extends StatelessWidget {
           CustomButton(
               onPressed: () async {
                 if (selectedIndex.value == 1 &&
-                    controller.nameController.text.trim().isEmpty &&
+                    controller.nameController.text.trim().isEmpty) {
+                  customErrorSnackBar(content: "Please fill the name field");
+                  return;
+                }
+                if (selectedIndex.value == 1 &&
                     controller.emailController.text.trim().isEmpty &&
                     controller.phoneController.text.trim().isEmpty) {
-                  customErrorSnackBar(content: "Please fill all the fields");
+                  customErrorSnackBar(content: "Please fill the email/phone");
                   return;
                 }
 

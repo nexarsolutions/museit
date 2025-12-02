@@ -575,13 +575,13 @@ class AddSongsController extends GetxController {
                     apiMethod: () =>
                         SongService().songPaymentStatusAPi(orderId: orderId),
                     onSuccess: (success) {
-                      bool isPaid = success['response']['isPaid'] ?? false;
-                      if (isPaid) {
-                        Get.to(() => ViewCharityOrganization());
-                      } else {
-                        Get.offAll(() => SenderBottomBar());
-                        customErrorSnackBar(content: response['message']);
-                      }
+                      // bool isPaid = success['response']['isPaid'] ?? false;
+                      // if (isPaid) {
+                      //   Get.to(() => ViewCharityOrganization());
+                      // } else {
+                      Get.offAll(() => SenderBottomBar());
+                      customErrorSnackBar(content: 'Shared Successfully');
+                      // }
                     },
                   );
                 },

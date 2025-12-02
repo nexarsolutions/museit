@@ -28,7 +28,7 @@ import 'widget/build_spotify_widget.dart';
 class AddSongsScreen extends StatelessWidget {
   AddSongsScreen({super.key, required this.voiceSongs});
 
-  final controller = Get.put(AddSongsController());
+  final controller = Get.put(AddSongsController(), permanent: true);
   final SpotifyAuthService spotifyService = Get.find<SpotifyAuthService>();
   final AppleMusicService appleMusicService = AppleMusicService();
   final List<SongModel> voiceSongs;
@@ -319,13 +319,14 @@ class AddSongsScreen extends StatelessWidget {
                                       Duration(milliseconds: 100));
                                   print("selectedUser");
                                   print(_selectedUsers.length);
-                                  Get.to(() => SenderBottomBar());
+                                  Get.offAll(() => SenderBottomBar());
+
                                   customErrorSnackBar(
                                       content: "Successfully added to cart");
                                   return;
                                 }
                                 if (_selectedUsers.isNotEmpty) {
-                                  controller.addToCart(
+                                  await controller.addToCart(
                                       voiceSongs, _selectedUsers);
                                 }
 

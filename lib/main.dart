@@ -35,7 +35,12 @@ Future<void> main() async {
         );
       };
 
-      await userManager.init();
+      await Get.putAsync<UserManager>(() async {
+        final manager = UserManager();
+        await manager.init();
+        return manager;
+      }, permanent: true);
+
       await Get.putAsync<DeepLinkService>(() async {
         final service = DeepLinkService();
         return service.init();
