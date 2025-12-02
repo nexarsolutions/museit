@@ -1,6 +1,7 @@
 // ui/received_songs_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
 import '../../../common_widgets/song_card.dart';
 import '../../../constants/colors.dart';
@@ -110,6 +111,33 @@ class ReceivedSongsScreen extends StatelessWidget {
                                     horizontal: 12, vertical: 10),
                                 child: SongCard(
                                   model: song,
+                                  lastWidget: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 24,
+                                        backgroundImage:
+                                            fromUser?.profile != null &&
+                                                    fromUser?.profile != ''
+                                                ? NetworkImage(
+                                                    fromUser?.profile ?? '')
+                                                : null,
+                                        child: fromUser?.profile != null &&
+                                                fromUser?.profile != ''
+                                            ? null
+                                            : Center(
+                                                child: Text(
+                                                fromUser?.username
+                                                        ?.split('')
+                                                        .first
+                                                        .toUpperCase() ??
+                                                    '?',
+                                                style: manRopeSemiBold.copyWith(
+                                                    fontSize: 22),
+                                              )),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             )),

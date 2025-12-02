@@ -49,7 +49,11 @@ class RecipientProfileScreen extends StatelessWidget {
                     },
                   );
                 },
-                child: Image.asset('assets/images/logout_icon.png', scale: 3.5),
+                child: Image.asset(
+                  'assets/images/logout_icon.png',
+                  scale: 3.5,
+                  color: whiteColor,
+                ),
               ),
             ),
           ),
