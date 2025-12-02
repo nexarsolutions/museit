@@ -480,12 +480,14 @@ class AddSongsController extends GetxController {
     // Return the original link as-is (it will be the API URL format)
     return song.link ?? '';
   }
-  RxList<PreSavedRecipient> preSavedRecipients=RxList();
+
+  RxList<PreSavedRecipient> preSavedRecipients = RxList();
+
   Future<void> addToCart(List<SongModel> voiceRecordings,
       List<PreSavedRecipient> selectedUsers) async {
     List<Map<AudioKey, dynamic>> voices = [];
-    preSavedRecipients= RxList<PreSavedRecipient>
-        .from(selectedUsers.map((e) => e));
+    preSavedRecipients =
+        RxList<PreSavedRecipient>.from(selectedUsers.map((e) => e));
 
     print("selected user here${selectedUsers.length}");
     if (voiceRecordings.isNotEmpty) {
@@ -504,7 +506,8 @@ class AddSongsController extends GetxController {
     print("Pre Saved ${preSavedRecipients.length}");
 
     userManager.cartItems.add(CartModel(
-      defaultRecipientIds: RxList.from(preSavedRecipients.map((element) => element)),
+      defaultRecipientIds:
+          RxList.from(preSavedRecipients.map((element) => element)),
       songs: RxList<SongModel>.from(songs.map(
         (element) => element,
       )),
@@ -513,7 +516,6 @@ class AddSongsController extends GetxController {
       )),
     ));
 
-
     await Future.delayed(Duration(milliseconds: 500));
     songs.clear();
     selectedUsers.clear();
@@ -521,13 +523,14 @@ class AddSongsController extends GetxController {
   }
 
   Future<void> shareSong() async {
-
-    print("Sharing song ${userManager.cartItems.first.defaultRecipientIds.length}");
+    print(
+        "Sharing song ${userManager.cartItems.first.defaultRecipientIds.length}");
     print("preSavedRecipients ${preSavedRecipients.length}");
-    if(userManager.cartItems.first.defaultRecipientIds.isEmpty){
-      for(var ele in userManager.cartItems){
+    if (userManager.cartItems.first.defaultRecipientIds.isEmpty) {
+      for (var ele in userManager.cartItems) {
         ele.defaultRecipientIds.clear();
-        ele.defaultRecipientIds=RxList.from(preSavedRecipients.map((element) => element));
+        ele.defaultRecipientIds =
+            RxList.from(preSavedRecipients.map((element) => element));
       }
     }
     var data = {

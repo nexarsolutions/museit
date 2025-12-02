@@ -115,6 +115,8 @@ class AllRecipients extends StatelessWidget {
                                       Obx(
                                         () => CircleAvatar(
                                           radius: 45,
+                                          backgroundColor: Color(0xFF8C7FAC)
+                                              .withValues(alpha: 0.5),
                                           backgroundImage: controller
                                                       .selectedImage.value !=
                                                   null
@@ -125,8 +127,9 @@ class AllRecipients extends StatelessWidget {
                                                   ? AssetImage(controller
                                                       .selectedLogo
                                                       .value!) as ImageProvider
-                                                  : AssetImage(
-                                                      controller.logoList[0]),
+                                                  : null /*AssetImage(
+                                                      controller.logoList[0])*/
+                                          ,
                                         ),
                                       ),
                                       CircleAvatar(
@@ -257,8 +260,18 @@ class AllRecipients extends StatelessWidget {
           ),
           CustomButton(
               onPressed: () async {
-                String? netImage;
                 if (selectedIndex.value == 1 &&
+                    controller.nameController.text.trim().isEmpty &&
+                    controller.emailController.text.trim().isEmpty &&
+                    controller.phoneController.text.trim().isEmpty) {
+                  customErrorSnackBar(content: "Please fill all the fields");
+                  return;
+                }
+
+                String? netImage;
+
+                if (controller.selectedImage.value != null &&
+                    selectedIndex.value == 1 &&
                     controller.selectedImage.value != '') {
                   netImage = await UploadFileService().fileUploadResult(
                       uploadData: controller.selectedImage.value!);
