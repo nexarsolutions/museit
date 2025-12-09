@@ -28,7 +28,7 @@ class AddSongsController extends GetxController {
   final spotifyService = Get.find<SpotifyAuthService>();
   final appleMusicService = AppleMusicService();
 
-  final RxInt songTypeId = 0.obs;
+  final RxInt songTypeId = 1.obs;
   final searchController = TextEditingController();
   RxString searchQuery = ''.obs;
   final RxnInt selectedCharityId = RxnInt();
@@ -77,23 +77,23 @@ class AddSongsController extends GetxController {
   void onInit() {
     super.onInit();
 
+    //todo: uncomment later when this are being used
     // Check Apple Music connection status on init
-    appleMusicService.checkConnection();
-
-    ever(spotifyService.isConnected, (connected) {
-      if (connected == true) loadDefaultSpotifySongs();
-    });
-
-    // Listen to Apple Music connection changes
-    ever(appleMusicService.isConnected, (connected) {
-      if (connected == true && songTypeId.value == 2) {
-        loadDefaultAppleMusicSongs();
-      }
-    });
-
-    // ever(ytMusicService.isConnected, (connected) {
-    //   if (connected == true) loadYoutubeSongs();
+    // appleMusicService.checkConnection();
+    //
+    // ever(spotifyService.isConnected, (connected) {
+    //   if (connected == true) loadDefaultSpotifySongs();
     // });
+    //
+    // // Listen to Apple Music connection changes
+    // ever(appleMusicService.isConnected, (connected) {
+    //   if (connected == true && songTypeId.value == 2) {
+    //     loadDefaultAppleMusicSongs();
+    //   }
+    // });
+
+    //todo: remove later when spotify and apple music are used
+    loadDefaultYoutubeSongs();
 
     ever(
       songTypeId,
@@ -285,6 +285,67 @@ class AddSongsController extends GetxController {
     isYoutubeLoading.value = true;
 
     try {
+      final cleanQuery = query.trim();
+      if (cleanQuery.isEmpty) {
+        searchInYoutubeList.clear();
+        return;
+      }
+
+      // Encode the query to handle spaces and special characters
+      final encodedQuery = Uri.encodeQueryComponent(cleanQuery);
+
+      final url = Uri.parse(
+          "https://www.googleapis.com/youtube/v3/search"
+              "?part=snippet"
+              "&q=$encodedQuery"
+              "&type=video"
+              "&maxResults=20"
+              "&key=AIzaSyBDr9sg-4rttuwR3mczEIZJ6qPvA1pzYN8" // <-- Replace with your actual API key
+      );
+
+      final response = await http.get(url);
+
+      if (response.statusCode != 200) {
+        debugPrint("YT Error: ${response.body}");
+        searchInYoutubeList.clear();
+        return;
+      }
+
+      final json = jsonDecode(response.body);
+
+      if (json["items"] == null || json["items"] is! List) {
+        debugPrint("Invalid response format");
+        searchInYoutubeList.clear();
+        return;
+      }
+
+      final items = json["items"] as List;
+
+      final results = items.map((item) {
+        final snippet = item["snippet"];
+        return {
+          "videoId": item["id"]?["videoId"],
+          "title": snippet?["title"],
+          "thumbnail": snippet?["thumbnails"]?["high"]?["url"],
+          "channel": snippet?["channelTitle"],
+        };
+      }).toList();
+
+      searchInYoutubeList.assignAll(results);
+    } catch (e) {
+      debugPrint("YT Exception: $e");
+      searchInYoutubeList.clear();
+    } finally {
+      isYoutubeLoading.value = false;
+    }
+  }
+
+
+  ///via user account
+  /*Future<void> searchYouTube(String query) async {
+    isYoutubeLoading.value = true;
+
+    try {
       if (query.trim().isEmpty) {
         searchInYoutubeList.clear();
         return;
@@ -409,7 +470,7 @@ class AddSongsController extends GetxController {
     } finally {
       isYoutubeLoading.value = false;
     }
-  }
+  }*/
 
   // Future<String> getAudioStream(String videoId) async {
   //   var yt = YoutubeExplode();

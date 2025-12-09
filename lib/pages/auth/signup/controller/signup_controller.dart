@@ -40,7 +40,6 @@ class SignupController extends GetxController {
 
   RxBool switchValue = false.obs;
 
-
   //=================Check If Email Exists=========
   Future<void> checkEmailExists(int roleId) async {
     this.roleId.value = roleId;
