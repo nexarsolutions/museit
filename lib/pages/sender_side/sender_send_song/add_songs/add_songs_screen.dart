@@ -100,14 +100,14 @@ class AddSongsScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // BuildSelectedItemWidget(
-                    //   title: "Spotify",
-                    //   selectedIcon: 'assets/images/spotify_selected.png',
-                    //   unselectedIcon: 'assets/images/spotify.png',
-                    //   selectedColor: Color(0xFF1db954),
-                    //   index: 0,
-                    //   selectedIndex: controller.songTypeId,
-                    // ),
+                    BuildSelectedItemWidget(
+                      title: "Spotify",
+                      selectedIcon: 'assets/images/spotify_selected.png',
+                      unselectedIcon: 'assets/images/spotify.png',
+                      selectedColor: Color(0xFF1db954),
+                      index: 0,
+                      selectedIndex: controller.songTypeId,
+                    ),
                     BuildSelectedItemWidget(
                       title: "Youtube",
                       selectedIcon: 'assets/images/youtube_selected.png',
@@ -116,15 +116,15 @@ class AddSongsScreen extends StatelessWidget {
                       index: 1,
                       selectedIndex: controller.songTypeId,
                     ),
-                    // BuildSelectedItemWidget(
-                    //   title: "Apple",
-                    //   selectedIcon: 'assets/images/selected_apple_music.png',
-                    //   unselectedIcon:
-                    //       'assets/images/unselected_apple_music.png',
-                    //   selectedColor: Color(0xFFFF4E6B),
-                    //   index: 2,
-                    //   selectedIndex: controller.songTypeId,
-                    // ),
+                    BuildSelectedItemWidget(
+                      title: "Apple",
+                      selectedIcon: 'assets/images/selected_apple_music.png',
+                      unselectedIcon:
+                          'assets/images/unselected_apple_music.png',
+                      selectedColor: Color(0xFFFF4E6B),
+                      index: 2,
+                      selectedIndex: controller.songTypeId,
+                    ),
                     BuildSelectedItemWidget(
                       title: "Upload",
                       selectedIcon: 'assets/images/upload_selected.png',
@@ -173,6 +173,9 @@ class AddSongsScreen extends StatelessWidget {
                                       assetPath:
                                           'assets/images/selected_apple_music.png',
                                       onPressed: () async {
+                                        customErrorSnackBar(
+                                            content: "Coming soon");
+                                        return;
                                         try {
                                           await appleMusicService
                                               .connectAppleMusic();

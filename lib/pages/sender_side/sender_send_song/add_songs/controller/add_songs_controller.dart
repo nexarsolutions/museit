@@ -28,7 +28,7 @@ class AddSongsController extends GetxController {
   final spotifyService = Get.find<SpotifyAuthService>();
   final appleMusicService = AppleMusicService();
 
-  final RxInt songTypeId = 1.obs;
+  final RxInt songTypeId = 0.obs;
   final searchController = TextEditingController();
   RxString searchQuery = ''.obs;
   final RxnInt selectedCharityId = RxnInt();
@@ -64,7 +64,7 @@ class AddSongsController extends GetxController {
 
   // Default fallback songs for spotify
   final defaultSongs = [
-    "Shape of You",
+    "music moments",
     "Blinding Lights",
     "Stay",
     "Believer",
@@ -77,23 +77,19 @@ class AddSongsController extends GetxController {
   void onInit() {
     super.onInit();
 
-    //todo: uncomment later when this are being used
     // Check Apple Music connection status on init
-    // appleMusicService.checkConnection();
-    //
-    // ever(spotifyService.isConnected, (connected) {
-    //   if (connected == true) loadDefaultSpotifySongs();
-    // });
-    //
-    // // Listen to Apple Music connection changes
-    // ever(appleMusicService.isConnected, (connected) {
-    //   if (connected == true && songTypeId.value == 2) {
-    //     loadDefaultAppleMusicSongs();
-    //   }
-    // });
+    appleMusicService.checkConnection();
 
-    //todo: remove later when spotify and apple music are used
-    loadDefaultYoutubeSongs();
+    ever(spotifyService.isConnected, (connected) {
+      if (connected == true) loadDefaultSpotifySongs();
+    });
+
+    // Listen to Apple Music connection changes
+    ever(appleMusicService.isConnected, (connected) {
+      if (connected == true && songTypeId.value == 2) {
+        loadDefaultAppleMusicSongs();
+      }
+    });
 
     ever(
       songTypeId,
@@ -294,14 +290,13 @@ class AddSongsController extends GetxController {
       // Encode the query to handle spaces and special characters
       final encodedQuery = Uri.encodeQueryComponent(cleanQuery);
 
-      final url = Uri.parse(
-          "https://www.googleapis.com/youtube/v3/search"
-              "?part=snippet"
-              "&q=$encodedQuery"
-              "&type=video"
-              "&maxResults=20"
-              "&key=AIzaSyBDr9sg-4rttuwR3mczEIZJ6qPvA1pzYN8" // <-- Replace with your actual API key
-      );
+      final url = Uri.parse("https://www.googleapis.com/youtube/v3/search"
+          "?part=snippet"
+          "&q=$encodedQuery"
+          "&type=video"
+          "&maxResults=20"
+          "&key=AIzaSyBDr9sg-4rttuwR3mczEIZJ6qPvA1pzYN8" // <-- Replace with your actual API key
+          );
 
       final response = await http.get(url);
 
@@ -339,7 +334,6 @@ class AddSongsController extends GetxController {
       isYoutubeLoading.value = false;
     }
   }
-
 
   ///via user account
   /*Future<void> searchYouTube(String query) async {
