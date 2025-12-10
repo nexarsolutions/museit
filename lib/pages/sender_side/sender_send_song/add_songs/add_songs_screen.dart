@@ -5,6 +5,7 @@ import 'package:musit/main.dart';
 import 'package:musit/pages/charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
 import 'package:musit/pages/music_player/music_player_screen.dart';
 import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
+import 'package:musit/pages/sender_side/sender_send_song/add_songs/widget/build_selected_item_widget.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/widget/build_youtube_widget.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/widget/connect_account_prompt.dart';
 import 'package:musit/pages/viewCharityOrg/view_charity_organization.dart';
@@ -82,35 +83,54 @@ class AddSongsScreen extends StatelessWidget {
             SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Obx(
-                () => CustomTabButtonWithIcon(
-                  selectedIndex: controller.songTypeId.value,
-                  // GetX ya setState use kar sakte ho
-                  onTabSelected: (index) {
-                    print(index);
-                    controller.songTypeId.value = index;
-                  },
-                  tabs: [
-                    TabItem(
-                        title: "Spotify",
-                        selectedIcon: 'assets/images/spotify_selected.png',
-                        unselectedIcon: 'assets/images/spotify.png',
-                        selectedColor: Color(0xFF1db954)),
-                    TabItem(
-                        title: "Youtube",
-                        selectedIcon: 'assets/images/youtube_selected.png',
-                        unselectedIcon: 'assets/images/youtube.png',
-                        selectedColor: Color(0xFFFF0000)),
-                    TabItem(
-                        title: "Apple",
-                        selectedIcon: 'assets/images/selected_apple_music.png',
-                        unselectedIcon:
-                            'assets/images/unselected_apple_music.png',
-                        selectedColor: Color(0xFFFF4E6B)),
-                    TabItem(
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                height: 45,
+                width: Get.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF8C7FAC).withValues(alpha: 0.15),
+                      const Color(0xFF7695CA).withValues(alpha: 0.15),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    BuildSelectedItemWidget(
+                      title: "Spotify",
+                      selectedIcon: 'assets/images/spotify_selected.png',
+                      unselectedIcon: 'assets/images/spotify.png',
+                      selectedColor: Color(0xFF1db954),
+                      index: 0,
+                      selectedIndex: controller.songTypeId,
+                    ),
+                    BuildSelectedItemWidget(
+                      title: "Youtube",
+                      selectedIcon: 'assets/images/youtube_selected.png',
+                      unselectedIcon: 'assets/images/youtube.png',
+                      selectedColor: Color(0xFFFF0000),
+                      index: 1,
+                      selectedIndex: controller.songTypeId,
+                    ),
+                    BuildSelectedItemWidget(
+                      title: "Apple",
+                      selectedIcon: 'assets/images/selected_apple_music.png',
+                      unselectedIcon:
+                          'assets/images/unselected_apple_music.png',
+                      selectedColor: Color(0xFFFF4E6B),
+                      index: 2,
+                      selectedIndex: controller.songTypeId,
+                    ),
+                    BuildSelectedItemWidget(
                       title: "Upload",
                       selectedIcon: 'assets/images/upload_selected.png',
                       unselectedIcon: 'assets/images/upload.png',
+                      index: 3,
+                      selectedIndex: controller.songTypeId,
                     ),
                   ],
                 ),
@@ -153,6 +173,9 @@ class AddSongsScreen extends StatelessWidget {
                                       assetPath:
                                           'assets/images/selected_apple_music.png',
                                       onPressed: () async {
+                                        customErrorSnackBar(
+                                            content: "Coming soon");
+                                        return;
                                         try {
                                           await appleMusicService
                                               .connectAppleMusic();
