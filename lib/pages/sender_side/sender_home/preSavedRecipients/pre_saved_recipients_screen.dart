@@ -193,7 +193,7 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                         icon: Icon(
                           Icons.shopping_basket_sharp,
                         )),
-                    Text("View Cart ")
+                    Text(" Cart ")
                   ],
                 ),
               ],

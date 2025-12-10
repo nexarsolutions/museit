@@ -42,7 +42,7 @@ class SenderBottomBar extends StatelessWidget {
                 Icon(
                   Icons.shopping_basket_sharp,
                 ),
-                Text("View Cart ")
+                Text(" Cart ")
               ],
             ),
           ),
