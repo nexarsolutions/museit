@@ -1,5 +1,7 @@
 import 'package:app_links/app_links.dart';
 import 'package:get/get.dart';
+import 'package:musit/pages/music_player/music_player_screen.dart';
+
 import 'spotify_auth_service.dart';
 
 class DeepLinkService extends GetxService {
@@ -23,6 +25,12 @@ class DeepLinkService extends GetxService {
       print('🎯 DeepLink received: $uri');
       SpotifyAuthService().handleRedirect(uri);
     }
+
+    if (uri.path == 'https://museit-s3bucket.s3.eu-west-2.amazonaws.com') {
+      Get.to(() => MusicPlayerScreen(
+          songTitle: 'songTitle', songUrl: uri.path, imagePath: 'imagePath'));
+    }
+
     // if (uri.scheme == 'com.museit' && uri.host == 'paypal-callback') {
     //   Get.back();
     // }

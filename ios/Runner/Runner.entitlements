@@ -9,6 +9,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>com.museit://spotify-callback</string>
+		<string>https://museit-s3bucket.s3.eu-west-2.amazonaws.com</string>
 	</array>
 </dict>
 </plist>
