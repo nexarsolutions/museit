@@ -31,6 +31,22 @@ class _WebViewScreenState extends State<WebViewScreen> {
         NavigationDelegate(
           onPageStarted: (_) => setState(() => isLoading = true),
           onPageFinished: (_) => setState(() => isLoading = false),
+          onNavigationRequest: (NavigationRequest request) {
+            final url = request.url;
+
+            if (url.contains("success")) {
+              // Auto-return AFTER showing the success page
+              Future.delayed(const Duration(seconds: 3), () {
+                handleBack();
+              });
+
+              // 👇 allow WebView to show the page
+              return NavigationDecision.navigate;
+            }
+
+            return NavigationDecision.navigate;
+          },
+
         ),
       )
       ..loadRequest(Uri.parse(widget.url));

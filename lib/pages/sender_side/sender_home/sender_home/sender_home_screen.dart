@@ -33,50 +33,76 @@ class SenderHomeScreen extends StatelessWidget {
 
                 // ==== Quote Box ====
                 _buildQuoteBox(),
-                Spacer(),
 
-                Row(
-                  spacing: 12,
-                  children: [
-                    Expanded(
-                      child: _buildSmallCard(
-                        title: 'MUSEiT Moment',
-                        image: 'assets/images/send_paid_songs.png',
-                        primary: true,
-                        onTap: () async {
-                          // Get.to(()=>VoiceNoteScreen(isFromMuseitMoment: true));
-                          Get.find<SenderBottomBarController>()
-                              .selectedTab
-                              .value = 1;
-                          // // Get.to(() => AddSongsScreen());
-                          if (userManager.isFirstTimeAddSongScreen) {
-                            successDialog(
-                                content:
-                                    """A MUSEiT Moment is 1 message + 1 song sent to your favourite people.\nEvery MUSEiT Moment sent, 50p will go towards your selected charity.""");
-                            await userManager.saveFirstTimeAddSongScreen();
-                          }
-                        },
-                      ),
+                Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: Row(
+                      spacing: 12,
+                      children: [
+                        Expanded(
+                          child: _buildSmallCard(
+                            title: 'MUSEiT Moment',
+                            image: 'assets/images/send_paid_songs.png',
+                            primary: true,
+                            onTap: () async {
+                              // Get.to(()=>VoiceNoteScreen(isFromMuseitMoment: true));
+                              Get.find<SenderBottomBarController>()
+                                  .selectedTab
+                                  .value = 1;
+                              // // Get.to(() => AddSongsScreen());
+                              if (userManager.isFirstTimeAddSongScreen) {
+                                successDialog(
+                                    content:
+                                        """A MUSEiT Moment is 1 message + 1 song sent to your favourite people.\nEvery MUSEiT Moment sent, 50p will go towards your selected charity.""");
+                                await userManager.saveFirstTimeAddSongScreen();
+                              }
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: _buildSmallCard(
+                            title: 'MUSEiT\nBundle',
+                            image: 'assets/images/send_paid_songs.png',
+                            primary: true,
+                            onTap: () {
+                              customErrorSnackBar(content: "“Coming Soon");
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: _buildSmallCard(
-                        title: 'MUSEiT\nBundle',
-                        image: 'assets/images/send_paid_songs.png',
-                        primary: true,
-                        onTap: () {
-                          customErrorSnackBar(content: "“Coming Soon");
-                        },
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                Spacer(),
-                Center(
-                  child: CustomButton(
-                      onPressed: () {
-                        customErrorSnackBar(content: "“Coming Soon");
-                      },
-                      text: ' MUSEiT Charity'),
+
+                Expanded(
+                  // flex: 2,
+                  child: Column(
+                    spacing: 20,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            "When sending a MUSEiT moment 50p will go directly"
+                                " to a charity of selection.",
+                            style: manRope.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w200,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: CustomButton(
+                            onPressed: () {
+                              customErrorSnackBar(content: "“Coming Soon");
+                            },
+                            text: ' MUSEiT Charity'),
+                      ),
+                    ],
+                  ),
                 ),
                 Spacer(),
               ],
