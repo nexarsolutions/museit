@@ -56,17 +56,6 @@ class AddSongsScreen extends StatelessWidget {
                   } else {
                     controller.searchQuery.value = value;
                   }
-
-                  // if (controller.songTypeId.value == 1 &&
-                  //     value.trim().isNotEmpty) {
-                  //   controller.searchInYoutubeList.value =
-                  //       RxList<Map<String, String>>.from(controller
-                  //           .youtubeSongsList
-                  //           .where((value) => value['name']!
-                  //               .toLowerCase()
-                  //               .contains(controller.searchQuery.value
-                  //                   .toLowerCase())));
-                  // }
                 },
                 isSuffixIcon: true,
                 suffixIcon: Container(
@@ -312,53 +301,15 @@ class AddSongsScreen extends StatelessWidget {
               children: [
                 CustomButton(
                     onPressed: () {
-                      if (controller.songs.isNotEmpty) {
-                        /// navigate to send view screen
-                        Get.to(() => PreSavedRecipientsScreen(
-                              onPressedSave:
-                                  (List<PreSavedRecipient> selectedUser,
-                                      bool addToCart) async {
-                                List<PreSavedRecipient> _selectedUsers =
-                                    List<PreSavedRecipient>.from(
-                                        selectedUser.map((e) => e));
-                                print("Selected User=${_selectedUsers.length}");
-                                if (userManager.cartItems.isEmpty &&
-                                    _selectedUsers.isEmpty) {
-                                  customErrorSnackBar(
-                                      content: "Select Users to continue");
-                                  return;
-                                }
-
-                                if (addToCart && _selectedUsers.isEmpty) {
-                                  customErrorSnackBar(
-                                      content: "Nothing to add");
-                                  return;
-                                }
-
-                                if (addToCart && _selectedUsers.isNotEmpty) {
-                                  controller.addToCart(
-                                      voiceSongs, _selectedUsers);
-                                  await Future.delayed(
-                                      Duration(milliseconds: 100));
-                                  print("selectedUser");
-                                  print(_selectedUsers.length);
-                                  Get.offAll(() => SenderBottomBar());
-
-                                  customErrorSnackBar(
-                                      content: "Successfully added to cart");
-                                  return;
-                                }
-                                if (_selectedUsers.isNotEmpty) {
-                                  await controller.addToCart(
-                                      voiceSongs, _selectedUsers);
-                                }
-
-                                Get.to(() => ViewCharityOrganization());
-                              },
-                            ));
-                      } else {
+                      if (controller.songs.isEmpty) {
                         customErrorSnackBar(content: "Select song to continue");
+                        return;
                       }
+
+                      /// navigate to send view screen
+                      Get.to(() => PreSavedRecipientsScreen(
+                            voiceSongs: voiceSongs,
+                          ));
                     },
                     text: 'Save'),
               ],

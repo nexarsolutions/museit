@@ -3,23 +3,28 @@ import 'package:get/get.dart';
 import 'package:musit/common_widgets/recipients_card.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/globalModels/song_model.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/main.dart';
 import 'package:musit/pages/allRecipients/all_recipients.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/controller/pre_saved_recipients_controller.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/widget/view_cart.dart';
+import 'package:musit/pages/sender_side/sender_send_song/add_songs/controller/add_songs_controller.dart';
 import 'package:musit/services/auth_service.dart';
+import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
 
 import '../../../../globalModels/presaved_receipents.dart';
 import '../../../../widgets/custom_button.dart';
+import '../../../viewCharityOrg/view_charity_organization.dart';
 
 class PreSavedRecipientsScreen extends StatelessWidget {
-  PreSavedRecipientsScreen({super.key, required this.onPressedSave});
+  PreSavedRecipientsScreen({super.key, required this.voiceSongs});
 
   final controller = Get.put(PreSavedRecipientsController());
-  final Function(List<PreSavedRecipient> selectedUsersId, bool addToCart)
-      onPressedSave;
+  final songController = Get.put(AddSongsController());
+
+  final List<SongModel> voiceSongs;
 
   @override
   Widget build(BuildContext context) {
@@ -147,26 +152,33 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                 Flexible(
                   child: CustomButton(
                       onPressed: () {
-                        // if (controller.selectedUsersId.value.isEmpty) {
-                        //   errorDialog(
-                        //       content: "Select User/Receipt to continue.");
-                        //   return;
-                        // }
-                        print("length0");
+                        if (controller.selectedUsersId.value.isEmpty) {
+                          customErrorSnackBar(
+                              content: "Select Users to continue");
+                          return;
+                        }
 
-                        print(controller.selectedUsersId.length);
-                        onPressedSave(controller.selectedUsersId.value, false);
+                        Get.to(() => ViewCharityOrganization(
+                            voiceSongs: voiceSongs,
+                            selectedUsersIds: controller.selectedUsersId
+                                .value));
                       },
                       text: 'Send'),
                 ),
                 Column(
                   children: [
                     IconButton(
-                        onPressed: () {
-                          print("length");
-                          print(controller.selectedUsersId.length);
+                        onPressed: () async {
+                          // onPressedSave(controller.selectedUsersId.value, true);
 
-                          onPressedSave(controller.selectedUsersId.value, true);
+                          if (controller.selectedUsersId.value.isEmpty) {
+                            customErrorSnackBar(
+                                content: "Select Users to continue");
+                            return;
+                          }
+
+                          songController.addToCart(
+                              voiceSongs, controller.selectedUsersId.value);
                         },
                         icon: Icon(
                           Icons.add_shopping_cart_outlined,

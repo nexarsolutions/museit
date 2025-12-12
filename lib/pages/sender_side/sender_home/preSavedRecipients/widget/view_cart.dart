@@ -111,8 +111,32 @@ class CartListBottomSheet extends StatelessWidget {
                                     const Text("Voice Notes",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600)),
-                                    ...cart.voices.map(
-                                        (v) => Text("• ${v[AudioKey.name]}")),
+                                    ...cart.voices.map((v) => GestureDetector(
+                                        onTap: () {
+                                          Get.to(() => MusicPlayerScreen(
+                                              songTitle: v[AudioKey.name],
+                                              songUrl: v[AudioKey.path],
+                                              imagePath: /*recordingList[index].image!*/
+                                                  ''));
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            spacing: 10,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: Image.asset(
+                                                  'assets/images/app_icon.jpg',
+                                                  width: 60,
+                                                  height: 60,
+                                                ),
+                                              ),
+                                              Text("${v[AudioKey.name]}"),
+                                            ],
+                                          ),
+                                        ))),
                                   ],
 
                                   const SizedBox(height: 8),
