@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
+import 'package:musit/globalModels/presaved_receipents.dart';
+import 'package:musit/globalModels/song_model.dart';
 import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/controller/add_songs_controller.dart';
 import 'package:musit/pages/viewCharityOrg/widget/view_carity_card.dart';
@@ -16,12 +18,12 @@ import '../summaryPage/summary_page.dart';
 import 'controller/view_charity_org_controller.dart';
 
 class ViewCharityOrganization extends StatelessWidget {
-  ViewCharityOrganization({
-    super.key,
-  });
+  ViewCharityOrganization({super.key, this.voiceSongs, this.selectedUsersIds});
 
   final controller = Get.put(ViewCharityOrgController());
   final RxBool isSelected = true.obs;
+  final List<SongModel>? voiceSongs;
+  final List<PreSavedRecipient>? selectedUsersIds;
 
   @override
   Widget build(BuildContext context) {
@@ -207,6 +209,14 @@ class ViewCharityOrganization extends StatelessWidget {
 
                         Get.find<AddSongsController>().selectedCharityId.value =
                             controller.selectedCharity.value;
+
+                        if ((voiceSongs != null && voiceSongs!.isNotEmpty) ||
+                            (selectedUsersIds != null &&
+                                selectedUsersIds!.isNotEmpty)) {
+                          Get.find<AddSongsController>().addToCart(
+                              voiceSongs ?? [], selectedUsersIds ?? [],
+                              fromAddCart: false);
+                        }
 
                         Get.to(() => SentSongSummaryPage());
                       },

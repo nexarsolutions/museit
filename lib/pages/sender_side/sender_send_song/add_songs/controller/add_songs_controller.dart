@@ -8,6 +8,7 @@ import 'package:music_kit/music_kit.dart';
 import 'package:musit/globalModels/admin_songs_model.dart';
 import 'package:musit/globalModels/cart_model.dart';
 import 'package:musit/main.dart';
+import 'package:musit/pages/sendBottombar/widget/thank_you_page.dart';
 import 'package:musit/services/api_service.dart';
 import 'package:musit/services/song_service.dart';
 import 'package:musit/services/upload_file_service.dart';
@@ -23,6 +24,7 @@ import '../../../../../utils/global_functions.dart';
 import '../../../../../widgets/web_view_screen.dart';
 import '../../../../sendBottombar/sender_bottom_bar.dart';
 import '../../../../viewCharityOrg/view_charity_organization.dart';
+import '../../../sender_home/preSavedRecipients/widget/view_cart.dart';
 
 class AddSongsController extends GetxController {
   final spotifyService = Get.find<SpotifyAuthService>();
@@ -538,13 +540,11 @@ class AddSongsController extends GetxController {
 
   RxList<PreSavedRecipient> preSavedRecipients = RxList();
 
-  Future<void> addToCart(List<SongModel> voiceRecordings,
-      List<PreSavedRecipient> selectedUsers) async {
+  Future<void> addToCart(
+      List<SongModel> voiceRecordings, List<PreSavedRecipient> selectedUsers,
+      {bool fromAddCart = true}) async {
     List<Map<AudioKey, dynamic>> voices = [];
-    preSavedRecipients =
-        RxList<PreSavedRecipient>.from(selectedUsers.map((e) => e));
 
-    print("selected user here${selectedUsers.length}");
     if (voiceRecordings.isNotEmpty) {
       for (var voice in voiceRecordings) {
         final voicePath = await UploadFileService()
@@ -558,11 +558,9 @@ class AddSongsController extends GetxController {
         }
       }
     }
-    print("Pre Saved ${preSavedRecipients.length}");
 
     userManager.cartItems.add(CartModel(
-      defaultRecipientIds:
-          RxList.from(preSavedRecipients.map((element) => element)),
+      defaultRecipientIds: RxList.from(selectedUsers.map((element) => element)),
       songs: RxList<SongModel>.from(songs.map(
         (element) => element,
       )),
@@ -572,22 +570,28 @@ class AddSongsController extends GetxController {
     ));
 
     await Future.delayed(Duration(milliseconds: 500));
-    songs.clear();
-    selectedUsers.clear();
-    voiceRecordings.clear();
+
+    if (fromAddCart) {
+      Get.offAll(() => SenderBottomBar());
+      customErrorSnackBar(content: "Successfully added to cart");
+      songs.clear();
+      selectedUsers.clear();
+      voiceRecordings.clear();
+    }
   }
 
   Future<void> shareSong() async {
-    print(
-        "Sharing song ${userManager.cartItems.first.defaultRecipientIds.length}");
-    print("preSavedRecipients ${preSavedRecipients.length}");
-    if (userManager.cartItems.first.defaultRecipientIds.isEmpty) {
-      for (var ele in userManager.cartItems) {
-        ele.defaultRecipientIds.clear();
-        ele.defaultRecipientIds =
-            RxList.from(preSavedRecipients.map((element) => element));
-      }
-    }
+    // print(
+    //     "Sharing song ${userManager.cartItems.first.defaultRecipientIds
+    //         .length}");
+    // print("preSavedRecipients ${preSavedRecipients.length}");
+    // if (userManager.cartItems.first.defaultRecipientIds.isEmpty) {
+    //   for (var ele in userManager.cartItems) {
+    //     ele.defaultRecipientIds.clear();
+    //     ele.defaultRecipientIds =
+    //         RxList.from(preSavedRecipients.map((element) => element));
+    //   }
+    // }
     var data = {
       "cartItems": userManager.cartItems.map((e) => e.toMap()).toList(),
       "charityId": selectedCharityId.value,
@@ -635,27 +639,35 @@ class AddSongsController extends GetxController {
                       //   Get.to(() => ViewCharityOrganization());
                       // } else {
                       Get.offAll(() => SenderBottomBar());
-                      customErrorSnackBar(content: 'Shared Successfully');
-                      // }
+                      Get.bottomSheet(
+                        SafeArea(
+                            child:
+                                ThankYouPage(cartItems: userManager.cartItems)),
+                        isScrollControlled: true,
+                        backgroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                      );
+                      songTypeId.value = 0;
+                      searchController.clear();
+                      searchQuery.value = '';
+
+                      songs.clear();
+
+                      // RxList<SongModel> librarySelected = <SongModel>[].obs;
+                      adminSongs.clear();
+
+                      searchSpotifyResults.clear();
+
+                      searchInYoutubeList.clear();
+                      userManager.cartItems.clear();
                     },
                   );
                 },
               ));
         }
-
-        songTypeId.value = 0;
-        searchController.clear();
-        searchQuery.value = '';
-
-        songs.clear();
-
-        // RxList<SongModel> librarySelected = <SongModel>[].obs;
-        adminSongs.clear();
-
-        searchSpotifyResults.clear();
-
-        searchInYoutubeList.clear();
-        userManager.cartItems.clear();
       },
     );
   }

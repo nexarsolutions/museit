@@ -8,13 +8,15 @@ import 'package:musit/widgets/custom_app_bar.dart';
 import 'package:musit/widgets/custom_button.dart';
 
 import '../../constants/app_enums.dart';
+import '../../globalModels/presaved_receipents.dart';
+import '../../globalModels/song_model.dart';
 import '../../widgets/web_view_screen.dart';
 import '../../widgets/youtube_player_widget.dart';
 import '../charity_side/charity_home/charity_add_songs/widget/add_songs_widget.dart';
 import '../music_player/music_player_screen.dart';
 
 class SentSongSummaryPage extends StatelessWidget {
-  SentSongSummaryPage({super.key});
+  SentSongSummaryPage({super.key,});
 
   final controller = Get.put(AddSongsController());
 

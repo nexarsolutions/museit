@@ -85,7 +85,7 @@ class SenderHomeScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text(
                             "When sending a MUSEiT moment 50p will go directly"
-                                " to a charity of selection.",
+                            " to a charity of selection.",
                             style: manRope.copyWith(
                               fontSize: 14,
                               fontWeight: FontWeight.w200,

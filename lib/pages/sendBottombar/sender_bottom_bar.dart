@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:musit/constants/colors.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/main.dart';
+import 'package:musit/pages/sendBottombar/widget/thank_you_page.dart';
 import 'package:musit/utils/dialog_utilities.dart';
 
 import '../sender_side/sender_home/preSavedRecipients/widget/view_cart.dart';
@@ -22,13 +23,13 @@ class SenderBottomBar extends StatelessWidget {
         floatingActionButton: SizedBox(
           height: 70,
           width: 80,
-          child: FloatingActionButton(
+          child: FloatingActionButton.extended(
             backgroundColor: Colors.white,
             onPressed: () {
               Get.bottomSheet(
                 SafeArea(
                     child:
-                        CartListBottomSheet(cartItems: userManager.cartItems)),
+                    ThankYouPage(cartItems: userManager.cartItems)),
                 isScrollControlled: true,
                 backgroundColor: Colors.white,
                 shape: const RoundedRectangleBorder(
@@ -36,7 +37,7 @@ class SenderBottomBar extends StatelessWidget {
                 ),
               );
             },
-            child: Column(
+            label: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
