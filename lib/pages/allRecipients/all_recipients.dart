@@ -55,19 +55,19 @@ class AllRecipients extends StatelessWidget {
                       child: Obx(
                         () => selectedIndex.value == 1
                             ? Column(children: [
-                                /// IMPORT BUTTON
-                                // Align(
-                                //   alignment: Alignment.topRight,
-                                //   child: IconButton(
-                                //     onPressed: controller.importContact,
-                                //     icon: Icon(Icons.import_contacts),
-                                //     style: ButtonStyle(
-                                //         backgroundColor:
-                                //             WidgetStatePropertyAll(blackColor),
-                                //         foregroundColor:
-                                //             WidgetStatePropertyAll(whiteColor)),
-                                //   ),
-                                // ),
+                                // / IMPORT BUTTON
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: IconButton(
+                                    onPressed: controller.importContact,
+                                    icon: Icon(Icons.import_contacts),
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            WidgetStatePropertyAll(blackColor),
+                                        foregroundColor:
+                                            WidgetStatePropertyAll(whiteColor)),
+                                  ),
+                                ),
 
                                 const SizedBox(height: 24),
 
