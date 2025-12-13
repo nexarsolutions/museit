@@ -29,7 +29,7 @@ class SenderBottomBar extends StatelessWidget {
               Get.bottomSheet(
                 SafeArea(
                     child:
-                    ThankYouPage(cartItems: userManager.cartItems)),
+                        CartListBottomSheet(cartItems: userManager.cartItems)),
                 isScrollControlled: true,
                 backgroundColor: Colors.white,
                 shape: const RoundedRectangleBorder(

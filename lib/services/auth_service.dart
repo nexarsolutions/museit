@@ -216,8 +216,8 @@ class AuthService {
       await _api.handleGetResponse(
         apiMethod: () => getAllCharityApi(search: search),
         onSuccess: (response) {
-          print("response");
-          customPrint(response.toString());
+          // print("response");
+          // customPrint(response.toString());
           final receiptResponseModel = CharityResponseModel.fromJson(response);
           final newUserList = receiptResponseModel.response?.rows ?? [];
           userList.assignAll(newUserList);

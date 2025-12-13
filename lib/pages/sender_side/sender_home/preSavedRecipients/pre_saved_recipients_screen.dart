@@ -10,6 +10,7 @@ import 'package:musit/pages/allRecipients/all_recipients.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/controller/pre_saved_recipients_controller.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/widget/view_cart.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/controller/add_songs_controller.dart';
+import 'package:musit/services/api_service.dart';
 import 'package:musit/services/auth_service.dart';
 import 'package:musit/utils/custom_error_snack_bar.dart';
 import 'package:musit/widgets/custom_app_bar.dart';
@@ -51,6 +52,68 @@ class PreSavedRecipientsScreen extends StatelessWidget {
               ),
             ),
           ),
+          Obx(() {
+            if (!controller.onLongPresses.value) {
+              return TextButton(
+                onPressed: () {
+                  controller.onLongPresses.value = true;
+                  controller.selectedUsersId.clear();
+                },
+                child: const Text(
+                  "Tap to update default list",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              );
+            } else {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      controller.onLongPresses.value = false;
+                      controller.selectedUsersId.clear();
+                    },
+                    child: const Text("Cancel"),
+                  ),
+                  const SizedBox(width: 8),
+                  Text("(${controller.selectedUsersId.length})",style: manRope,),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: controller.selectedUsersId.isEmpty
+                        ? null
+                        : () async {
+                            await ApiService().handleResponse(
+                              apiMethod: () async => await ApiService().delete(
+                                "recipients/default/remove",
+                                {
+                                  "defaultReceipientsIds": controller
+                                      .selectedUsersId
+                                      .map((e) => e.id)
+                                      .toList(),
+                                },
+                              ),
+                              loadingMsg: "Removing",
+                              onSuccess: (_) {
+                                controller.selectedUsersId.clear();
+                                controller.onLongPresses.value = false;
+                                controller.isLoading.toggle();
+                              },
+                            );
+                          },
+                    child: Text(
+                      "Remove",
+                      style: TextStyle(
+                        color: controller.selectedUsersId.isEmpty
+                            ? Colors.grey
+                            : Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+          }),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -123,7 +186,16 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                                       ),
                                 isSelected: isSelected,
                                 onTap: () {
-                                  if (isSelected) {
+                                  if (controller.onLongPresses.value) {
+                                    if (isSelected) {
+                                      controller.selectedUsersId.removeWhere(
+                                          (element) =>
+                                              element.id == userList[index].id);
+                                    } else if (userList[index].id != null) {
+                                      controller.selectedUsersId
+                                          .add(userList[index]);
+                                    }
+                                  } else if (isSelected) {
                                     controller.selectedUsersId.removeWhere(
                                         (element) =>
                                             element.id == userList[index].id);
@@ -146,69 +218,74 @@ class PreSavedRecipientsScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              spacing: 10,
-              children: [
-                Flexible(
-                  child: CustomButton(
-                      onPressed: () {
-                        if (controller.selectedUsersId.value.isEmpty) {
-                          customErrorSnackBar(
-                              content: "Select Users to continue");
-                          return;
-                        }
+            child: Obx(
+              () => controller.onLongPresses.value
+                  ? const SizedBox.shrink()
+                  : Row(
+                      spacing: 10,
+                      children: [
+                        Flexible(
+                          child: CustomButton(
+                              onPressed: () {
+                                if (controller.selectedUsersId.value.isEmpty) {
+                                  customErrorSnackBar(
+                                      content: "Select Users to continue");
+                                  return;
+                                }
 
-                        Get.to(() => ViewCharityOrganization(
-                            voiceSongs: voiceSongs,
-                            selectedUsersIds: controller.selectedUsersId
-                                .value));
-                      },
-                      text: 'Send'),
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                        onPressed: () async {
-                          // onPressedSave(controller.selectedUsersId.value, true);
+                                Get.to(() => ViewCharityOrganization(
+                                    voiceSongs: voiceSongs,
+                                    selectedUsersIds:
+                                        controller.selectedUsersId.value));
+                              },
+                              text: 'Send'),
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                                onPressed: () async {
+                                  // onPressedSave(controller.selectedUsersId.value, true);
 
-                          if (controller.selectedUsersId.value.isEmpty) {
-                            customErrorSnackBar(
-                                content: "Select Users to continue");
-                            return;
-                          }
+                                  if (controller
+                                      .selectedUsersId.value.isEmpty) {
+                                    customErrorSnackBar(
+                                        content: "Select Users to continue");
+                                    return;
+                                  }
 
-                          songController.addToCart(
-                              voiceSongs, controller.selectedUsersId.value);
-                        },
-                        icon: Icon(
-                          Icons.add_shopping_cart_outlined,
-                        )),
-                    Text("Add to Cart ")
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          Get.bottomSheet(
-                            SafeArea(
-                                child: CartListBottomSheet(
-                                    cartItems: userManager.cartItems)),
-                            isScrollControlled: true,
-                            backgroundColor: Colors.white,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20)),
-                            ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.shopping_basket_sharp,
-                        )),
-                    Text("View Cart ")
-                  ],
-                ),
-              ],
+                                  songController.addToCart(voiceSongs,
+                                      controller.selectedUsersId.value);
+                                },
+                                icon: Icon(
+                                  Icons.add_shopping_cart_outlined,
+                                )),
+                            Text("Add to Cart ")
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Get.bottomSheet(
+                                    SafeArea(
+                                        child: CartListBottomSheet(
+                                            cartItems: userManager.cartItems)),
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.white,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20)),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.shopping_basket_sharp,
+                                )),
+                            Text("View Cart ")
+                          ],
+                        ),
+                      ],
+                    ),
             ),
           ),
           SizedBox(height: 12),
