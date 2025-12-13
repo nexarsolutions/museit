@@ -8,4 +8,5 @@ class PreSavedRecipientsController extends GetxController {
   // final searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
   final RxList<PreSavedRecipient> selectedUsersId = <PreSavedRecipient>[].obs;
+  final RxBool onLongPresses=false.obs;
 }

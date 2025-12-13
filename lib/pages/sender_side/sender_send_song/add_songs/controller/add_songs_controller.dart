@@ -23,6 +23,7 @@ import '../../../../../services/spotify_auth_service.dart';
 import '../../../../../utils/global_functions.dart';
 import '../../../../../widgets/web_view_screen.dart';
 import '../../../../sendBottombar/sender_bottom_bar.dart';
+import '../../../../summaryPage/summary_page.dart';
 import '../../../../viewCharityOrg/view_charity_organization.dart';
 import '../../../sender_home/preSavedRecipients/widget/view_cart.dart';
 
@@ -66,7 +67,7 @@ class AddSongsController extends GetxController {
 
   // Default fallback songs for spotify
   final defaultSongs = [
-    "music moments",
+    "top hits english songs of all time",
     "Blinding Lights",
     "Stay",
     "Believer",
@@ -577,6 +578,8 @@ class AddSongsController extends GetxController {
       songs.clear();
       selectedUsers.clear();
       voiceRecordings.clear();
+    } else {
+      Get.to(() => SentSongSummaryPage());
     }
   }
 
@@ -592,6 +595,7 @@ class AddSongsController extends GetxController {
     //         RxList.from(preSavedRecipients.map((element) => element));
     //   }
     // }
+
     var data = {
       "cartItems": userManager.cartItems.map((e) => e.toMap()).toList(),
       "charityId": selectedCharityId.value,

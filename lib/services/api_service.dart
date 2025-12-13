@@ -201,11 +201,16 @@ class ApiService {
   }
 
   ///delete
-  Future<dynamic> delete(String path) async {
+  Future<dynamic> delete(String path, [dynamic data]) async {
     try {
+      print(path);
+      print(data);
       final headers = await _getHeaders();
-      final response =
-          await http.delete(Uri.parse('$baseUrl$path'), headers: headers);
+      final response = await http.delete(
+        Uri.parse('$baseUrl$path'),
+        headers: headers,
+        body: jsonEncode(data),
+      );
       return await _handleResponse(response);
     } on SocketException {
       throw NetworkException('No internet connection');

@@ -117,9 +117,49 @@ class SentSongSummaryPage extends StatelessWidget {
                       /// 🎙 Voice Notes
                       if (cart.voices.isNotEmpty) ...[
                         const Text("Voice Notes",
-                            style: TextStyle(fontWeight: FontWeight.w600)),
-                        ...cart.voices
-                            .map((v) => Text("• ${v[AudioKey.name]}")),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600)),
+                        ...cart.voices.map((v) => GestureDetector(
+                            onTap: () {
+                              Get.to(() => MusicPlayerScreen(
+                                  songTitle: v[AudioKey.name],
+                                  songUrl: v[AudioKey.path],
+                                  imagePath: /*recordingList[index].image!*/
+                                  ''));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+
+                              width: Get.width,
+                              margin: const EdgeInsets.only(bottom: 6),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: whiteColor,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                                border: Border.all(color: blueColor, width: 0.7),
+                              ),
+                              child: Row(
+                                spacing: 10,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius:
+                                    BorderRadius.circular(12),
+                                    child: Image.asset(
+                                      'assets/images/app_icon.jpg',
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                  ),
+                                  Text("${v[AudioKey.name]}"),
+                                ],
+                              ),
+                            ))),
                       ],
 
                       const SizedBox(height: 8),

@@ -217,8 +217,6 @@ class ViewCharityOrganization extends StatelessWidget {
                               voiceSongs ?? [], selectedUsersIds ?? [],
                               fromAddCart: false);
                         }
-
-                        Get.to(() => SentSongSummaryPage());
                       },
                       text: 'Next'),
                   SizedBox(height: 16),

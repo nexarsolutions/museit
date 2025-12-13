@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/text_styles.dart';
@@ -17,56 +19,62 @@ class ThankYouPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        minHeight: Get.height * 0.6,
-        maxHeight: Get.height * 0.8,
-      ),
-      padding: EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 16,
-          children: [
-            ClipRRect(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16)),
-                child: Image.asset(
-                  "assets/images/thank_you_page.jpeg",
-                  fit: BoxFit.fitWidth,
-                  width: double.infinity,
-                  height: Get.height * 0.35,
-                )),
-            Padding(
-              padding: EdgeInsets.only(left: 16, right: 16),
-              child: Text(
-                "Your MUSEiT Moments are on there way!",
-                style: manRopeSemiBold,
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: Get.height * 0.6,
+          maxHeight: Get.height * 0.8,
+        ),
+        padding: EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 16,
+            children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16)),
+                  child: Image.asset(
+                    "assets/images/thank_you_page.jpeg",
+                    fit: BoxFit.fitWidth,
+                    width: double.infinity,
+                    height: Get.height * 0.35,
+                  )),
+              Padding(
+                padding: EdgeInsets.only(left: 16, right: 16),
+                child: Text(
+                  "Your MUSEiT Moments are on there way!",
+                  style: manRopeSemiBold,
+                ),
               ),
-            ),
-            SizedBox(height: 24,),
-            Padding(
-              padding: EdgeInsets.only(left: 16, right: 16),
-              child: CustomButton(
-                  width: double.maxFinite,
-                  onPressed: () {
-                    Get.back();
-                    Get.find<SenderBottomBarController>().selectedTab.value = 1;
-                  },
-                  text: "Send Another MUSEiT Moments"),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 16, right: 16),
-              child: Text(
-                "Share the love even futher",
-                style: manRope,
+              SizedBox(
+                height: 24,
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.only(left: 16, right: 16),
+                child: CustomButton(
+                    width: double.maxFinite,
+                    onPressed: () {
+                      Get.back();
+                      Get.find<SenderBottomBarController>().selectedTab.value =
+                          1;
+                    },
+                    text: "Send Another MUSEiT Moments"),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 16, right: 16),
+                child: Text(
+                  "Share the love even futher",
+                  style: manRope,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

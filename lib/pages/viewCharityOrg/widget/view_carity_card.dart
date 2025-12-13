@@ -18,8 +18,8 @@ class ViewCharityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("assets/images/${user.profile.value.showImage}");
-    print(user.profile);
+    // print("assets/images/${user.profile.value.showImage}");
+    // print(user.profile);
     // Outer Container for the gradient border.
     return GestureDetector(
       onTap: onTap,
