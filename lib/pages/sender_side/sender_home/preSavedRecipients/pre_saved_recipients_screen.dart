@@ -8,6 +8,7 @@ import 'package:musit/globalModels/user_model.dart';
 import 'package:musit/main.dart';
 import 'package:musit/pages/allRecipients/all_recipients.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/controller/pre_saved_recipients_controller.dart';
+import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/widget/edit_recipient_dialog.dart';
 import 'package:musit/pages/sender_side/sender_home/preSavedRecipients/widget/view_cart.dart';
 import 'package:musit/pages/sender_side/sender_send_song/add_songs/controller/add_songs_controller.dart';
 import 'package:musit/services/api_service.dart';
@@ -76,7 +77,10 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                     child: const Text("Cancel"),
                   ),
                   const SizedBox(width: 8),
-                  Text("(${controller.selectedUsersId.length})",style: manRope,),
+                  Text(
+                    "(${controller.selectedUsersId.length})",
+                    style: manRope,
+                  ),
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: controller.selectedUsersId.isEmpty
@@ -185,6 +189,9 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                                             userList[index].picture ?? ''),
                                       ),
                                 isSelected: isSelected,
+                                showPopup: userList[index].recipient != null
+                                    ? false
+                                    : true,
                                 onTap: () {
                                   if (controller.onLongPresses.value) {
                                     if (isSelected) {
@@ -206,6 +213,23 @@ class PreSavedRecipientsScreen extends StatelessWidget {
                                           .add(userList[index]);
                                     }
                                   }
+                                },
+                                onEdit: () {
+                                  showEditRecipientDialog(
+                                    context: context,
+                                    user: UserModel(
+                                      id: userList[index].id,
+                                      username: TextEditingController(
+                                          text: userList[index].name ?? ''),
+                                      email: TextEditingController(
+                                          text: userList[index].email ?? ''),
+                                      phone: TextEditingController(
+                                          text: userList[index].phone ?? ''),
+                                      profile: RxString(
+                                          userList[index].picture ?? ''),
+                                    ),
+                                    controller: controller,
+                                  );
                                 },
                               );
                             },
