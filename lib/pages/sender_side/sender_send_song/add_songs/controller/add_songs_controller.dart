@@ -643,17 +643,7 @@ class AddSongsController extends GetxController {
                       //   Get.to(() => ViewCharityOrganization());
                       // } else {
                       Get.offAll(() => SenderBottomBar());
-                      Get.bottomSheet(
-                        SafeArea(
-                            child:
-                                ThankYouPage(cartItems: userManager.cartItems)),
-                        isScrollControlled: true,
-                        backgroundColor: Colors.white,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                      );
+                      Get.to(() => ThankYouPage());
                       songTypeId.value = 0;
                       searchController.clear();
                       searchQuery.value = '';
