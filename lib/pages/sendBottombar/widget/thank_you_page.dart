@@ -4,57 +4,75 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:musit/constants/text_styles.dart';
 import 'package:musit/pages/sendBottombar/controller/sender_bottom_bar_controller.dart';
-import 'package:musit/pages/sendBottombar/sender_bottom_bar.dart';
 
-import '../../../../../constants/app_enums.dart';
 import '../../../../../globalModels/cart_model.dart';
 import '../../../../../widgets/custom_button.dart';
-import '../../../../../widgets/web_view_screen.dart';
-import '../../../../../widgets/youtube_player_widget.dart';
+import '../../../constants/colors.dart';
 
 class ThankYouPage extends StatelessWidget {
-  final RxList<CartModel> cartItems;
-
-  const ThankYouPage({super.key, required this.cartItems});
+  const ThankYouPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-      child: Container(
-        constraints: BoxConstraints(
-          minHeight: Get.height * 0.6,
-          maxHeight: Get.height * 0.8,
-        ),
-        padding: EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-        child: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: whiteColor,
+      body: SafeArea(
+        bottom: true,
+        top: true,
+        child: Container(
+          width: Get.width,
+          height: Get.height,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/thank_you_page.jpg"),
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+          padding: EdgeInsets.symmetric(vertical: 24),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             spacing: 16,
             children: [
-              ClipRRect(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16)),
-                  child: Image.asset(
-                    "assets/images/thank_you_page.jpeg",
-                    fit: BoxFit.fitWidth,
-                    width: double.infinity,
-                    height: Get.height * 0.35,
-                  )),
+              // Image.asset(
+              //   "assets/images/thank_you_page.jpeg",
+              //   fit: BoxFit.fitWidth,
+              //   width: double.infinity,
+              //   height: Get.height * 0.35,
+              // ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: AlignmentGeometry.topLeft,
+                  child: IconButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(blackColor),
+                        foregroundColor: WidgetStatePropertyAll(whiteColor),
+                      ),
+                      icon: Icon(
+                        Icons.close,
+                      )),
+                ),
+              ),
+              Spacer(),
+              SizedBox(
+                height: 24,
+              ),
               Padding(
                 padding: EdgeInsets.only(left: 16, right: 16),
                 child: Text(
                   "Your MUSEiT Moments are on there way!",
-                  style: manRopeSemiBold,
+                  style: manRopeSemiBold.copyWith(color: whiteColor),
                 ),
               ),
               SizedBox(
                 height: 24,
               ),
+              Spacer(),
               Padding(
                 padding: EdgeInsets.only(left: 16, right: 16),
                 child: CustomButton(
@@ -70,7 +88,7 @@ class ThankYouPage extends StatelessWidget {
                 padding: EdgeInsets.only(left: 16, right: 16),
                 child: Text(
                   "Share the love even futher",
-                  style: manRope,
+                  style: manRope.copyWith(color: whiteColor),
                 ),
               ),
             ],

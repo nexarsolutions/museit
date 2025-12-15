@@ -35,7 +35,7 @@ class SenderHomeScreen extends StatelessWidget {
                 _buildQuoteBox(),
 
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Center(
                     child: Row(
                       spacing: 12,
@@ -76,7 +76,7 @@ class SenderHomeScreen extends StatelessWidget {
                 ),
 
                 Expanded(
-                  // flex: 2,
+                  flex: 2,
                   child: Column(
                     spacing: 20,
                     children: [
