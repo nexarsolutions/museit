@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.nexar.musit"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -31,7 +31,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.nexar.musit"
         minSdkVersion(24)
-        targetSdkVersion(34)
+        targetSdkVersion(35)
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
